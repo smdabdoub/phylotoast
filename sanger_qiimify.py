@@ -14,6 +14,8 @@ from collections import namedtuple
 import codecs
 import os
 import os.path as osp
+import random
+import re
 import sys
 
 from Bio import SeqIO
@@ -50,7 +52,7 @@ def open_enc(fn, utf16):
     :@param utf16: Boolean flag to specify a UTF-16 file
     """
     if utf16:
-        return codecs.open(fn, encoding='utf-16')
+        return codecs.open(fn, encoding='utf-16')#-be')
     return open(fn, 'rU')
 
 
@@ -82,25 +84,41 @@ def gather_sample_ids(sampleDir, idopt, utf16):
     return sampleIDs
 
 
-def generate_barcodes(nIds, codes=None, idx=-1, codeLen=12):
+def generate_barcodes(nIds, codeLen=12):
     """
     Given a list of sample IDs generate unique n-base barcodes for each.
     Note that only 4^n unique barcodes are possible. 
     """
-    if codes is None: codes = [''.join(['A' for _ in range(codeLen)])]
-    if idx < -codeLen: return
-    if len(set(codes)) > nIds: codes.pop(); return
-    
     def next_code(b,c,i):
-        c.append(c[-1][:i] + b + (c[-1][i+1:] if i<-1 else ''))
-        return c
+        return c[:i] + b + (c[i+1:] if i<-1 else '')
     
-    generate_barcodes(nIds, next_code('A',codes,idx), idx-1)
-    generate_barcodes(nIds, next_code('C',codes,idx), idx-1)
-    generate_barcodes(nIds, next_code('T',codes,idx), idx-1)
-    generate_barcodes(nIds, next_code('G',codes,idx), idx-1)
+    def rand_base():
+        return random.choice(['A','T','C','G'])
     
-    return list(set(codes))[:nIds]
+    def rand_seq(n):
+        return ''.join([rand_base() for _ in range(n)])
+    
+    #homopolymer filter regex: match if 4 identical bases in a row
+    hpf = re.compile('aaaa|cccc|gggg|tttt', re.IGNORECASE)
+    
+    while True:
+        codes = [rand_seq(codeLen)]
+        if (hpf.search(codes[0]) is None):
+            break
+    idx = 0
+    
+    while len(codes) < nIds:
+        idx -= 1
+        if idx < -codeLen:
+            idx = -1
+            codes.append(rand_seq(codeLen))
+        else:
+            nc = next_code(rand_base(), codes[-1], idx)
+            if hpf.search(nc) is None:
+                codes.append(nc)
+        codes = list(set(codes))
+    
+    return codes
     
 
 def write_mapping_file(mapF, sampleIDs, barcodes):
@@ -113,14 +131,14 @@ def write_mapping_file(mapF, sampleIDs, barcodes):
     """
     header = '\t'.join(['#SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
                         'Description', '\n'])
-    primer = 'GGGGGGGGGGGGGGGGGGGG'
+    primer = 'AAACCCGGGTTTAAACTGAC'
     sampleMap = {}
     
     with mapF:
         mapF.write(header)
         for sid, bc in zip(sampleIDs, barcodes):
             sampleMap[sid] = MapRecord(bc, primer, sid)
-            mapF.write('\t'.join([sid, bc, primer, sid, '\n']))
+            mapF.write('\t'.join([sid, bc, primer, sid]) + '\n')
     
     return sampleMap
 
