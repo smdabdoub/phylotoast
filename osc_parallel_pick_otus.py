@@ -12,6 +12,7 @@ data sets.
 import argparse
 import os.path as osp
 
+PBS_JOB_NAME_SIZE = 15
 
 PBS_SCRIPT = """#PBS -N {job_name}_{job_num}
 
@@ -75,6 +76,8 @@ def main():
     
     for fname in args.input_fna:
         fnum = osp.splitext(osp.split(fname)[1])[0]
+        job_id_len = len(str(len(args.input_fna))) + 1
+        args.job_name = args.job_name[:PBS_JOB_NAME_SIZE - job_id_len]
         outFN = '{}.pbs'.format(fnum)
         with open(outFN, 'w') as outF:
             outF.write(PBS_SCRIPT.format(job_name=args.job_name, job_num=fnum,
