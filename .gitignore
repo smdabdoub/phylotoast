@@ -5,6 +5,7 @@
 /data
 *.fasta
 *.txt
+*.biom
 
 # Miscellaneous
 .project
