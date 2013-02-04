@@ -1,5 +1,11 @@
+# Python files
+*.py[cod]
+
+# Sequence-related
+/data
 *.fasta
 *.txt
+
+# Miscellaneous
 .project
 .pydevproject
-/data
