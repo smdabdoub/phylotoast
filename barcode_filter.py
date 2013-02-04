@@ -4,8 +4,8 @@ Created on Jan 31, 2013
 
 @author: Shareef Dabdoub
 
-From an input FASTA file, filter all sequences with barcodes matching those 
-in an input mapping file.
+From an input FASTA file, filter out all sequences with barcodes matching those 
+in an input mapping file and write to a new file.
 '''
 import argparse
 from Bio import SeqIO
