@@ -5,8 +5,9 @@ Created on Jan 10, 2013
 
 @author: Shareef M Dabdoub
 
-Generate PBS scripts for submission to the OSC to run the QIIME parallel blast
-pick OTUs script on multiple input sequence data sets.
+Generate PBS scripts for submission to the Ohio Supercomputer Center to 
+run the QIIME parallel blast pick OTUs script on multiple input sequence 
+data sets.
 '''
 import argparse
 import os.path as osp
