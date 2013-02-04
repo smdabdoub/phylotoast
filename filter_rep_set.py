@@ -1,8 +1,11 @@
+#!/usr/bin/env python
 '''
 Created on Nov 27, 2012
 
 @author: Shareef M Dabdoub
 @author Matthew Mason
+
+Step 2 of the condensing process.
 '''
 import argparse
 
@@ -45,7 +48,9 @@ def handle_program_options():
                                      sequences that map to unique OTUs.")
     parser.add_argument('rep_set', help="The set of representative sequences.")
     parser.add_argument('unique_otus', help="The set of sequence IDs \
-                                             associated with unique OTUs.")
+                                             associated with unique OTUs. \
+                                             Output from otu_condense.py \
+                                             (Step 1).")
     
     parser.add_argument('-o', '--output_filtered_rep_set', 
                         default='condensed_rep_set.fna',

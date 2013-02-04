@@ -1,8 +1,11 @@
+#!/usr/bin/env python
 '''
 Created on Nov 27, 2012
 
 @author: Shareef M Dabdoub
 @author Matthew Mason
+
+Step 3 of the condensing process.
 '''
 import argparse
 from collections import defaultdict
