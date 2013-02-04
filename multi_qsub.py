@@ -5,7 +5,7 @@ Created on Feb 4, 2013
 
 @author: Shareef Dabdoub
 
-Submit multiple PBS job scripts to the queuing system (qsub) and store 
+Submit multiple PBS job scripts to the queuing system (qsub) and print 
 the output job IDs
 '''
 import argparse

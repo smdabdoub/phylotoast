@@ -77,6 +77,7 @@ def main():
     for fname in args.input_fna:
         fnum = osp.splitext(osp.split(fname)[1])[0]
         job_id_len = len(str(len(args.input_fna))) + 1
+        # for 0-based file names, this is one character too conservative
         args.job_name = args.job_name[:PBS_JOB_NAME_SIZE - job_id_len]
         outFN = '{}.pbs'.format(fnum)
         with open(outFN, 'w') as outF:
