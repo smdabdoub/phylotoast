@@ -30,7 +30,7 @@ class MappingFileTest(unittest.TestCase):
     def tearDown(self):
         pass
         
-    def parseMapFile(self, mapF):
+    def parse_map_file(self, mapF):
         """
         Opens a QIIME mapping file and stores the contents in a dictionary
         keyed on SampleID (default) or a user-supplied one. The only 
@@ -66,14 +66,14 @@ class MappingFileTest(unittest.TestCase):
     
     def test_write_mapping_file__check_num_entries(self):
         with open(self.mapFN, 'rU') as mapF:
-            map_len = len(self.parseMapFile(mapF))
+            map_len = len(self.parse_map_file(mapF))
             errmsg = ('The number of sample IDs is not preserved in the '
                       'mapping file') 
             self.assertEqual(map_len, len(self.sampleIDs), errmsg)
             
     def test_write_mapping_file__check_num_fields(self):
         with open(self.mapFN, 'rU') as mapF:
-            m = self.parseMapFile(mapF)
+            m = self.parse_map_file(mapF)
             item = m[m.keys()[0]]
             errmsg = ('There are fewer than the required 4 fields in the ' 
                       'mapping file')
@@ -81,7 +81,7 @@ class MappingFileTest(unittest.TestCase):
             
     def test_write_mapping_file__check_contents(self):
         with open(self.mapFN, 'rU') as mapF:
-            m = self.parseMapFile(mapF)
+            m = self.parse_map_file(mapF)
             self.assertTrue(self.sampleIDs[0] in m, 'Sample ID S1 not found')
             errmsg = 'Sample ID/barcode match incorrect in mapping file'
             self.assertEqual(m[self.sampleIDs[0]][1], self.barcodes[0], errmsg)
