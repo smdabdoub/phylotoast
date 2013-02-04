@@ -1,16 +1,28 @@
+#!/usr/bin/env python
 '''
 Created on Nov 27, 2012
 
 @author: Shareef M Dabdoub
 @author Matthew Mason
+
+Step 1 of the condensing process.
 '''
 import argparse
+import operator
 
-#TODO: allow for tree level selection (i.e. stop at genus level)
-def prune_taxonomy(taxF):
+def split_phylogeny(p, level='s'):
+    level = level+'__'
+    result = p.split(level)
+    return result[0]+level+result[1].split(';')[0]
+
+
+def prune_taxonomy(taxF, level):
     """
     :@type taxF: file
     :@param taxF: The taxonomy output file to parse
+    :@type level: string
+    :@param level: The level of the phylogenetic assignment at which to cut off
+                   every assigned taxonomic string.
     
     :@rtype: dict
     :@return: A dictionary of taxonomy strings keyed on OTU ID 
@@ -20,13 +32,14 @@ def prune_taxonomy(taxF):
     
     for line in taxF:
         otuID, tax, floatVal, otuIDr = line.split()
+        tax = split_phylogeny(tax, level)
         if not tax in uniqueTax:
             uniqueTax[tax] = otuID, floatVal, otuIDr
             nuTax[uniqueTax[tax][0]] = []
         else:
             nuTax[uniqueTax[tax][0]].append(otuID)
     
-    ut = {otuID: (tax, floatVal, otuIDr) for tax,(otuID, floatVal, otuIDr) in 
+    ut = {otuID: [tax, floatVal, otuIDr] for tax,(otuID, floatVal, otuIDr) in 
           uniqueTax.iteritems()}
     
     return ut, nuTax
@@ -47,6 +60,11 @@ def handle_program_options():
                               associated with the OTU IDs they replaced.")
     parser.add_argument('-v', '--verbose', action='store_true')
     
+    parser.add_argument('-l', '--phylogenetic_level', default='s',
+                        choices = ['k','p','c','o','f','g','s'],
+                        help="Set the phylogenetic level at which to define \
+                              OTUs for condensing and downstream processing.")
+    
     return parser.parse_args()
         
 
@@ -55,7 +73,8 @@ def main():
     args = handle_program_options()
     
     with open(args.input_taxonomy, 'rU') as taxF:
-        uniqueTaxonomies, nonuniqueTaxonomies = prune_taxonomy(taxF)
+        uniqueTaxonomies, nonuniqueTaxonomies = prune_taxonomy(taxF, 
+                                                       args.phylogenetic_level)
     
     with open(args.pruned_output_file, 'w') as poF:
         for otuID, (tax, floatVal, otuIDr) in uniqueTaxonomies.iteritems():
@@ -69,24 +88,9 @@ def main():
                 nuID_count += len(nonuniqueTaxonomies[key])
 
     if args.verbose:
+        print '%i total original OTUs' % (len(uniqueTaxonomies) + nuID_count)
         print '%i unique OTUs discovered' % len(uniqueTaxonomies)
         print '%i non-unique OTU records eliminated' % nuID_count
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
