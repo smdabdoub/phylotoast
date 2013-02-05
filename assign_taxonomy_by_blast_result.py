@@ -57,5 +57,9 @@ def main():
             line = '{0}\t{1}\t{2}\t{0}\n'.format(taxid, taxids[taxid], 0.0)
             outF.write(line)
 
+    if args.verbose:
+        print 'Taxonomy written to: {}'.format(args.assigned_taxonomy_fp)
+        print '{} records written'.format(len(taxids))
+        
 if __name__ == '__main__':
     main()
