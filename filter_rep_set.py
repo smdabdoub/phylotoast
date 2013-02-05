@@ -21,7 +21,7 @@ def parse_unique_otus(inF):
     :@rtype: list
     :@return: The sequence IDs associated with unique OTUs
     """
-    return {line.split()[0] for line in inF}
+    return {line.split('\t')[0] for line in inF}
         
 
 def filter_rep_set(inF, otuSet):
@@ -43,14 +43,15 @@ def filter_rep_set(inF, otuSet):
 
 
 def handle_program_options():
-    parser = argparse.ArgumentParser(description="Filter the representative \
+    parser = argparse.ArgumentParser(description="Step 2 of the condensing \
+                                     process. Filter the representative \
                                      sequence set to include only those \
                                      sequences that map to unique OTUs.")
-    parser.add_argument('rep_set', help="The set of representative sequences.")
-    parser.add_argument('unique_otus', help="The set of sequence IDs \
-                                             associated with unique OTUs. \
-                                             Output from otu_condense.py \
-                                             (Step 1).")
+    parser.add_argument('-r', '--rep_set', required=True,
+                        help="The set of representative sequences.")
+    parser.add_argument('-u', '--unique_otus', required=True, 
+                        help="The set of sequence IDs associated with unique\
+                              OTUs. Output from otu_condense.py (Step 1).")
     
     parser.add_argument('-o', '--output_filtered_rep_set', 
                         default='condensed_rep_set.fna',
