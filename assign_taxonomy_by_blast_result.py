@@ -53,8 +53,9 @@ def main():
     
     # write out the assigned taxonomy file
     with open(args.assigned_taxonomy_fp, 'w') as outF:
-        for taxid in rep_set:                                  
-            outF.write('%s\t%s\n' % (taxid, taxids[taxid]))
+        for taxid in rep_set:
+            line = '{0}\t{1}\t{2}\t{0}\n'.format(taxid, taxids[taxid], 0.0)
+            outF.write(line)
 
 if __name__ == '__main__':
     main()
