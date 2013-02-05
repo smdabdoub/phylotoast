@@ -31,7 +31,7 @@ def prune_taxonomy(taxF, level):
     nuTax = {}  #non-unique taxonomies
     
     for line in taxF:
-        otuID, tax, floatVal, otuIDr = line.split()
+        otuID, tax, floatVal, otuIDr = line.split('\t')
         tax = split_phylogeny(tax, level)
         if not tax in uniqueTax:
             uniqueTax[tax] = otuID, floatVal, otuIDr
@@ -46,11 +46,13 @@ def prune_taxonomy(taxF, level):
     
 
 def handle_program_options():
-    parser = argparse.ArgumentParser(description="Take a taxonomy table \
-                                     from the assign_taxonomy QIIME script \
-                                     and prune all redundant taxonomy strings")
-    parser.add_argument('input_taxonomy', help="The taxonomy file output by \
-                                                the assign_taxonomy script.")
+    parser = argparse.ArgumentParser(description="Step 1 of the condensing \
+                                     process. Take a taxonomy table from the \
+                                     assign_taxonomy QIIME script and prune \
+                                     all redundant taxonomy strings")
+    parser.add_argument('-t', '--input_taxonomy', required=True,
+                        help="The taxonomy file output by the assign_taxonomy \
+                              script.")
     parser.add_argument('-p', '--pruned_output_file', 
                         default='condensed_rep_set_tax_assignments.txt',
                         help="The output file for the pruned taxonomy list.")
