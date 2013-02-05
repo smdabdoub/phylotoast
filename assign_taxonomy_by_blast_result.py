@@ -59,7 +59,7 @@ def main():
 
     if args.verbose:
         print 'Taxonomy written to: {}'.format(args.assigned_taxonomy_fp)
-        print '{} records written'.format(len(taxids))
+        print '{} records written'.format(len(rep_set))
         
 if __name__ == '__main__':
     main()
