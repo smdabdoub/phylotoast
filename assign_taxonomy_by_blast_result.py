@@ -19,7 +19,7 @@ def parse_taxonomy_table(idtaxFN):
     idtax = {}
     with open(idtaxFN,'rU') as idtxF:
         for line in idtxF:
-            ID, tax = line.split()
+            ID, tax = line.strip().split('\t')
             idtax[ID] = tax
     
     return idtax
