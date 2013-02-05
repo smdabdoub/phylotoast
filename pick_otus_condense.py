@@ -51,16 +51,18 @@ def condense_otus(otuF, nuniqueF):
 
 
 def handle_program_options():
-    parser = argparse.ArgumentParser(description="Condense the QIIME \
-                                     pick_otus.py script output by moving the \
-                                     sequences associated with non-unique OTUs\
-                                     to OTU IDs that were identified as \
-                                     unique.") 
-    parser.add_argument('seqs_otus', help="The list of OTU IDs and their \
-                                           associated sequence IDs.")
+    parser = argparse.ArgumentParser(description="Step 3 of the condensing \
+                                     process. Condense the QIIME pick_otus.py \
+                                     script output by moving the sequences \
+                                     associated with non-unique OTUs to OTU \
+                                     IDs that were identified as unique.") 
+    parser.add_argument('-s', '--seqs_otus', required=True,
+                        help="The list of OTU IDs and their associated \
+                              sequence IDs.")
     
-    parser.add_argument('non_unique_otu_matrix', help="The list of unique OTU \
-                               IDs associated with the OTU IDs they replaced.")
+    parser.add_argument('-n', '--non_unique_otu_matrix', required=True,
+                        help="The list of unique OTU IDs associated with the \
+                              OTU IDs they replaced.")
     
     parser.add_argument('-o', '--condensed_seqs_otus_file', 
                         default='condensed_seqs_otus.txt',
@@ -81,7 +83,10 @@ def main():
     
     with open(args.condensed_seqs_otus_file, 'w') as outF:
         for otuID, seqIDs in filteredOTUs.iteritems():
-            outF.write("%s\t%s\n" % (otuID, '\t'.join(seqIDs)))
+            outF.write("{0}\t{1}\n".format(otuID, '\t'.join(seqIDs)))
+            
+    if args.verbose:
+        print 'Output written to {}'.format(args.condensed_seqs_otus_file)
 
 
 if __name__ == '__main__':
