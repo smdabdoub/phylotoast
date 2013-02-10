@@ -31,7 +31,7 @@ def prune_taxonomy(taxF, level):
     nuTax = {}  #non-unique taxonomies
     
     for line in taxF:
-        otuID, tax, floatVal, otuIDr = line.split('\t')
+        otuID, tax, floatVal, otuIDr = line.strip().split('\t')
         tax = split_phylogeny(tax, level)
         if not tax in uniqueTax:
             uniqueTax[tax] = otuID, floatVal, otuIDr
