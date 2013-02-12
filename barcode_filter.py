@@ -10,7 +10,7 @@ in an input mapping file and write to a new file.
 import argparse
 from Bio import SeqIO
 from Bio.Alphabet import generic_dna
-from filter import parse_map_file
+from util import parse_map_file
 
 
 def gather_sequences(fastaFN, mapFN):
