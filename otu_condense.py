@@ -54,7 +54,7 @@ def handle_program_options():
                         help="The taxonomy file output by the assign_taxonomy \
                               script.")
     parser.add_argument('-p', '--pruned_output_file', 
-                        default='condensed_rep_set_tax_assignments.txt',
+                        default='condensed_assigned_taxonomy.txt',
                         help="The output file for the pruned taxonomy list.")
     parser.add_argument('-n', '--non_unique_output_file', 
                         default='nonunique_otu_matrix.txt',
