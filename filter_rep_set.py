@@ -47,13 +47,12 @@ def handle_program_options():
                                      process. Filter the representative \
                                      sequence set to include only those \
                                      sequences that map to unique OTUs.")
-    parser.add_argument('-r', '--rep_set', required=True,
+    parser.add_argument('-r', '--rep_set_fn', required=True,
                         help="The set of representative sequences.")
-    parser.add_argument('-u', '--unique_otus', required=True, 
-                        help="The set of sequence IDs associated with unique\
-                              OTUs. Output from otu_condense.py (Step 1).")
+    parser.add_argument('-u', '--unique_otus_fn', required=True, 
+                        help="The condensed assigned taxonomy file.")
     
-    parser.add_argument('-o', '--output_filtered_rep_set', 
+    parser.add_argument('-o', '--output_filtered_rep_set_fn', 
                         default='condensed_rep_set.fna',
                         help="The filtered representative set. By default \
                               outputs to condensed_rep_set.fna")
@@ -66,18 +65,18 @@ def handle_program_options():
 def main():
     args = handle_program_options()
     
-    with open(args.unique_otus, 'rU') as uoF:
+    with open(args.unique_otus_fn, 'rU') as uoF:
         otuSet = parse_unique_otus(uoF)
 
-    with open(args.rep_set, 'rU') as rsF:
+    with open(args.rep_set_fn, 'rU') as rsF:
         records = filter_rep_set(rsF, otuSet)
 
-    SeqIO.write(records, args.output_filtered_rep_set, "fasta")
+    SeqIO.write(records, args.output_filtered_rep_set_fn, "fasta")
     
     if args.verbose:
         print '%i sequences associated with unique OTUs' % len(records)
         print 
-        print 'Output written to: %s' % args.output_filtered_rep_set
+        print 'Output written to: %s' % args.output_filtered_rep_set_fn
 
 
 if __name__ == '__main__':
