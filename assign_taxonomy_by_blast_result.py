@@ -11,18 +11,10 @@ methods (BLAST, RDP, RTAX)
 
 @author: Shareef Dabdoub
 '''
+from util import parse_taxonomy_table
 import argparse
-
 from Bio import SeqIO
 
-def parse_taxonomy_table(idtaxFN):
-    idtax = {}
-    with open(idtaxFN,'rU') as idtxF:
-        for line in idtxF:
-            ID, tax = line.strip().split('\t')
-            idtax[ID] = tax
-    
-    return idtax
 
 
 def handle_program_options():
