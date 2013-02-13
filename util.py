@@ -45,32 +45,58 @@ def parseFASTA(fastaF):
         else:
                 seq.append(line.strip())
                 
-def parse_map_file(mapFN, keyColumn=0):
+def parse_map_file(mapFNH):
     """
     Opens a QIIME mapping file and stores the contents in a dictionary
     keyed on SampleID (default) or a user-supplied one. The only 
     required fields are SampleID, BarcodeSequence, LinkerPrimerSequence 
     (in that order), and Description (which must be the final field).
     
-    :@param mapFN: Full path to the map file
-    :@param keyColumn: The column to key the returned dictionary on.
-                       If keyColumn is larger than the number of columns,
-                       it will be set to the default, 0.     
+    :@type mapFNH: file or str
+    :@param mapFNH: Either the full path to the map file or an open file handle
+    
+    :@rtype: dict
+    :@return: A map associating each line of the mapping file with the
+              appropriate sample ID (each value of the map also contains 
+              the sample ID).
     
     Example data:
-    #SampleID    BarcodeSequence    LinkerPrimerSequence    Treatment    SampleType    DOB    Description
-    11.V13    ACGCTCGACA    GTTTGATCCTGGCTCAG    V13    Rat_Oral_Disease    111111    Rat_Oral
+    #SampleID BarcodeSequence LinkerPrimerSequence State   Description
+    11.V13    ACGCTCGACA      GTTTGATCCTGGCTCAG    Disease Rat_Oral
     """
     m = {}
     
-    with open(mapFN) as mapfile:
-        lines = mapfile.readlines()
-        if keyColumn >= len(lines[0].split()): keyColumn = 0
-        for line in lines[1:]:
+    with file_handle(mapFNH) as mapF:
+        for line in mapF:
+            if line.startswith('#') or not line:
+                    continue
             line = line.strip().split('\t')
-            m[line[keyColumn]] = line
+            m[line[0]] = line
             
     return m
+
+
+def parse_taxonomy_table(idtaxFNH):
+    """
+    Greengenes provides a file each OTU a full taxonomic designation. This 
+    method parses that file into a map with (key,val) = (OTU, taxonomy).
+    
+    :@param idtaxFNH: 
+    :
+    """
+    idtax = {}
+    with file_handle(idtaxFNH) as idtxF:
+        for line in idtxF:
+            ID, tax = line.strip().split('\t')
+            idtax[ID] = tax
+    
+    return idtax
+
+
+def split_phylogeny(p, level='s'):
+    level = level+'__'
+    result = p.split(level)
+    return result[0]+level+result[1].split(';')[0]
 
 
 def ensure_dir(d):
@@ -82,9 +108,19 @@ def ensure_dir(d):
         os.makedirs(d)
 
 
-
-
-
+def file_handle(fnh):
+    """
+    Takes either a file path or an open file handle, checks validity and 
+    returns an open file handle or raises an appropriate Exception
+    """
+    handle = None
+    if isinstance(fnh, file):
+        if fnh.closed: raise ValueError('Input file is already closed.')
+        handle = fnh
+    elif isinstance(fnh, str):
+        handle = open(fnh, 'rU')
+    
+    return handle
 
 
 
