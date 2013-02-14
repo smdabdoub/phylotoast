@@ -213,16 +213,17 @@ def main():
                                    samplepct=item[1], seqs='\t'.join(item[3])))
             
     if args.verbose:
-        print '{} total samples'.format(nsamples)
-        print '{} total sequences\n'.format(nseqs)
-        print '{} otus remain from a total of {}'.format(len(above), len(otus))
+        print 'Input: \t{} total samples'.format(nsamples)
+        print '\t{} total sequences\n'.format(nseqs)
+        print 'From a total of {} input otus'.format(len(otus))
+        print '{} otus remain '.format(len(above))
         print '{} otus removed'.format(len(below))
         
         phyl_map = {'k':'kingdoms', 'p':'phyla', 'c':'classes', 'o':'orders',
                     'f':'families', 'g':'genera', 's':'species'}
         phyls = {split_phylogeny(otus[oid][0], args.phylogenetic_level) 
                    for oid in otus}
-        print '\n{} total {}'.format(len(phyls), 
+        print '\nFrom the {} total {}'.format(len(phyls), 
                                              phyl_map[args.phylogenetic_level])
         phyl_above = {split_phylogeny(otus[aoid][0], args.phylogenetic_level) 
                         for aoid in above}
@@ -230,16 +231,14 @@ def main():
                         for boid in below}
         above_abundance = sum([len(item[1]) for item in above.values()])
         below_abundance = sum([len(below[boid][3]) for boid in below])
-        report =  ('{0} {1} ({2:.4G}%) account for {3} sequences for a '+
-                   'total of {4:.4G}% of all sequence data.')
+        report =  ('{0} {1} ({2:.4G}%) were {3}, and account for {4:.4G}% of' +
+                   ' all sequence data ({5} sequences)')
         print report.format(len(phyl_above), phyl_map[args.phylogenetic_level],
-                            len(phyl_above)/float(len(phyls))*100,
-                            above_abundance,
-                            above_abundance/float(nseqs)*100)
+                            len(phyl_above)/float(len(phyls))*100, 'kept',
+                            above_abundance/float(nseqs)*100, above_abundance)
         print report.format(len(phyl_below), phyl_map[args.phylogenetic_level],
-                            len(phyl_below)/float(len(phyls))*100,
-                            below_abundance,
-                            below_abundance/float(nseqs)*100)
+                            len(phyl_below)/float(len(phyls))*100, 'removed',
+                            below_abundance/float(nseqs)*100, below_abundance)
         
 
 
