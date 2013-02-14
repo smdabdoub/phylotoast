@@ -132,7 +132,7 @@ def handle_program_options():
     parser = argparse.ArgumentParser(description="Parse the OTU-sequence data \
                                      in two steps. First remove any OTUs that \
                                      occur in less than a user-defined percent\
-                                     of samples (default 1%). Second, remove \
+                                     of samples (default 5%). Second, remove \
                                      any OTUs that make up less than a \
                                      user-defined percentage of the overall \
                                      sequences (default 0.01%)")
@@ -146,7 +146,7 @@ def handle_program_options():
     parser.add_argument('-p', '--percent_of_samples', type=float,
                         default=0.05, help="OTUs that occur in less than this \
                                             percent of samples will be removed.\
-                                            Default is 1 percent.")
+                                            Default is 5 percent.")
     parser.add_argument('-s', '--percent_of_sequences', type=float,
                         default=0.0001, help="OTUs that occur in less than \
                                               this percent of total sequences \
