@@ -55,7 +55,8 @@ def filter_by_sample_pct(otus, nsamples, pct, phyl_level):
         if sample_counts[phyl] >= pct:
             above[otuid] = otus[otuid]
         else:
-            below[otuid] = [sample_counts[phyl], '', otus[otuid][1]]
+            below[otuid] = [sample_counts[phyl], '', 
+                            otus[otuid][0], otus[otuid][1]]
     
     return above, below
 
@@ -99,7 +100,8 @@ def filter_by_sequence_pct(otus, nseqs, pct, phyl_level):
         if seq_counts[phyl] >= pct:
             above[otuid] = otus[otuid]
         else:
-            below[otuid] = ['', seq_counts[phyl], otus[otuid][1]]
+            below[otuid] = ['', seq_counts[phyl], 
+                            otus[otuid][0], otus[otuid][1]]
     
     return above, below
 
@@ -186,7 +188,16 @@ def main():
     above, below2 = filter_by_sequence_pct(above, nseqs, 
                                            args.percent_of_sequences,
                                            args.phylogenetic_level)
+    
+    above2, below3 = filter_by_sequence_pct({boid:below[boid][2:] 
+                                               for boid in below}, 
+                                            nseqs, 
+                                            args.percent_of_sequences,
+                                            args.phylogenetic_level)
+    below = {boid:below[boid] for boid in below3}
     below.update(below2)
+    above.update(above2)
+    
     
     with open(args.output_pruned_otus_fn, 'w') as outF:
         for otuid, item in above.iteritems():
@@ -199,7 +210,7 @@ def main():
             samplepct = '{samplepct:.2G}' if item[1] != '' else '     '
             line = '{otuid}\t'+seqpct+'\t'+samplepct+'\t{seqs}\n'
             outF.write(line.format(otuid=oid, seqpct=item[0], 
-                                   samplepct=item[1], seqs='\t'.join(item[2])))
+                                   samplepct=item[1], seqs='\t'.join(item[3])))
             
     if args.verbose:
         print '{} total samples'.format(nsamples)
@@ -218,7 +229,7 @@ def main():
         phyl_below = {split_phylogeny(otus[boid][0], args.phylogenetic_level) 
                         for boid in below}
         above_abundance = sum([len(item[1]) for item in above.values()])
-        below_abundance = sum([len(below[boid][2]) for boid in below])
+        below_abundance = sum([len(below[boid][3]) for boid in below])
         report =  ('{0} {1} ({2:.4G}%) account for {3} sequences for a '+
                    'total of {4:.4G}% of all sequence data.')
         print report.format(len(phyl_above), phyl_map[args.phylogenetic_level],
