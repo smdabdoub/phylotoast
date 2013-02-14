@@ -50,22 +50,24 @@ def handle_program_options():
                                      process. Take a taxonomy table from the \
                                      assign_taxonomy QIIME script and prune \
                                      all redundant taxonomy strings")
-    parser.add_argument('-t', '--input_taxonomy', required=True,
+    parser.add_argument('-i', '--input_assigned_taxonomy', required=True,
                         help="The taxonomy file output by the assign_taxonomy \
                               script.")
     parser.add_argument('-p', '--pruned_output_file', 
                         default='condensed_assigned_taxonomy.txt',
-                        help="The output file for the pruned taxonomy list.")
+                        help="The output file for the pruned taxonomy list.\
+                              Defaults to condensed_assigned_taxonomy.txt")
     parser.add_argument('-n', '--non_unique_output_file', 
                         default='nonunique_otu_matrix.txt',
                         help="The file will contain a list of pruned OTU IDs \
-                              associated with the OTU IDs they replaced.")
-    parser.add_argument('-v', '--verbose', action='store_true')
-    
+                              associated with the OTU IDs they replaced.\
+                              Defaults to nonunique_otu_matrix.txt")
     parser.add_argument('-l', '--phylogenetic_level', default='s',
                         choices = ['k','p','c','o','f','g','s'],
                         help="Set the phylogenetic level at which to define \
-                              OTUs for condensing and downstream processing.")
+                              OTUs for condensing and downstream processing.\
+                              Defaults to species level.")
+    parser.add_argument('-v', '--verbose', action='store_true')
     
     return parser.parse_args()
         
@@ -74,7 +76,7 @@ def handle_program_options():
 def main():
     args = handle_program_options()
     
-    with open(args.input_taxonomy, 'rU') as taxF:
+    with open(args.input_assigned_taxonomy, 'rU') as taxF:
         uniqueTaxonomies, nonuniqueTaxonomies = prune_taxonomy(taxF, 
                                                        args.phylogenetic_level)
     
