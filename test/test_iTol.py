@@ -6,8 +6,18 @@ Created on Feb 16, 2013
 import iTol
 import unittest
 
-class iTolTest(object):
-    def __init__(self):
+class iTolTest(unittest.TestCase):
+    pass
+        
+
+class GatherCategoriesTest(iTolTest):
+
+    def setUp(self):
+        self.header = ('#SampleID BarcodeSequence LinkerPrimerSequence ' + 
+                      'DiseaseState SmokingStatus SampleLocation Description')
+        self.header = self.header[1:].split()
+        self.categories = ['DiseaseState', 'SmokingStatus', 
+                           'SampleLocation=implant']
         self.imap = {'SID1':['SID1','AA','GG','healthy','smoker','implant',''],
                      'SID2':['SID2','AA','GG','pm','smoker','implant',''],
                      'SID3':['SID3','AA','GG','pi','smoker','implant',''],
@@ -16,15 +26,6 @@ class iTolTest(object):
                      'SID6':['SID6','AA','GG','pi','smoker','tooth',''],
                      'SID7':['SID7','AA','GG','pm','ns','implant',''],
                      'SID8':['SID8','AA','GG','pi','ns','implant','']}
-
-class GatherCategoriesTest(unittest.TestCase, iTolTest):
-
-    def setUp(self):
-        self.header = ('#SampleID BarcodeSequence LinkerPrimerSequence ' + 
-                      'DiseaseState SmokingStatus SampleLocation Description')
-        self.header = self.header[1:].split()
-        self.categories = ['SmokingStatus', 'DiseaseState', 
-                           'SampleLocation=implant']
 
     def tearDown(self):
         pass
@@ -41,12 +42,12 @@ class GatherCategoriesTest(unittest.TestCase, iTolTest):
         
     def test_expected_input(self):
         cats = iTol.gather_categories(self.imap, self.header, self.categories)
-        expected = {'healthy_smoker':iTol.DataCategory([],{},{}),
-                    'pm_smoker':iTol.DataCategory([],{},{}),
-                    'pi_smoker':iTol.DataCategory([],{},{}),
-                    'healthy_ns':iTol.DataCategory([],{},{}),
-                    'pm_ns':iTol.DataCategory([],{},{}),
-                    'pi_ns':iTol.DataCategory([],{},{})}
+        expected = {'healthy_smoker':iTol.DataCategory({'SID1'},None,None),
+                    'pm_smoker':iTol.DataCategory({'SID2'},None,None),
+                    'pi_smoker':iTol.DataCategory({'SID3'},None,None),
+                    'healthy_ns':iTol.DataCategory({'SID5'},None,None),
+                    'pm_ns':iTol.DataCategory({'SID7'},None,None),
+                    'pi_ns':iTol.DataCategory({'SID8'},None,None)}
         self.assertDictContainsSubset(expected, cats)
         
 if __name__ == "__main__":
