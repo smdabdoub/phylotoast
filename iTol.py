@@ -6,7 +6,7 @@ Created on Feb 8, 2012
 '''
 import util
 import argparse
-from collections import defaultdict, namedtuple
+from collections import defaultdict, namedtuple, OrderedDict
 import json
 
 def otu_name(biom_row):
@@ -74,14 +74,14 @@ def gather_categories(imap, header, categories=None):
     :@type categories: list
     :@param categories: The list of user-specified categories from the mapping 
                         file
-    :@rtype: dict
-    :@return: A dictionary keyed on the combinations of all the types found 
-              within the user-specified categories. Each entry will contain an 
-              empty DataCategory namedtuple. If no categories are specified, a 
-              single entry with the key 'default' will be returned  
+    :@rtype: OrderedDict
+    :@return: A sorted dictionary keyed on the combinations of all the types 
+    		  found within the user-specified categories. Each entry will 
+    		  contain an empty DataCategory namedtuple. If no categories are 
+    		  specified, a single entry with the key 'default' will be returned  
     """
     if categories is None:
-        return {'default': DataCategory(frozenset(imap.keys()), None, None)}
+        return {'default': DataCategory(set(imap.keys()), {}, {})}
     
     cat_ids = [header.index(cat) for cat in categories if cat in header
                                                          and '=' not in cat]
@@ -91,17 +91,17 @@ def gather_categories(imap, header, categories=None):
             conditions[header.index(cat.split('=')[0])] =  cat.split('=')[1]
 
     if not cat_ids:
-        return {'default': DataCategory(frozenset(imap.keys()), None, None)}
+        return {'default': DataCategory(set(imap.keys()), {}, {})}
     
     table = {}
     for sid,row in imap.iteritems():
         if all([row[c] == conditions[c] for c in conditions]):
             key = '_'.join([row[cid] for cid in cat_ids])
             if not key in table:
-                table[key] = DataCategory(set(), None, None)
+                table[key] = DataCategory(set(), {}, {})
             table[key].sids.add(sid)
             
-    return table
+    return OrderedDict(sorted(table.items(), key=lambda t: t[0]))
 
 
 def handle_program_options():
@@ -170,16 +170,18 @@ def main():
     with open(args.mapping, 'rU') as mapF:
         map_header = mapF.readline()[1:].split()
     
-    groups = gather_categories(imap, map_header, args.map_categories)
+    groups = gather_categories(imap, map_header, 
+                               args.map_categories.split(','))
     all_otus = {otu_name(item) for item in biom['rows']}
 
     for group in groups.values():
-        group.ra = relative_abundance(biom, group.sids)
-        group.means = mean_otu_pct_abundance(group.ra, all_otus)
+        group.ra.update(relative_abundance(biom, group.sids))
+        group.means.update(mean_otu_pct_abundance(group.ra, all_otus))
     
     with open('iTol_table.txt', 'w') as itolF:
-        itolF.write('LABELS\t' + '\t'.join([groups.keys()])+'\n')
-        itolF.write('COLORS\t#ff0000\t#00ff00\n')
+        itolF.write('LABELS\t' + '\t'.join(groups.keys())+'\n')
+        itolF.write('COLORS\t{}\n'.format('\t'.join(['#ff0000' 
+											    for _ in range(len(groups))])))
         
         for oname in all_otus:
             row = ['{name}']#\t{s:.2f}\t{ns:.2f}\n'
