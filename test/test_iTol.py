@@ -42,12 +42,12 @@ class GatherCategoriesTest(iTolTest):
         
     def test_expected_input(self):
         cats = iTol.gather_categories(self.imap, self.header, self.categories)
-        expected = {'healthy_smoker':iTol.DataCategory({'SID1'},None,None),
-                    'pm_smoker':iTol.DataCategory({'SID2'},None,None),
-                    'pi_smoker':iTol.DataCategory({'SID3'},None,None),
-                    'healthy_ns':iTol.DataCategory({'SID5'},None,None),
-                    'pm_ns':iTol.DataCategory({'SID7'},None,None),
-                    'pi_ns':iTol.DataCategory({'SID8'},None,None)}
+        expected = {'healthy_smoker':iTol.DataCategory({'SID1'},{},{}),
+                    'pm_smoker':iTol.DataCategory({'SID2'},{},{}),
+                    'pi_smoker':iTol.DataCategory({'SID3'},{},{}),
+                    'healthy_ns':iTol.DataCategory({'SID5'},{},{}),
+                    'pm_ns':iTol.DataCategory({'SID7'},{},{}),
+                    'pi_ns':iTol.DataCategory({'SID8'},{},{})}
         self.assertDictContainsSubset(expected, cats)
         
 if __name__ == "__main__":
