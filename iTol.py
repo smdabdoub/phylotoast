@@ -76,18 +76,33 @@ def gather_categories(imap, header, categories=None):
                         file
     :@rtype: dict
     :@return: A dictionary keyed on the combinations of all the types found 
-              within the user-specified categories. If no categories are 
-              specified, a single entry with the key 'default' will be returned  
+              within the user-specified categories. Each entry will contain an 
+              empty DataCategory namedtuple. If no categories are specified, a 
+              single entry with the key 'default' will be returned  
     """
-    cat_ids = [header.index(cat) for cat in categories if cat in header]
-    if categories is None or not cat_ids:
-        return {'default':[]}
+    if categories is None:
+        return {'default': DataCategory(frozenset(imap.keys()), None, None)}
     
-#    table = {}
-#    for row in imap:
-#        key = '_'.join([row[cid] for cid in cat_ids])
-        
+    cat_ids = [header.index(cat) for cat in categories if cat in header
+                                                         and '=' not in cat]
+    conditions = {}
+    for cat in categories:
+        if '=' in cat and cat.split('=')[0] in header:
+            conditions[header.index(cat.split('=')[0])] =  cat.split('=')[1]
+
+    if not cat_ids:
+        return {'default': DataCategory(frozenset(imap.keys()), None, None)}
     
+    table = {}
+    for sid,row in imap.iteritems():
+        if all([row[c] == conditions[c] for c in conditions]):
+            key = '_'.join([row[cid] for cid in cat_ids])
+            if not key in table:
+                table[key] = DataCategory(set(), None, None)
+            table[key].sids.add(sid)
+            
+    return table
+
 
 def handle_program_options():
     parser = argparse.ArgumentParser(description="Create files appropriate for \
@@ -100,14 +115,13 @@ def handle_program_options():
                                      of OTU IDs for useful display in iTol.")
     parser.add_argument('-i', '--otu_table', required=True,
                         help="The biom file with OTU-Sample abundance data.")
-    parser.add_argument('-m', '--mapping',
+    parser.add_argument('-m', '--mapping', required=True,
                         help="The mapping file specifying group information \
                               for each sample.")
-    parser.add_argument('-t', '--input_tre', help="A phylogenetic tree in \
-                                                   Newick format to be modified\
-                                                   by exchanging the OTU ID \
-                                                   node names for taxonomic \
-                                                   names.")
+    parser.add_argument('-t', '--input_tre', required=True, 
+                        help="A phylogenetic tree in Newick format to be \
+                              modified by exchanging the OTU ID node names for \
+                              taxonomic names.")
     parser.add_argument('-e', '--output_tre', default='iTol.tre',
                         help="The output .tre file")
     parser.add_argument('-o', '--output_itol_table', default='iTol_table.txt',
@@ -139,12 +153,11 @@ def handle_program_options():
 #                        help="Set the phylogenetic level at which to calculate\
 #                              the mean relative abundance values. Defaults to \
 #                              species level.")
-    parser.add_argument('-v', '--verbose', action='store_true')
+#    parser.add_argument('-v', '--verbose', action='store_true')
     
     return parser.parse_args()
-        
 
-    
+
 def main():
     args = handle_program_options()
     
@@ -157,28 +170,28 @@ def main():
     with open(args.mapping, 'rU') as mapF:
         map_header = mapF.readline()[1:].split()
     
-    
     groups = gather_categories(imap, map_header, args.map_categories)
-    
-#    # remove tooth data samples
-#    sids = frozenset({sid for sid in hmap if hmap[sid][3] == 'Smoker'})
-#    nsids = frozenset({sid for sid in hmap if hmap[sid][3] != 'Smoker'})
-    
-    sra = relative_abundance(biom, sids)
-    nsra = relative_abundance(biom, nsids)
-    
     all_otus = {otu_name(item) for item in biom['rows']}
-    
-    s_otu_means = mean_otu_pct_abundance(sra, all_otus)
-    ns_otu_means = mean_otu_pct_abundance(nsra, all_otus)
-    
+
+    for group in groups.values():
+        group.ra = relative_abundance(biom, group.sids)
+        group.means = mean_otu_pct_abundance(group.ra, all_otus)
     
     with open('iTol_table.txt', 'w') as itolF:
-        itolF.write('LABELS\tSmokers\tNon-Smokers\n')
+        itolF.write('LABELS\t' + '\t'.join([groups.keys()])+'\n')
         itolF.write('COLORS\t#ff0000\t#00ff00\n')
         
         for oname in all_otus:
-            s_avg = s_otu_means[oname] * 100 if oname in s_otu_means else 0.0
-            ns_avg = ns_otu_means[oname] * 100 if oname in ns_otu_means else 0.0
-            row = '{name}\t{s:.2f}\t{ns:.2f}\n'
-            itolF.write(row.format(name=oname, s=s_avg, ns=ns_avg))
+            row = ['{name}']#\t{s:.2f}\t{ns:.2f}\n'
+            row_data = {'name': oname}
+            for name, group in groups.iteritems():
+                row.append('{{{}:.2f}}'.format(name))
+                if oname in group.means:
+                    row_data[name] = group.means[oname] * 100 
+                else:
+                    row_data[name] = 0.0
+            
+            itolF.write('\t'.join(row).format(**row_data) + '\n')
+            
+if __name__ == '__main__':
+    main()
