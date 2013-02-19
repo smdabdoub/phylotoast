@@ -145,7 +145,7 @@ def handle_program_options():
                               three types each will result in six data \
                               columns. Default is no categories and all the \
                               data will be treated as a single group.")
-    parser.add_argument('-N', '--normalized_MRE', default=False, 
+    parser.add_argument('-N', '--normalized_MRE', action='store_true', 
                          help="Specifies whether the mean relative abundance \
                                 calculated for each OTU and group is \
                                 normalized by the sum for the whole OTU. \
@@ -183,12 +183,18 @@ def main():
         for oname in all_otus:
             row = ['{name}']#\t{s:.2f}\t{ns:.2f}\n'
             row_data = {'name': oname}
+            msum = 0
             for name, group in groups.iteritems():
-                row.append('{{{}:.2f}}'.format(name))
+                row.append('{{{}:.5f}}'.format(name))
                 if oname in group.means:
                     row_data[name] = group.means[oname] * 100 
                 else:
                     row_data[name] = 0.0
+                msum += row_data[name]
+            # normalize avg relative abundance data
+            if args.normalized_MRE and msum > 0:
+                row_data.update({key:data/msum for key,data in row_data.items() 
+                                   if key != 'name'})
             
             itolF.write('\t'.join(row).format(**row_data) + '\n')
             
