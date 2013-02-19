@@ -105,14 +105,15 @@ def gather_categories(imap, header, categories=None):
 
 
 def handle_program_options():
-    parser = argparse.ArgumentParser(description="Create files appropriate for \
+    parser = argparse.ArgumentParser(description="Create files appropriate for\
                                      use in the iTol visualization program by \
                                      using the abundance data from a \
                                      biom-format file and groups specified in \
                                      a QIIME mapping file. The program also \
-                                     modifies a Newick-format phylogenetic tree\
-                                     file to use proper taxonomic names instead\
-                                     of OTU IDs for useful display in iTol.")
+                                     modifies a Newick-format phylogenetic \
+                                     tree file to use proper taxonomic names \
+                                     instead of OTU IDs for useful display in \
+                                     iTol.")
     parser.add_argument('-i', '--otu_table', required=True,
                         help="The biom file with OTU-Sample abundance data.")
     parser.add_argument('-m', '--mapping', required=True,
@@ -120,39 +121,35 @@ def handle_program_options():
                               for each sample.")
     parser.add_argument('-t', '--input_tre', required=True, 
                         help="A phylogenetic tree in Newick format to be \
-                              modified by exchanging the OTU ID node names for \
+                              modified by exchanging the OTU ID node names for\
                               taxonomic names.")
     parser.add_argument('-e', '--output_tre', default='iTol.tre',
                         help="The output .tre file")
     parser.add_argument('-o', '--output_itol_table', default='iTol_table.txt',
                         help="Other than a phylogenetic tree, the main input \
                               to iTol is a dataset file containing some \
-                              representation of the relative abundance of every\
-                              OTU across the specified data groups. This \
-                              program calculates either the (MRE) mean relative\
-                              abundance (relative abundance of each sample \
-                              combined to find the mean across OTUs) or the \
-                              MRE normalized across the groups (the group MRE \
-                              of each OTU divided by the sum for that OTU).")
+                              representation of the relative abundance of \
+                              every OTU across the specified data groups. This\
+                              program calculates either the (MRE) mean \
+                              relative abundance (relative abundance of each \
+                              sample combined to find the mean across OTUs) or\
+                              the MRE normalized across the groups (the group \
+                              MRE of each OTU divided by the sum for that \
+                              OTU).")
     parser.add_argument('-c', '--map_categories', default=None,
                         help="Any mapping categories, such as treatment type, \
-                              that will be used to group the data in the output\
-                              iTol table. For example, one category with three\
-                              types will result in three data columns in the \
-                              final output. Two categories with three types \
-                              each will result in six data columns. Default \
-                              is no categories and all the data will be treated\
-                              as a single group.")
+                              that will be used to group the data in the \
+                              output iTol table. For example, one category \
+                              with three types will result in three data \
+                              columns in the final output. Two categories with\
+                              three types each will result in six data \
+                              columns. Default is no categories and all the \
+                              data will be treated as a single group.")
     parser.add_argument('-N', '--normalized_MRE', default=False, 
                          help="Specifies whether the mean relative abundance \
-                                calculated for each OTU and group is normalized\
-                                by the sum for the whole OTU. Default is \
-                                False.")
-#    parser.add_argument('-L', '--phylogenetic_level', default='s',
-#                        choices=['k', 'p', 'c', 'o', 'f', 'g', 's'],
-#                        help="Set the phylogenetic level at which to calculate\
-#                              the mean relative abundance values. Defaults to \
-#                              species level.")
+                                calculated for each OTU and group is \
+                                normalized by the sum for the whole OTU. \
+                                Default is False.")
 #    parser.add_argument('-v', '--verbose', action='store_true')
     
     return parser.parse_args()
