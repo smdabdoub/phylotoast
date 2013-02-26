@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 '''
 Created on Feb 25, 2013
 
@@ -7,15 +8,10 @@ import argparse
 import subprocess
 
 def handle_program_options():
-    parser = argparse.ArgumentParser(description="Create files appropriate for\
-                                     use in the iTol visualization program by \
-                                     using the abundance data from a \
-                                     biom-format file and groups specified in \
-                                     a QIIME mapping file. The program also \
-                                     modifies a Newick-format phylogenetic \
-                                     tree file to use proper taxonomic names \
-                                     instead of OTU IDs for useful display in \
-                                     iTol.")
+    parser = argparse.ArgumentParser(description="This workflow script will run\
+                                     all three steps of the OTU condensing \
+                                     pipeline automatically with the default \
+                                     output file settings.")
     parser.add_argument('-i', '--assigned_taxonomy_fn', required=True,
                         help="The taxonomy file output by the assign_taxonomy \
                               script.")
@@ -47,8 +43,8 @@ def main():
         
         print "Step 1: Condensing assigned taxonomy file...\n"
     output.append(subprocess.check_output(['otu_condense.py', 
-                                           '-i '+args.assigned_taxonomy_fn,
-                                           '-l '+args.phylogenetic_level,
+                                           '-i', args.assigned_taxonomy_fn,
+                                           '-l', args.phylogenetic_level,
                                            '-v']))
     if args.verbose:
         print "output:\n"
@@ -56,8 +52,9 @@ def main():
     
         print "Step 2: Condensing representative set...\n"
     output.append(subprocess.check_output(['filter_rep_set.py', 
-                                           '-r '+args.rep_set_fn,
-                                           '-u condensed_assigned_taxonomy.txt',
+                                           '-r',args.rep_set_fn,
+                                           '-u',
+                                           'condensed_assigned_taxonomy.txt',
                                            '-v']))
     if args.verbose:
         print "output:\n"
@@ -65,8 +62,8 @@ def main():
         
         print "Step 3: Condensing pick otus output file...\n"
     output.append(subprocess.check_output(['pick_otus_condense.py', 
-                                           '-s '+args.seqs_otus_fn,
-                                           '-n nonunique_otu_matrix.txt',
+                                           '-s', args.seqs_otus_fn,
+                                           '-n', 'nonunique_otu_matrix.txt',
                                            '-v']))
     
     if args.verbose:
