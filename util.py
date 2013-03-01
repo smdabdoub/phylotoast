@@ -3,16 +3,16 @@ Created on Feb 2, 2013
 
 @author: Shareef Dabdoub
 '''
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 import os
 
 FASTARecord = namedtuple("FASTA_Record", "id descr data")
 
-def storeFASTA(fastaF):
+def storeFASTA(fastaFNH):
     recs = []; seq = []
     ID = ''; descr = ''
     
-    for line in fastaF:
+    for line in file_handle(fastaFNH):
         if line == '' or line[0] == ';':
             continue
         elif line[0] == '>':
@@ -27,11 +27,11 @@ def storeFASTA(fastaF):
                 seq.append(line.strip())
     return recs
 
-def parseFASTA(fastaF):
+def parseFASTA(fastaFNH):
     seq = []
     ID = ''; descr = ''
     
-    for line in fastaF:
+    for line in file_handle(fastaFNH):
         if line == '' or line[0] == ';':
             continue
         elif line[0] == '>':
@@ -58,13 +58,14 @@ def parse_map_file(mapFNH):
     :@rtype: dict
     :@return: A map associating each line of the mapping file with the
               appropriate sample ID (each value of the map also contains 
-              the sample ID).
+              the sample ID). An OrderedDict is used so the returned map is
+              guaranteed to have the same order as the input file.
     
     Example data:
     #SampleID BarcodeSequence LinkerPrimerSequence State   Description
     11.V13    ACGCTCGACA      GTTTGATCCTGGCTCAG    Disease Rat_Oral
     """
-    m = {}
+    m = OrderedDict()
     
     with file_handle(mapFNH) as mapF:
         for line in mapF:
@@ -76,15 +77,44 @@ def parse_map_file(mapFNH):
     return m
 
 
+def write_map_file(mapFNH, items, header):
+    """
+    Given a list of mapping items (in the form described by the  
+    parse_mapping_file method) and a header line, write each row to the given 
+    input file with fields separated by tabs.
+    
+    :@type mapFNH: file or str
+    :@param mapFNH: Either the full path to the map file or an open file handle
+    :@type items: list
+    :@param item: The list of row entries to be written to the mapping file
+    :@type header: list or str
+    :@param header: The descriptive column names that are required as the first
+                    line of the mapping file
+    :@rtype: None
+    """
+    if isinstance(header, list):
+        header = '\t'.join(header)+'\n'
+    
+    with file_handle(mapFNH, 'w') as mapF:
+        mapF.write(header)
+        for row in items:
+            mapF.write('\t'.join(row)+'\n')
+
+
 def parse_taxonomy_table(idtaxFNH):
     """
     Greengenes provides a file each OTU a full taxonomic designation. This 
     method parses that file into a map with (key,val) = (OTU, taxonomy).
     
-    :@param idtaxFNH: 
-    :
+    :@type idtaxFNH: file or str
+    :@param idtaxFNH: Either the full path to the map file or an open file 
+                      handle
+    :@rtype: dict
+    :@return: A map associating each OTU ID with the taxonomic specifier.
+              An OrderedDict is used so the returned map is guaranteed to have
+              the same order as the input file.
     """
-    idtax = {}
+    idtax = OrderedDict()
     with file_handle(idtaxFNH) as idtxF:
         for line in idtxF:
             ID, tax = line.strip().split('\t')
@@ -108,17 +138,17 @@ def ensure_dir(d):
         os.makedirs(d)
 
 
-def file_handle(fnh):
+def file_handle(fnh, mode='rU'):
     """
     Takes either a file path or an open file handle, checks validity and 
     returns an open file handle or raises an appropriate Exception
     """
     handle = None
     if isinstance(fnh, file):
-        if fnh.closed: raise ValueError('Input file is already closed.')
+        if fnh.closed: raise ValueError('Input file is closed.')
         handle = fnh
     elif isinstance(fnh, str):
-        handle = open(fnh, 'rU')
+        handle = open(fnh, mode)
     
     return handle
 
