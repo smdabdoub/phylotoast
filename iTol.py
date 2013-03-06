@@ -176,7 +176,7 @@ def main():
                                     for oid in results})
         
     # write iTol data set file
-    with open('iTol_table.txt', 'w') as itolF:
+    with open(args.output_itol_table, 'w') as itolF:
         itolF.write('LABELS\t' + '\t'.join(groups.keys())+'\n')
         itolF.write('COLORS\t{}\n'.format('\t'.join(['#ff0000' 
 											    for _ in range(len(groups))])))
