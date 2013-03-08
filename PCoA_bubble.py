@@ -124,37 +124,28 @@ def rstyle(ax):
         lg.get_frame().set_alpha(0.5)
 
 
-def plot_PCoA(rh, rd, hh, hd, otu_name):
+def plot_PCoA(cat_data, otu_name, unifrac, names, colors):
     p.matplotlib.rc('axes', edgecolor='black')
     p.matplotlib.rc('axes', facecolor='grey')
     fig = p.plt.figure()
     fig.set_figheight(8)
     fig.set_figwidth(10)
+    legend = []
     
-    p.scatter(rd['pc1'], rd['pc2'], rd['size'], color='#90EE90', marker='s')
-    p.scatter(rd['zpc1'], rd['zpc2'], s=20, edgecolor='#90EE90', facecolor='none', marker='s')
-    p.scatter(rh['pc1'], rh['pc2'], rh['size'], color='#FFA07A', marker='^')
-    p.scatter(rh['zpc1'], rh['zpc2'], s=20, edgecolor='#FFA07A', facecolor='none', marker='^')
-    p.scatter(hh['pc1'], hh['pc2'], hh['size'], color='green', marker='o')
-    p.scatter(hh['zpc1'], hh['zpc2'], s=20, edgecolor='green', facecolor='none', marker='o')
-    p.scatter(hd['pc1'], hd['pc2'], hd['size'], color='red', marker='p')
-    p.scatter(hd['zpc1'], hd['zpc2'], s=20, edgecolor='red', facecolor='none', marker='p')
-
-    # set plot labels
-    rhr = p.Rectangle((0, 0), 1, 1, fc='#90EE90')
-    rdr = p.Rectangle((0, 0), 1, 1, fc='#FFA07A')
-    hhr = p.Rectangle((0, 0), 1, 1, fc='green')
-    hdr = p.Rectangle((0, 0), 1, 1, fc='red')
-    p.legend((rhr, rdr, hhr, hdr), ('Rat Health', 'Rat Disease', 'Human Health', 'Human Disease'), loc='upper left')
+    for i,cat in enumerate(cat_data):
+        p.scatter(cat['pc1'], cat['pc2'], cat['size'], color=colors[i], 
+                  marker='s')
+        p.scatter(cat['zpc1'], cat['zpc2'], s=20, edgecolor=colors[i], 
+                  facecolor='none', marker='s')
+        legend.append(p.Rectangle((0, 0), 1, 1, fc=colors[i]))
+       
+    p.legend(legend, names, loc='upper left')
     p.title(otu_name, style='italic')
     p.xlabel('PC2 ({:.2f}%)'.format(float(unifrac[-1].split('\t')[2])))
     p.ylabel('PC1 ({:.2f}%)'.format(float(unifrac[-1].split('\t')[1])))
-    p.hlines(0, -0.4, 0.4)
-    p.vlines(0, -0.3, 0.3)
-    p.xlim(-0.4, 0.4)
-    p.ylim(-0.3, 0.3)
     
-    fig.savefig('./figures/' + '_'.join(otu_name.split()) + '.png', facecolor='gray', edgecolor='none')
+    fig.savefig('./figures/' + '_'.join(otu_name.split()) + '.png', 
+                facecolor='gray', edgecolor='none')
 
 
 def handle_program_options():
@@ -234,16 +225,8 @@ def main():
         cat_data = {cat:{'pc1':[], 'pc2':[], 'size':[], 'zpc1':[], 'zpc2':[]} 
                     for cat in category_ids}
     
-        for e in pcd:
-            if 'RM' in e[0]:
-                category = rh
-            elif 'RS' in e[0]:
-                category = rd
-            elif 'HH' in e[0]:
-                category = hh
-            elif 'HD' in e[0]:
-                category = hd
-    
+        for e in unifrac['pcd']:
+            category = cat_data[imap[e[0]][category_idx]]
             size = rel_abundance(otuID, e[0], biom)
             if size > 0:
                 category['pc1'].append(e[1])
@@ -254,4 +237,4 @@ def main():
                 category['zpc2'].append(e[2])
                 
     
-        plot_PCoA(rh, rd, hh, hd, otus[otuID])
+        plot_PCoA(cat_data, otus[otuID], unifrac, category_names, category_colors)
