@@ -8,6 +8,7 @@ each OTU in an input OTU abundance table. This is currently used by iTol.py
 to offload the different methods.
 '''
 from collections import defaultdict
+from math import log10
 
 def relative_abundance(biom, sampleIDs):
     ra = {item['id']: defaultdict(int) for item in biom['columns'] 
@@ -57,7 +58,7 @@ def raw_abundance(biom, sampleIDs):
         if sampleID in sampleIDs:
             results[otuID] += amt
             
-    return results
+    return {k:log10(v) for k,v in results.items()}
 
 
 
