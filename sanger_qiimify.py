@@ -20,14 +20,14 @@ import sys
 
 from Bio import SeqIO
 
-
 file_types = {'fasta': ('.fasta', '.fa', '.txt', '.seq', '.Seq'),
               'fastq': ('.fastq'),
               'abi': ('.abi','.ab1'),
               'qual': ('.qual')}
 
-MapRecord = namedtuple('MapRecord', 'barcode primer descr')
+MapRecord = namedtuple('MapRecord', 'barcode primer treatment descr')
 IDPattern = namedtuple('IDPattern','separator field')
+TreatmentType = namedtuple('TreatmentType', 'name value')
 
 class ValidateIDPattern(argparse.Action):
     def __call__(self, parser, args, values, option_string = None):
@@ -121,7 +121,8 @@ def generate_barcodes(nIds, codeLen=12):
     return codes
     
 
-def write_mapping_file(mapF, sampleIDs, barcodes):
+
+def write_mapping_file(mapF, sampleIDs, barcodes, treatment=None):
     """
     Given a mapping from sample IDs to barcodes/primers/other info, 
     write out a QIIME-compatible mapping file.
@@ -129,16 +130,21 @@ def write_mapping_file(mapF, sampleIDs, barcodes):
     File format described at: http://qiime.org/documentation/file_formats.html
     Note that primer column can be left blank.
     """
-    header = '\t'.join(['#SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
-                        'Description', '\n'])
+    header = ['#SampleID', 'BarcodeSequence', 'LinkerPrimerSequence',
+              'Description', '\n']
+    if treatment is not None:
+        header.insert(-2, treatment.name)
     primer = 'AAACCCGGGTTTAAACTGAC'
     sampleMap = {}
     
     with mapF:
-        mapF.write(header)
+        mapF.write('\t'.join(header))
         for sid, bc in zip(sampleIDs, barcodes):
-            sampleMap[sid] = MapRecord(bc, primer, sid)
-            mapF.write('\t'.join([sid, bc, primer, sid]) + '\n')
+            sampleMap[sid] = MapRecord(bc, primer, treatment.value, sid)
+            line = [sid, bc, primer, sid]
+            if treatment is not None:
+                line.insert(-1, treatment.value)
+            mapF.write('\t'.join(line) + '\n')
     
     return sampleMap
 
@@ -203,7 +209,7 @@ def handle_program_options():
                                      formed by concatenating all input data.")
     parser.add_argument('--version', action='version', 
                         version='Sanger-QIIMEfy 0.1')
-    parser.add_argument('input_dir', 
+    parser.add_argument('-i', '--input_dir', required=True, 
                         help="The directory containing sequence data files. \
                               Assumes all data files are placed in this \
                               directory. For files organized within folders by\
@@ -222,9 +228,23 @@ def handle_program_options():
     parser.add_argument('-b', '--barcode_length', type=int, default=12,
                         help="Length of the generated barcode sequences. \
                               Default is 12 (QIIME default), minimum is 8.")
+    
+    parser.add_argument('-q', '--qual', action='store_true', default=False,
+                        help="Instruct the program to look for quality \
+                              input files")
+    parser.add_argument('-u', '--utf16', action='store_true', default=False,
+                        help="UTF-16 encoded input files")
+    
+    parser.add_argument('-t', '--treatment', 
+                        help="Inserts an additional column into the mapping \
+                              file specifying some treatment or other variable\
+                              that separates the current set of sequences \
+                              from any other set of seqeunces. For example:\
+                              -t DiseaseState=healthy")
+    
     # data input options
     sidGroup = parser.add_mutually_exclusive_group(required=True)
-    sidGroup.add_argument('-i', '--identifier_pattern', 
+    sidGroup.add_argument('-d', '--identifier_pattern', 
                           action=ValidateIDPattern,
                           nargs=2, metavar=('SEPARATOR', 'FIELD_NUMBER'),
                           help="Indicates how to extract the Sample ID from \
@@ -241,11 +261,6 @@ def handle_program_options():
                           in the mapping file. This is meant to be used when \
                           all sequence data for a sample is stored in a single\
                           file.')
-    parser.add_argument('-q', '--qual', action='store_true', default=False,
-                        help="Instruct the program to look for quality \
-                              input files")
-    parser.add_argument('-u', '--utf16', action='store_true', default=False,
-                        help="UTF-16 encoded input files")
     
     return parser.parse_args(), parser
     
@@ -255,14 +270,25 @@ def main():
     args, _ = handle_program_options()
     qualOutFN = ''
     
+    if args.treatment is not None:
+        if '=' in args.treatment and args.treatment > 2:
+            name, value = args.treatment.split('=')
+            args.treatment = TreatmentType(name, value)
+        else:
+            msg = ('Treatment column specification must be of the form: '+
+                   'Treatment=type')
+            print msg
+    
     sampleIDs =  gather_sample_ids(args.input_dir, 
                                    args.identifier_pattern or 
                                    args.filename_sample_id, 
                                    args.utf16)
     barcodes = generate_barcodes(len(sampleIDs), codeLen=args.barcode_length)
     
-    with open(args.map_file,'w') as mapfile:
-        sampleMap = write_mapping_file(mapfile, sampleIDs, barcodes)
+    mode = 'a' if os.path.exists(args.map_file) else 'w'
+    with open(args.map_file, mode) as mapfile:
+        sampleMap = write_mapping_file(mapfile, sampleIDs, barcodes, 
+                                       args.treatment)
 
     if args.qual:
         qualOutFN = osp.splitext(osp.split(args.output)[1])[0] + '.qual'
