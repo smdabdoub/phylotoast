@@ -32,11 +32,12 @@ def handle_program_options():
                         help="The mapping file specifying group information \
                               for each sample.")
     parser.add_argument('-c', '--map_category', default=None,
-                        help="A mapping category, such as treatment type, \
+                        help="A mapping category, such as TreatmentType, \
                               that will be used to split the data into \
-                              separate BIOM files.")
-    parser.add_argument('-o','--output_biom_fp', default='transposed.biom',
-                        help="The BIOM-format file to write.")     
+                              separate BIOM files; one for each value found\
+                              in the category.")
+    parser.add_argument('-o','--output_biom_fp', default='transposed.biom', 
+                        required=True, help="The BIOM-format file to write.")
 
     parser.add_argument('-v', '--verbose', action='store_true')
     
