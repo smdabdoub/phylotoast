@@ -1,0 +1,31 @@
+OSC Parallel Pick OTUs
+========================
+
+Generate PBS scripts for submission to the OSC to run the QIIME parallel blast
+pick OTUs script on multiple input sequence data sets.
+
+usage: osc_parallel_pick_otus.py [-h] -i INPUT_FNA [INPUT_FNA ...]
+                                 [-t WALLTIME] [-n JOB_NAME] [-v]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUT_FNA [INPUT_FNA ...], --input_fna INPUT_FNA [INPUT_FNA ...]
+                        The names of the sequence files that will be have PBS
+                        scripts generated to process them. The expected input
+                        is from the split_sequence_data.py script (e.g. 0.fna,
+                        1.fna, ..., n.fna).
+  -t WALLTIME, --walltime WALLTIME
+                        The maximum running time to specify to the OSC queuing
+                        system for each script.
+  -n JOB_NAME, --job_name JOB_NAME
+                        A descriptive name for the job script that will appear
+                        when checking the job status. Max length is 15
+                        characters, but '_#' will be appended to the name you
+                        provide to differentiate among all the jobs, so this
+                        parameter will be truncated if necessary to
+                        accommodate for the number of input files.
+  -v, --verbose         This will cause the program to print the full path for
+                        each output file to the command line. This can be used
+                        for informational purposes or to pipe (|) to the PBS
+                        multi-submission script to automate job submission as
+                        soon as the scripts are created.

@@ -1,3 +1,6 @@
+Merge OTU Results
+===================
+
 Distributing sequence data across the cluster for OTU picking results in a set
 of result files that need to be merged into a single pick otus result.
 

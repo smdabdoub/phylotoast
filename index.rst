@@ -9,8 +9,9 @@ Welcome to QIIME-Tools's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
+   scripts/index.rst
 
 
 Indices and tables
