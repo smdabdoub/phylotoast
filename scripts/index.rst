@@ -9,11 +9,9 @@ Contents:
    assign_taxonomy_by_blast_result
    barcode_filter
    biom_relative_abundance
-   concat_paired_ends
    condense_workflow
    filter_rep_set
    iTol
-   osc_parallel_pick_otus_homd
    osc_parallel_pick_otus
    otu_condense
    otu_to_tax_name
