@@ -25,15 +25,13 @@ PBS_SCRIPT = """#PBS -N {job_name}_{job_num}
 # Keep output
 #PBS -j oe
 
-set -x
-
 module load qiime
 cd $PBS_O_WORKDIR
-cp $HOME/local/oakley/greengenes/gg_12_10_otus/rep_set/97_otus.fasta $TMPDIR
+cp $HOME/local/oakley/greengenes/gg_13_8_otus/rep_set/99_otus.fasta $TMPDIR
 cp {job_num}.fna $TMPDIR
 cd $TMPDIR
 
-time parallel_pick_otus_blast.py -i {job_num}.fna -r 97_otus.fasta -O 12 -o bpo.{job_num}
+time parallel_pick_otus_blast.py -i {job_num}.fna -r 99_otus.fasta -O 12 -o bpo.{job_num}
 
 cp -r bpo.{job_num} $PBS_O_WORKDIR
 """
