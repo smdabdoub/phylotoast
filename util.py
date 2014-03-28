@@ -9,41 +9,47 @@ import os
 FASTARecord = namedtuple("FASTA_Record", "id descr data")
 
 def storeFASTA(fastaFNH):
+    """
+    Parse the records in a FASTA-format file by first reading the entire file 
+    into memory.
+    """
+    fasta = file_handle(fastaFNH).read()
+    return [FASTARecord(rec[0].split()[0], rec[0], ''.join(rec[1:])) for rec in (x.strip().split('\n') for x in fasta.split('>')[1:])]
+
+def parseFASTA(fastaFNH):
+    """
+    Parse the records in a FASTA-format file keeping the file open, and reading
+    through one line at a time.
+    
+    :@type source: list or open file handle
+    :@param source: The data source from which to parse the FASTA records. 
+                    Expects the input to resolve to a collection that can be 
+                    iterated through, such as a list or an open file handle.
+                    
+    :@param 
+    """
     recs = []; seq = []
     ID = ''; descr = ''
     
     for line in file_handle(fastaFNH):
-        if line == '' or line[0] == ';':
+        line = line.strip()
+        if line[0] == ';':
             continue
-        elif line[0] == '>':
-                # conclude previous record
-                if seq:
-                    recs.append(FASTARecord(ID, descr, ''.join(seq)))
-                    seq = []
-                # start new record
-                line = line[1:].split()
-                ID, descr = line[0], ' '.join(line[1:])
+        if line[0] == '>':
+            # conclude previous record
+            if seq:
+                recs.append(FASTARecord(ID, descr, ''.join(seq)))
+                seq = []
+            # start new record
+            line = line[1:].split()
+            ID, descr = line[0], ' '.join(line[1:])
         else:
-                seq.append(line.strip())
-    return recs
-
-def parseFASTA(fastaFNH):
-    seq = []
-    ID = ''; descr = ''
+            seq.append(line)
     
-    for line in file_handle(fastaFNH):
-        if line == '' or line[0] == ';':
-            continue
-        elif line[0] == '>':
-                # conclude previous record
-                if seq:
-                    yield FASTARecord(ID, descr, ''.join(seq))
-                    seq = []
-                # start new record
-                line = line[1:].split()
-                ID, descr = line[0], ' '.join(line[1:])
-        else:
-                seq.append(line.strip())
+    # catch last seq in file
+    if seq:
+        recs.append(FASTARecord(ID, descr, ''.join(seq)))
+    return recs
                 
 def parse_map_file(mapFNH):
     """
@@ -53,7 +59,8 @@ def parse_map_file(mapFNH):
     (in that order), and Description (which must be the final field).
     
     :@type mapFNH: file or str
-    :@param mapFNH: Either the full path to the map file or an open file handle
+    :@param mapFNH: Either the full path to the map file or an open file 
+                    handle
     
     :@rtype: dict
     :@return: A map associating each line of the mapping file with the
