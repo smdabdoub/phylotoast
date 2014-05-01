@@ -20,7 +20,7 @@ def otu_biom_entry_num(ID, biom, entry_type='rows'):
             return i
 
 
-def rel_abundance(otuID, sampleID, biom):
+def rel_abundance(otuID, sampleID, biom, scaling_factor=10000):
     otuRow = otu_biom_entry_num(otuID, biom)
     sCol = otu_biom_entry_num(sampleID, biom, 'columns')
     otuAbundance = 0
@@ -34,8 +34,8 @@ def rel_abundance(otuID, sampleID, biom):
     
     if sampleAbundance == 0:
         return 0
-    
-    return otuAbundance / sampleAbundance * 15000
+
+    return otuAbundance / sampleAbundance * scaling_factor
 
 
 def calculate_xy_range(data):
@@ -208,6 +208,11 @@ def handle_program_options():
                         (per-OTU).")
     parser.add_argument('-o', '--output_dir', default='.',
                         help="The directory to output the PCoA plots to.")
+
+    parser.add_argument('--scaling_factor', default=10000, type=float,
+                        help="Species relative abundance is multiplied by this \
+                              factor in order to make appropriate visible \
+                              bubbles in the output plots. Default is 10000.")
 #    parser.add_argument('-v', '--verbose', action='store_true')
     
     return parser.parse_args()
@@ -269,6 +274,7 @@ def main():
             else:
                 category['zpc1'].append(e[1])
                 category['zpc2'].append(e[2])
+            size = rel_abundance(otuID, sid, biom, args.scaling_factor)
                 
     
         xr, yr = calculate_xy_range(cat_data)
