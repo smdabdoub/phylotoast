@@ -145,24 +145,28 @@ def plot_PCoA(cat_data, otu_name, unifrac, names, colors, xr, yr, outDir):
     p.matplotlib.rc('axes', edgecolor='black')
     p.matplotlib.rc('axes', facecolor='grey')
     fig = p.plt.figure()
-    fig.set_figheight(8)
-    fig.set_figwidth(10)
+    ax = fig.add_subplot(111)
+#    fig.set_figheight(8)
+#    fig.set_figwidth(10)
     legend = []
     
     for i,cat in enumerate(cat_data):
-        p.scatter(cat['pc1'], cat['pc2'], cat['size'], color=colors[i], 
-                  marker='s')
-        p.scatter(cat['zpc1'], cat['zpc2'], s=20, edgecolor=colors[i], 
-                  facecolor='none', marker='s')
+        p.scatter(cat_data[cat]['pc1'], cat_data[cat]['pc2'],
+                  cat_data[cat]['size'], color=colors[i], alpha=0.85, marker='o',
+                  edgecolor='black')
+#        p.scatter(cat_data[cat]['zpc1'], cat_data[cat]['zpc2'], s=20,
+#                  edgecolor=colors[i], facecolor='none', marker='s')
         legend.append(p.Rectangle((0, 0), 1, 1, fc=colors[i]))
        
-    p.legend(legend, names, loc='upper left')
+    ax.legend(legend, names, loc='best')
     p.title(otu_name, style='italic')
-    p.xlabel('PC2 ({:.2f}%)'.format(float(unifrac[-1].split('\t')[2])))
-    p.ylabel('PC1 ({:.2f}%)'.format(float(unifrac[-1].split('\t')[1])))
-    
-    fig.savefig('./figures/' + '_'.join(otu_name.split()) + '.png', 
-                facecolor='gray', edgecolor='none')
+    p.ylabel('PC2 ({:.2f}%)'.format(float(unifrac['varexp'][2])))
+    p.xlabel('PC1 ({:.2f}%)'.format(float(unifrac['varexp'][1])))
+    p.xlim(round(xr[0]*1.5, 1), round(xr[1]*1.5, 1))
+    p.ylim(round(yr[0]*1.5, 1), round(yr[1]*1.5, 1))
+    rstyle(ax)
+    fig.savefig(os.path.join(outDir,'_'.join(otu_name.split())) + '.png',
+                facecolor='0.75', edgecolor='none')
 
 
 def handle_program_options():
