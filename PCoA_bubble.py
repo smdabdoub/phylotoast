@@ -256,3 +256,5 @@ def main():
                 
     
         plot_PCoA(cat_data, otus[otuID], unifrac, category_names, category_colors)
+if __name__ == '__main__':
+    main()
