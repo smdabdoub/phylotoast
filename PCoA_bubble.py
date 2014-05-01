@@ -141,7 +141,7 @@ def rstyle(ax):
         lg.get_frame().set_alpha(0.5)
 
 
-def plot_PCoA(cat_data, otu_name, unifrac, names, colors):
+def plot_PCoA(cat_data, otu_name, unifrac, names, colors, xr, yr, outDir):
     p.matplotlib.rc('axes', edgecolor='black')
     p.matplotlib.rc('axes', facecolor='grey')
     fig = p.plt.figure()
