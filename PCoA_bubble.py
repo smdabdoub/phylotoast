@@ -76,6 +76,7 @@ def parse_unifrac(unifracFN):
         
         unifrac['eigvals'] = lines[-2].split('\t')
         unifrac['varexp'] = lines[-1].split('\t')
+        return unifrac
         
 def link_samples_to_categories(imap, category_idx):
     """
