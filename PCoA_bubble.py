@@ -10,6 +10,7 @@ from util import parse_map_file
 import argparse
 from collections import OrderedDict, defaultdict
 import json
+import os
 import sys
 import pylab as p
 
@@ -189,6 +190,8 @@ def handle_program_options():
                         help="Specifies whether OTU abundance is \
                         normalized column-wise (per-sample) or row-wise \
                         (per-OTU).")
+    parser.add_argument('-o', '--output_dir', default='.',
+                        help="The directory to output the PCoA plots to.")
 #    parser.add_argument('-v', '--verbose', action='store_true')
     
     return parser.parse_args()
@@ -197,6 +200,21 @@ def handle_program_options():
 def main():
     args = handle_program_options()
     
+    if not os.path.exists(args.output_dir):
+        try:
+            os.mkdir(args.output_dir)
+        except OSError, oe:
+            if os.errno == 2:
+                msg = ('One or more directories in the path provided for ' +
+                      '--output-dir ({}) do not exist. If you are specifying '+
+                      'a new directory for output, please ensure all other ' +
+                      'directories in the path currently exist.')
+                sys.exit(msg.format(args.output_dir))
+            else:
+                msg = ('An error occurred trying to create the output ' +
+                      'directory ({}) with message: {}')
+                sys.exit(msg.format(args.output_dir, oe.strerror))
+
     with open(args.otu_table) as bF:
         biom = json.loads(bF.readline())
     
