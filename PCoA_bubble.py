@@ -41,7 +41,7 @@ def rel_abundance(otuID, sampleID, biom, scaling_factor=10000):
 def calculate_xy_range(data):
     xr = [float('inf'),float('-inf')]
     yr = [float('inf'),float('-inf')]
-
+    
     for cat in data:
         pc1, pc2 = data[cat]['pc1'], data[cat]['pc2']
         if pc1:
@@ -50,7 +50,7 @@ def calculate_xy_range(data):
         if pc2:
             yr[0] = min(min(pc2),yr[0])
             yr[1] = max(max(pc2),yr[1])
-
+            
     return xr, yr
 
 
@@ -151,10 +151,10 @@ def plot_PCoA(cat_data, otu_name, unifrac, names, colors, xr, yr, outDir):
     legend = []
     
     for i,cat in enumerate(cat_data):
-        p.scatter(cat_data[cat]['pc1'], cat_data[cat]['pc2'],
+        p.scatter(cat_data[cat]['pc1'], cat_data[cat]['pc2'], 
                   cat_data[cat]['size'], color=colors[i], alpha=0.85, marker='o',
                   edgecolor='black')
-#        p.scatter(cat_data[cat]['zpc1'], cat_data[cat]['zpc2'], s=20,
+#        p.scatter(cat_data[cat]['zpc1'], cat_data[cat]['zpc2'], s=20, 
 #                  edgecolor=colors[i], facecolor='none', marker='s')
         legend.append(p.Rectangle((0, 0), 1, 1, fc=colors[i]))
        
@@ -165,7 +165,7 @@ def plot_PCoA(cat_data, otu_name, unifrac, names, colors, xr, yr, outDir):
     p.xlim(round(xr[0]*1.5, 1), round(xr[1]*1.5, 1))
     p.ylim(round(yr[0]*1.5, 1), round(yr[1]*1.5, 1))
     rstyle(ax)
-    fig.savefig(os.path.join(outDir,'_'.join(otu_name.split())) + '.png',
+    fig.savefig(os.path.join(outDir,'_'.join(otu_name.split())) + '.png', 
                 facecolor='0.75', edgecolor='none')
 
 
@@ -189,34 +189,32 @@ def handle_program_options():
                               names for the different types in the specified \
                               mapping category (--mapping_category), Line 2:\
                               a matching tab-separated list of hexadecimal\
-                              colors for each of the category types, Line 4:\
-                              blank, Lines 5-end: a tab-separated pair \
-                              specifying OTU ID and OTU Name. Each entry will\
-                              get a separate PCoA plot under a file with the \
-                              name of the OTU.')
+                              colors for each of the category types, \
+                              Lines 3-end: a tab-separated pair specifying \
+                              OTU ID and OTU Name. Each entry will get a \
+                              separate PCoA plot under a file with the name \
+                              of the OTU.')
     parser.add_argument('-m', '--mapping', required=True,
                         help="The mapping file specifying group information \
                               for each sample.")
-    parser.add_argument('-o', '--output_dir', default='.',
-                        help="The directory to output the PCoA plots to.")
-    parser.add_argument('-c', '--map_category',
+    parser.add_argument('-c', '--map_category', required=True,
                         help="Any mapping category, such as treatment type, \
                               that will be used to group the data in the \
                               output plots. For example, one category \
                               with three types will result in three different\
                               point sets in the final output.")
-    parser.add_argument('-n', '--normalization', default='sample', 
-                        choices=['sample','otu'],
-                        help="Specifies whether OTU abundance is \
-                        normalized column-wise (per-sample) or row-wise \
-                        (per-OTU).")
     parser.add_argument('-o', '--output_dir', default='.',
                         help="The directory to output the PCoA plots to.")
-
-    parser.add_argument('--scaling_factor', default=10000, type=float,
+                        
+    parser.add_argument('--scaling_factor', default=10000, type=float, 
                         help="Species relative abundance is multiplied by this \
                               factor in order to make appropriate visible \
                               bubbles in the output plots. Default is 10000.")
+#    parser.add_argument('-n', '--normalization', default='sample', 
+#                        choices=['sample','otu'],
+#                        help="Specifies whether OTU abundance is \
+#                        normalized column-wise (per-sample) or row-wise \
+#                        (per-OTU).")
 #    parser.add_argument('-v', '--verbose', action='store_true')
     
     return parser.parse_args()
@@ -231,7 +229,7 @@ def main():
         except OSError, oe:
             if os.errno == 2:
                 msg = ('One or more directories in the path provided for ' +
-                      '--output-dir ({}) do not exist. If you are specifying '+
+                      '--output-dir ({}) do not exist. If you are specifying '+ 
                       'a new directory for output, please ensure all other ' +
                       'directories in the path currently exist.')
                 sys.exit(msg.format(args.output_dir))
@@ -239,7 +237,7 @@ def main():
                 msg = ('An error occurred trying to create the output ' +
                       'directory ({}) with message: {}')
                 sys.exit(msg.format(args.output_dir, oe.strerror))
-
+    
     with open(args.otu_table) as bF:
         biom = json.loads(bF.readline())
     
@@ -247,12 +245,11 @@ def main():
     
     otus = {}
     with open(args.names_colors_ids_fn, 'rU') as nciF:
-        category_names = nciF.readline().split('\t')
-        category_colors = nciF.readline().split('\t')
-        for line in nciF.readlines()[2:]:
+        category_names = nciF.readline().strip().split('\t')
+        category_colors = nciF.readline().strip().split('\t')
+        for line in nciF.readlines():
             line = line.split()
             otus[line[0]] = ' '.join(line[1:])
-            
     imap = parse_map_file(args.mapping)
     with open(args.mapping) as mF:
         header = mF.readline().split('\t')
@@ -268,21 +265,20 @@ def main():
         cat_data = {cat:{'pc1':[], 'pc2':[], 'size':[], 'zpc1':[], 'zpc2':[]} 
                     for cat in category_ids}
     
-        for e in unifrac['pcd']:
-            category = cat_data[imap[e[0]][category_idx]]
-            size = rel_abundance(otuID, e[0], biom)
-            if size > 0:
-                category['pc1'].append(e[1])
-                category['pc2'].append(e[2])
-                category['size'].append(size)
-            else:
-                category['zpc1'].append(e[1])
-                category['zpc2'].append(e[2])
+        for sid in unifrac['pcd']:
+            category = cat_data[imap[sid][category_idx]]
             size = rel_abundance(otuID, sid, biom, args.scaling_factor)
+            #if size > 0:
+            category['pc1'].append(float(unifrac['pcd'][sid][0]))
+            category['pc2'].append(float(unifrac['pcd'][sid][1]))
+            category['size'].append(size)
+#            else:
+#                category['zpc1'].append(float(unifrac['pcd'][sid][1]))
+#                category['zpc2'].append(float(unifrac['pcd'][sid][2]))
                 
     
         xr, yr = calculate_xy_range(cat_data)
-        plot_PCoA(cat_data, otus[otuID], unifrac, category_names,
+        plot_PCoA(cat_data, otus[otuID], unifrac, category_names, 
                   category_colors, xr, yr, args.output_dir)
 
 if __name__ == '__main__':
