@@ -38,6 +38,21 @@ def rel_abundance(otuID, sampleID, biom):
     return otuAbundance / sampleAbundance * 15000
 
 
+def calculate_xy_range(data):
+    xr = [float('inf'),float('-inf')]
+    yr = [float('inf'),float('-inf')]
+
+    for cat in data:
+        pc1, pc2 = data[cat]['pc1'], data[cat]['pc2']
+        if pc1:
+            xr[0] = min(min(pc1),xr[0])
+            xr[1] = max(max(pc1),xr[1])
+        if pc2:
+            yr[0] = min(min(pc2),yr[0])
+            yr[1] = max(max(pc2),yr[1])
+
+    return xr, yr
+
 
 def parse_unifrac(unifracFN):
     """
@@ -255,6 +270,9 @@ def main():
                 category['zpc2'].append(e[2])
                 
     
-        plot_PCoA(cat_data, otus[otuID], unifrac, category_names, category_colors)
+        xr, yr = calculate_xy_range(cat_data)
+        plot_PCoA(cat_data, otus[otuID], unifrac, category_names,
+                  category_colors, xr, yr, args.output_dir)
+
 if __name__ == '__main__':
     main()
