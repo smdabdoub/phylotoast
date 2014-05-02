@@ -221,7 +221,9 @@ def handle_program_options():
 #                        help="Specifies whether OTU abundance is \
 #                        normalized column-wise (per-sample) or row-wise \
 #                        (per-OTU).")
-#    parser.add_argument('-v', '--verbose', action='store_true')
+    parser.add_argument('-v', '--verbose', action='store_true', 
+                        help="Displays species name as each is being plotted \
+                              and stored to disk.")
     
     return parser.parse_args()
 
@@ -281,8 +283,9 @@ def main():
 #            else:
 #                category['zpc1'].append(float(unifrac['pcd'][sid][1]))
 #                category['zpc2'].append(float(unifrac['pcd'][sid][2]))
-                
-    
+        
+        if args.verbose:
+            print 'Plotting chart for {}'.format(otus[otuID])
         xr, yr = calculate_xy_range(cat_data)
         plot_PCoA(cat_data, otus[otuID], unifrac, category_names, 
                   category_colors, xr, yr, args.output_dir)
