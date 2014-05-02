@@ -6,13 +6,19 @@ abundance of a particular OTU
 @author: Shareef M Dabdoub
 '''
 from __future__ import division
-from util import parse_map_file
+# built-in
 import argparse
 from collections import OrderedDict, defaultdict
 import json
 import os
 import sys
-import pylab as p
+# 3rd party
+import matplotlib
+matplotlib.use("Agg")  # for use on headless server
+import matplotlib.pylab as p
+# local
+from util import parse_map_file
+
 
 def otu_biom_entry_num(ID, biom, entry_type='rows'):
     for i, entry in enumerate(biom[entry_type]):
