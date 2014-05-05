@@ -1,56 +1,46 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-'''
+"""
 Created on Jan 10, 2013
 
 @author: Shareef M Dabdoub
 
-Generate PBS scripts for submission to the Ohio Supercomputer Center to 
-run the QIIME parallel blast pick OTUs script on multiple input sequence 
-data sets.
-'''
+Generate cluster-computing job scripts for submission in order to run multiple
+simultaneous runs of the QIIME parallel BLAST pick OTUs script.
+"""
+
 import argparse
 import os.path as osp
 
 PBS_JOB_NAME_SIZE = 15
 
-PBS_SCRIPT = """#PBS -N {job_name}_{job_num}
-
-# Walltime Limit: hh:nn:ss 
-#PBS -l walltime={walltime}:00:00 
-
-# Node Specification:
-#PBS -l nodes=1:ppn=12
-
-# Keep output
-#PBS -j oe
-
-module load qiime
-cd $PBS_O_WORKDIR
-cp $HOME/local/oakley/greengenes/gg_13_8_otus/rep_set/99_otus.fasta $TMPDIR
-cp {job_num}.fna $TMPDIR
-cd $TMPDIR
-
-time parallel_pick_otus_blast.py -i {job_num}.fna -r 99_otus.fasta -O 12 -o bpo.{job_num}
-
-cp -r bpo.{job_num} $PBS_O_WORKDIR
-"""
-
 
 def handle_program_options():
-    parser = argparse.ArgumentParser(description="Generate PBS scripts for \
-                                     submission to the OSC to run the QIIME \
-                                     parallel blast pick OTUs script on \
-                                     multiple input sequence data sets.")
+    parser = argparse.ArgumentParser(description="Generate cluster-computing \
+                                    job scripts for submission in order to run \
+                                    multiple simultaneous runs of the QIIME \
+                                    parallel BLAST pick OTUs script.")
     parser.add_argument('-i', '--input_fna', required=True, nargs='+',
                         help="The names of the sequence files that will be \
-                              have PBS scripts generated to process them. \
+                              have job scripts generated to process them. \
                               The expected input is from the \
                               split_sequence_data.py script (e.g. 0.fna, \
                               1.fna, ..., n.fna).")
+    parser.add_argument('-s', '--similarity', default=0.97, type=float,
+                        help="Sequence similarity threshold [default: 0.97]")
+    parser.add_argument('-j', '--job_script_template', required=True, 
+                        help="A file template containing placeholders for \
+                              variables that this script will fill in \
+                              when creating a new job script for each input \
+                              FASTA query file. An example file for PBS \
+                              systems is included with qiime-tools.")
+    parser.add_argument('-d', '--database', required=True, 
+                        help="The path to the sequence database file to run \
+                              the BLAST against.")
     parser.add_argument('-t', '--walltime', type=int, default=10,
-                        help="The maximum running time to specify to the \
-                              OSC queuing system for each script.")
+                        help="The maximum running time in hours for each \
+                              script. Default is 10 hours.")
     parser.add_argument('-n', '--job_name', default='pick_otus',
                         help="A descriptive name for the job script that will\
                               appear when checking the job status. Max length\
@@ -72,15 +62,21 @@ def handle_program_options():
 def main():
     args = handle_program_options()
     
+    with open(args.job_script_template, 'rU') as tF:
+        template = tF.read()
+    
     for fname in args.input_fna:
         fnum = osp.splitext(osp.split(fname)[1])[0]
         job_id_len = len(str(len(args.input_fna))) + 1
         # for 0-based file names, this is one character too conservative
         args.job_name = args.job_name[:PBS_JOB_NAME_SIZE - job_id_len]
         outFN = '{}.pbs'.format(fnum)
-        with open(outFN, 'w') as outF:
-            outF.write(PBS_SCRIPT.format(job_name=args.job_name, job_num=fnum,
-                                         walltime=args.walltime))
+        with open(outFN, 'w') as out:
+            out.write(template.format(job_name=args.job_name, job_num=fnum,
+                                      database_path=args.database,
+                                      database_fname=osp.basename(args.database),
+                                      similarity=args.similarity,
+                                      walltime=args.walltime))
 
         if args.verbose:
             print outFN
