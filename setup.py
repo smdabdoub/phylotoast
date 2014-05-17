@@ -10,7 +10,7 @@ setup(
   author = 'Shareef Dabdoub',
   author_email = 'dabdoub.2@osu.edu',
   url = 'https://github.com/smdabdoub/qiime-tools',
-  download_url = 'https://github.com/smdabdoub/qiime-tools/tarball/1.0',
+  download_url = 'https://github.com/smdabdoub/qiime-tools/archive/1.0.0.tar.gz',
   install_requires=requires,
   keywords = ['bioinformatics', 'QIIME', 'microbial ecology', '16S', 'microbiology'],
   license='MIT'
