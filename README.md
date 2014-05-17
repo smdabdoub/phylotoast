@@ -7,6 +7,9 @@ original QIIME [1] pipeline by adding or modifying several steps including suppo
 ##Documentation
 Full documentation for the scripts and code is available at the [qiime-tools documentation site](http://qiime-tools.readthedocs.org)
 
+##Citing
+A manuscript describing the qiime-tools software is currently in preparation. Until publication, please cite the github repository and the author: Shareef M. Dabdoub.
+
 ##References
 [1] J Gregory Caporaso, et al., *QIIME allows analysis of high-throughput community sequencing data*. Nature Methods, 2010; [doi:10.1038/nmeth.f.303](http://dx.doi.org/10.1038/nmeth.f.303)
 
