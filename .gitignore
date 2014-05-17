@@ -2,7 +2,6 @@
 *.py[cod]
 
 # Sequence-related
-/data
 *.fasta
 *.txt
 *.biom
