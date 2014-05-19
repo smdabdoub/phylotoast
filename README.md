@@ -7,6 +7,9 @@ original QIIME [1] pipeline by adding or modifying several steps including suppo
 ##Documentation
 Full documentation for the scripts and code is available at the [qiime-tools documentation site](http://qiime-tools.readthedocs.org)
 
+##Requirements
+[matplotlib](http://matplotlib.org) for PCoA plots. [Biopython](http://biopython.org) for some sequence and fastq processing, although its use is being phased out.
+
 ##Citing
 A manuscript describing the qiime-tools software is currently in preparation. Until publication, please cite the github repository and the author: Shareef M. Dabdoub.
 
