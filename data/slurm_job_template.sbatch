@@ -1,20 +1,20 @@
-#PBS -N {job_name}_{job_num}
+#SBATCH --job-name={job_name}_{job_num}
 
 # Walltime Limit: hh:nn:ss 
-#PBS -l walltime={walltime}
+#SBATCH --time={walltime} 
 
 # Node Specification:
-#PBS -l nodes=1:ppn={threads}
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node={threads}
 
-# Keep output
-#PBS -j oe
+# Send email notification upon job fail
+#SBATCH --mail-type=FAIL
 
 module load qiime
-cd $PBS_O_WORKDIR
 cp {database_path} $TMPDIR
 cp {job_num}.fna $TMPDIR
 cd $TMPDIR
 
 /usr/bin/time parallel_pick_otus_blast.py -i {job_num}.fna -r {database_fname} -O {threads} -s {similarity} -o bpo.{job_num}
 
-cp -r bpo.{job_num} $PBS_O_WORKDIR
+cp -r bpo.{job_num} $SLURM_SUBMIT_DIR
