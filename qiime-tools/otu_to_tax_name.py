@@ -1,59 +1,62 @@
 #!/usr/bin/env python
 
 import argparse
-import util
+from qiime_tools import otu_calc as otuc, util
 
-def sOTU_name(tax):
-    """
-    Determine a simple Genus-species identifier for an OTU, if possible. 
-    If OTU is not identified to the species level, name it as Unclassified (familly/genus/etc...)
-    """
-    tax = tax.split('; ')
-    for i, lvl in enumerate(tax):
-        lvl = lvl.strip()
-        if i < len(tax) - 1 and len(tax[i + 1].strip()) == 3:
-            if tax[i].strip()[0] == 'g':
-                return lvl.split('_')[-1] + '_spp.'
-            else:
-                return 'Unclassified_' + lvl.split('_')[-1]
-        elif i == len(tax) - 1:
-            name = lvl.split('_')[-1]
-            if lvl[0] == 's':
-                name = tax[i-1].split('_')[-1] + '_' + name
-            return name
-            
+			
 
 def handle_program_options():
-    parser = argparse.ArgumentParser(description="Convert a list of OTU IDs to a list of\
-                                                  OTU IDs paired with Genus_species \
-                                                  identifiers.")
-    parser.add_argument('-i', '--otu_id_fp', required=True,
-                        help="A text file containing a list (one per line) of OTU IDs.")
-    parser.add_argument('-t', '--taxonomy_fp', required=True,
-                        help="A file associating OTU ID with a full taxonomic specifier.")
-                        
-    parser.add_argument('-o', '--output_fp', default='otu_taxonomy.txt',
-                        help="A new file containing a list OTU IDs paired with \
-                              of short taxonomic identifiers.")
+	parser = argparse.ArgumentParser(description="Convert a list of OTU IDs to a list of\
+												  OTU IDs paired with Genus_species \
+												  identifiers.")
+	parser.add_argument('-i', '--otu_id_fp', required=True,
+						help="Either a text file containing a list (one per line) \
+						      of OTU IDs, or a tab-separated (classic) BIOM-format file.")
+	parser.add_argument('-t', '--taxonomy_fp', required=True,
+						help="A file associating OTU ID with a full taxonomic specifier.")
+						
+	parser.add_argument('-o', '--output_fp', default='otu_taxonomy.txt',
+						help="For a list input, a new file containing a list of OTU IDs \
+						      and their corresponding short taxonomic identifiers \
+						      separated by tabs. For a BIOM file input, a new \
+						      mapping file with all the OTU IDs replaced by the short\
+						      identifier.")
 
-#    parser.add_argument('-v', '--verbose', action='store_true')
-
-    return parser.parse_args()
+	return parser.parse_args()
 
 
 def main():
-    args = handle_program_options()
-    
-    with open(args.otu_id_fp, 'rU') as otuF:
-        otu_ids = [line.strip() for line in otuF.readlines()]
-    taxa = util.parse_taxonomy_table(args.taxonomy_fp)
-    
-    with open(args.output_fp, 'w') as outF:
-        for ID in otu_ids:
-            if ID in taxa:
-                outF.write('{}\t{}\n'.format(ID, sOTU_name(taxa[ID])))
-            else:
-                print 'OTU ID {} not found in supplied taxonomy file'.format(ID)
-    
+	args = handle_program_options()
+	
+	with open(args.otu_id_fp, 'rU') as otuF:
+		otu_ids = [line.strip().split('\t') for line in otuF.readlines()]
+	taxa = util.parse_taxonomy_table(args.taxonomy_fp)
+	
+	with open(args.output_fp, 'w') as outF:
+		for entry in otu_ids:
+			if isinstance(entry, list):
+				# check for comments in BIOM files
+				if not entry[0][0] == '#':
+					ID = entry[0]
+				else:
+					outF.write('{}\n'.format('\t'.join(entry)))
+					continue
+			# instead of a BIOM file, a line-by-line list of OTU IDs
+			else:
+				ID = entry
+
+			if ID in taxa:
+				named_ID = otuc.otu_name(taxa[ID].split('; '))
+			else:
+				print 'Error: OTU ID {} not found in supplied taxonomy file; stopping...'.format(ID)
+				return
+
+			# write out to file
+			out_str = '{}\t{}\n'
+			if isinstance(entry, list):
+				outF.write(out_str.format(named_ID, '\t'.join(entry[1:])))
+			else:
+				outF.write(out_str.format(ID, named_ID))
+	
 if __name__ == '__main__':
-    main()
+	main()
