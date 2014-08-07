@@ -180,7 +180,10 @@ def main():
     # rewrite tree file with otu names
     if args.input_tree:
         with open(args.input_tree) as treF, open(args.output_tre, 'w') as outF:
-            outF.write(newick_replace_otuids(treF.readline(), biom))
+            tree = treF.readline()
+            if "'" in tree:
+                tree = tree.replace("'", '')
+            outF.write(newick_replace_otuids(tree, biom))
 
     oid_rows = {row['id']:row for row in biom['rows']}
 
