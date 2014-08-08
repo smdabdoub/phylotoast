@@ -124,7 +124,7 @@ def parse_taxonomy_table(idtaxFNH):
     idtax = OrderedDict()
     with file_handle(idtaxFNH) as idtxF:
         for line in idtxF:
-            ID, tax = line.strip().split('\t')[:2]
+            ID, tax = line.strip().split('\t')
             idtax[ID] = tax
     
     return idtax

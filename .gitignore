@@ -3,9 +3,9 @@
 
 # Sequence-related
 *.fasta
-*.txt
 *.biom
 
 # Miscellaneous
 .project
 .pydevproject
+.DS_Store
