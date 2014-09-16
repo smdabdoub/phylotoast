@@ -99,10 +99,10 @@ def assign_otu_membership(biom):
     smax = calculate_total_abundance(biom)
     
     for row,col,amt in biom['data']:
-        otuName = otu_name(biom['rows'][row])
+        otu_name = otu_name_biom(biom['rows'][row])
         sampleID = biom['columns'][col]['id']
         
-        samples[sampleID].add(otuName, amt/smax[sampleID])
+        samples[sampleID].add(otu_name, amt/smax[sampleID])
 
     return samples
 
