@@ -59,17 +59,18 @@ def otu_name(tax):
     :@param tax: A list of qiime-style taxonomy identifiers, e.g. 
                  ['k__Bacteria', u'p__Firmicutes', u'c__Bacilli', ...
     """
+    extract_name = lambda lvl: '_'.join(lvl.split('_')[2:])
     for i, lvl in enumerate(tax):
         lvl = lvl.strip()
         if i < len(tax) - 1 and len(tax[i + 1].strip()) == 3:
             if tax[i].strip()[0] == 'g':
-                return lvl.split('_')[-1] + '_spp.'
+                return extract_name(lvl) + '_spp.'
             else:
-                return 'Unclassified_' + lvl.split('_')[-1]
+                return 'Unclassified_' + extract_name(lvl)
         elif i == len(tax) - 1:
-            name = lvl.split('_')[-1]
+            name = extract_name(lvl)
             if lvl[0] == 's':
-                name = tax[i-1].split('_')[-1] + '_' + name
+                name = extract_name(tax[i-1]) + '_' + name
             return name
 
 def load_core_file(core_fp):
