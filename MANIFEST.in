@@ -1,2 +1,2 @@
-include *.txt
+include *.rst LICENSE.txt
 recursive-include data *
