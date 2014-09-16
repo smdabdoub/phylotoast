@@ -9,7 +9,7 @@ Created on Jan 31, 2013
 Split an input FASTA-formatted file into a user-specified number of 
 smaller files such that the data is evenly distributed among them.
 '''
-import util
+from qiime_tools import util
 import argparse
 from itertools import cycle
 import os

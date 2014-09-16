@@ -11,7 +11,7 @@ methods (BLAST, RDP, RTAX)
 
 @author: Shareef Dabdoub
 '''
-from util import parse_taxonomy_table
+from qiime_tools import util
 import argparse
 from Bio import SeqIO
 
@@ -40,7 +40,7 @@ def main():
     args = handle_program_options()
     
     # input the ID to Taxonomy table and the rep set
-    taxids = parse_taxonomy_table(args.id_to_taxonomy_fp)
+    taxids = util.parse_taxonomy_table(args.id_to_taxonomy_fp)
     rep_set = SeqIO.to_dict(SeqIO.parse(args.rep_set_fp, 'fasta'))
     
     # write out the assigned taxonomy file

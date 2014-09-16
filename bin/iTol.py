@@ -4,8 +4,7 @@ Created on Feb 8, 2012
 
 @author: Shareef M Dabdoub
 '''
-import biom_calc as bc
-import util
+from qiime_tools import biom_calc as bc, util
 import argparse
 from collections import namedtuple, OrderedDict
 import json

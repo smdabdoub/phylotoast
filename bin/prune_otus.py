@@ -10,7 +10,7 @@ less than a user-defined percent of samples (default 1%). Second, remove any
 OTUs that make up less than a user-defined percentage of the overall 
 sequences (default 0.01%)
 '''
-from util import split_phylogeny
+from qiime_tools import util
 import argparse
 from collections import defaultdict
 
@@ -42,7 +42,7 @@ def filter_by_sample_pct(otus, nsamples, pct, phyl_level):
     sample_counts = defaultdict(set)
     # count the number of sequences per OTU
     for otuid in otus:
-        phyl = split_phylogeny(otus[otuid][0], phyl_level)
+        phyl = util.split_phylogeny(otus[otuid][0], phyl_level)
         samples = {seqid.split('_')[0] for seqid in otus[otuid][1]}
         sample_counts[phyl].update(samples)
     sample_counts = {phyl:len(sample_counts[phyl])/nsamples 
@@ -51,7 +51,7 @@ def filter_by_sample_pct(otus, nsamples, pct, phyl_level):
     # separate OTUs
     above = {};below = {}
     for otuid in otus:
-        phyl = split_phylogeny(otus[otuid][0], phyl_level)
+        phyl = util.split_phylogeny(otus[otuid][0], phyl_level)
         if sample_counts[phyl] >= pct:
             above[otuid] = otus[otuid]
         else:
@@ -89,14 +89,14 @@ def filter_by_sequence_pct(otus, nseqs, pct, phyl_level):
     nseqs = float(nseqs)
     # gather counts
     for oid in otus:
-        phyl = split_phylogeny(otus[oid][0], phyl_level)
+        phyl = util.split_phylogeny(otus[oid][0], phyl_level)
         seq_counts[phyl] += len(otus[oid][1])
     seq_counts = {phyl:seq_counts[phyl]/nseqs for phyl in seq_counts}    
     
     # separate OTUs
     above = {};below = {}
     for otuid in otus:
-        phyl = split_phylogeny(otus[otuid][0], phyl_level)
+        phyl = util.split_phylogeny(otus[otuid][0], phyl_level)
         if seq_counts[phyl] >= pct:
             above[otuid] = otus[otuid]
         else:
@@ -221,13 +221,13 @@ def main():
         
         phyl_map = {'k':'kingdoms', 'p':'phyla', 'c':'classes', 'o':'orders',
                     'f':'families', 'g':'genera', 's':'species'}
-        phyls = {split_phylogeny(otus[oid][0], args.phylogenetic_level) 
+        phyls = {util.split_phylogeny(otus[oid][0], args.phylogenetic_level) 
                    for oid in otus}
         print '\nFrom the {} total {}'.format(len(phyls), 
                                              phyl_map[args.phylogenetic_level])
-        phyl_above = {split_phylogeny(otus[aoid][0], args.phylogenetic_level) 
+        phyl_above = {util.split_phylogeny(otus[aoid][0], args.phylogenetic_level) 
                         for aoid in above}
-        phyl_below = {split_phylogeny(otus[boid][0], args.phylogenetic_level) 
+        phyl_below = {util.split_phylogeny(otus[boid][0], args.phylogenetic_level) 
                         for boid in below}
         above_abundance = sum([len(item[1]) for item in above.values()])
         below_abundance = sum([len(below[boid][3]) for boid in below])

@@ -17,7 +17,7 @@ import matplotlib
 matplotlib.use("Agg")  # for use on headless server
 import matplotlib.pylab as p
 # local
-from util import parse_map_file
+from qiime_tools import util
 
 
 def otu_biom_entry_num(ID, biom, entry_type='rows'):
@@ -258,7 +258,7 @@ def main():
         for line in nciF.readlines():
             line = line.split()
             otus[line[0]] = ' '.join(line[1:])
-    imap = parse_map_file(args.mapping)
+    imap = util.parse_map_file(args.mapping)
     with open(args.mapping) as mF:
         header = mF.readline().split('\t')
         try:

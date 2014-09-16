@@ -5,9 +5,9 @@ Automated tests for QIIME-tools
 '''
 import unittest
 
-import qiime-tools
-from qiime-tools import iTol
-from qiime-tools import sanger_qiimify
+import qiime_tools
+from qiime_tools import iTol
+from qiime_tools import sanger_qiimify
 
 
 #################
@@ -156,6 +156,3 @@ class PruneOTUsTest(unittest.TestCase):
 
     def test_filter_by_sequence_pct(self):
         pass
-
-    class iTolTest(unittest.TestCase):
-    pass

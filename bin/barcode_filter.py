@@ -10,11 +10,11 @@ in an input mapping file and write to a new file.
 import argparse
 from Bio import SeqIO
 from Bio.Alphabet import generic_dna
-from util import parse_map_file
+from qiime_tools import util
 
 
 def gather_sequences(fastaFN, mapFN):
-    barcodes = parse_map_file(mapFN, 1).keys()
+    barcodes = util.parse_map_file(mapFN, 1).keys()
     seqs = []
     bcodelen = len(barcodes[0])
     count = 0
