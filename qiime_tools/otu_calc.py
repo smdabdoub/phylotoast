@@ -47,7 +47,8 @@ def otu_name_biom(biom_row):
     Given an OTU row from a BIOM table, determine a Genus-species identifier
     from the taxonomic specifier (see otu_name() method)
     """
-    tax = biom_row['metadata']['taxonomy']
+    return otu_name(biom_row['metadata']['taxonomy'])
+    
     
 def otu_name(tax):
     """
