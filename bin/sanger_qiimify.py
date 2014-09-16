@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 '''
 Created on Sep 19, 2012
 
@@ -207,8 +209,6 @@ def handle_program_options():
                                      data, and outputting a mapping file and\
                                      single FASTA-formatted sequence file \
                                      formed by concatenating all input data.")
-    parser.add_argument('--version', action='version', 
-                        version='Sanger-QIIMEfy 0.1')
     parser.add_argument('-i', '--input_dir', required=True, 
                         help="The directory containing sequence data files. \
                               Assumes all data files are placed in this \
@@ -262,12 +262,12 @@ def handle_program_options():
                           all sequence data for a sample is stored in a single\
                           file.')
     
-    return parser.parse_args(), parser
+    return parser.parse_args()
     
 
     
 def main():
-    args, _ = handle_program_options()
+    args = handle_program_options()
     qualOutFN = ''
     
     if args.treatment is not None:
