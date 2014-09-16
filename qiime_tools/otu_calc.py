@@ -77,19 +77,6 @@ def load_core_file(core_fp):
     with open(core_fp, 'rU') as in_f:
         return {otu_name(ast.literal_eval(line.split('\t')[1])) for line in in_f.readlines()[1:]}
 
-def calculate_total_abundance(biom):
-    """
-    Calculates the total abundance for each sample ID
-    """
-    smax = defaultdict(int)
-    for row,col,amt in biom['data']:
-        otuID = biom['rows'][row]['id']
-        sampleID = biom['columns'][col]['id']
-        
-        smax[sampleID] += amt
-    return smax
-
-
 
 def assign_otu_membership(biom):
     """
@@ -120,39 +107,34 @@ def print_membership(entry):
         print e
 
 
-def output_relative_abundance(biom, outFN):
+def calculate_total_abundance(biom):
+    """
+    Calculates the total abundance for each sample ID
+    """
+    smax = defaultdict(int)
+    for row,col,amt in biom['data']:
+        sampleID = biom['columns'][col]['id']
+        smax[sampleID] += amt
+    return smax
+
+
+def relative_abundance(biom):
     """
     Given a BIOM table, calculate per-sample relative abundance for 
-    each OTU and write out to a tab-separated file listing OTUs as
-    rows and Samples as columns.
+    each OTU.
     :@type biom: dict (translated json string)
     :@param biom: BIOM-formatted OTU/Sample abundance data
-    :@type outFN: str
-    :@param outFN: The full path to the desired output file.    
     """
-    abundance = defaultdict(lambda: defaultdict(dict))
-    sids = []
+    rel_abundance = defaultdict(lambda: defaultdict(dict))
     smax = calculate_total_abundance(biom)
     
     for row,col,amt in biom['data']:
-        otuName = otu_name(biom['rows'][row])
+        otuName = otu_name_biom(biom['rows'][row])
         sampleID = biom['columns'][col]['id']
 
-        sids.append(sampleID)
-        abundance[otuName][sampleID] = str(amt/smax[sampleID])
-
-    with open(outFN, 'w') as outF:
-        sids = sorted(set(sids), key=lambda x:x[-3:])
-        sids.insert(0, 'OTU')
-        outF.write('\t'.join(sids)+'\n')
-        for row in biom['rows']:
-            otuName = otu_name(row)
-            outF.write('{}\t'.format(otuName))
-            sabd = []
-            for col in biom['columns']:
-                sampleID = col['id']
-                sabd.append(abundance[otuName][sampleID] if sampleID in abundance[otuName] else '0')
-            outF.write('\t'.join(sabd)+'\n')
+        rel_abundance[otuName][sampleID] = amt/smax[sampleID]
+    
+    return rel_abundance
 
 
 def biom_summary(biom, id_match):
