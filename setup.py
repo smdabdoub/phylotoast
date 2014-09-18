@@ -7,6 +7,7 @@ here = path.abspath(path.dirname(__file__))
 requires = ['fuzzpy >= 0.4.2', 'matplotlib >= 1.0.0', 'biopython >= 1.60']
 
 scripts = ['bin/PCoA_bubble.py', 'bin/biom_relative_abundance.py', 'bin/filter_rep_set.py',
+           'bin/biom_phyla_summary.py', 'bin/filter_keep_otus_by_sample.py',
            'bin/multi_parallel_pick_otus.py', 'bin/otu_to_tax_name.py',
            'bin/prune_otus.py', 'bin/split_sequence_data.py',
            'bin/assign_taxonomy_by_blast_result.py', 'bin/condense_workflow.py',
@@ -16,7 +17,7 @@ scripts = ['bin/PCoA_bubble.py', 'bin/biom_relative_abundance.py', 'bin/filter_r
 
 setup(
   name='qiime-tools',
-  version='1.1.1',
+  version='1.1.2',
   description='Useful additions to the QIIME analysis pipeline including tools for data visualization and cluster-computing.',
   author='Shareef M. Dabdoub',
   author_email='dabdoub.2@osu.edu',
