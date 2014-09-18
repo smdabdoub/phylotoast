@@ -1,11 +1,38 @@
 QIIME-tools
 ===========
+.. image:: https://pypip.in/version/qiime-tools/badge.svg
+    :target: https://pypi.python.org/pypi/qiime-tools/
+    :alt: Latest Version
+.. image:: https://pypip.in/d/qiime-tools/badge.svg
+    :target: https://crate.io/packages/qiime-tools/
+.. image:: https://pypip.in/license/qiime-tools/badge.svg
+    :target: https://pypi.python.org/pypi/qiime-tools/
+    :alt: License
+.. image:: https://pypip.in/format/qiime-tools/badge.svg
+    :target: https://pypi.python.org/pypi/qiime-tools/
+    :alt: Download format
 
 The QIIME-tools project is a collection of python code and scripts that
 modify the original QIIME [1] pipeline by adding/changing several
 steps including: support for cluster-computing, multiple primer support
 (eliminate primer bias) [2], enhanced support for species-specific
 analysis, and additional visualization tools.
+
+Installation
+------------
+
+To install QIIME-tools from PyPI:
+
+.. code-block:: bash
+
+    $ pip install qiime-tools
+    
+From source:
+
+.. code-block:: bash
+
+    $ python setup.py install
+
 
 Documentation
 -------------
@@ -18,7 +45,7 @@ Requirements
 
 `matplotlib`_ for PCoA plots. `Biopython`_ for some sequence and fastq
 processing, although its use is being phased out. `fuzzpy`_ for the
-otu\_calc module. Note that these are not listed as dependencies in the install 
+otu\_calc module. Note that these are not listed as dependencies in the install
 script because they are not required for all functionality. Install as needed.
 
 Source
