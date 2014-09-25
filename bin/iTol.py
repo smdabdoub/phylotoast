@@ -4,31 +4,11 @@ Created on Feb 8, 2012
 
 @author: Shareef M Dabdoub
 '''
-from qiime_tools import biom_calc as bc, util
+from qiime_tools import biom_calc as bc, otu_calc as oc, util
 import argparse
 from collections import namedtuple, OrderedDict
 import json
 import re
-
-
-def otu_name(biom_row):
-    """
-    Determine a simple Genus-species identifier for an OTU, if possible. 
-    If OTU is not identified to the species level, name it as Unclassified (familly/genus/etc...)
-    """
-    tax = biom_row['metadata']['taxonomy']
-    for i, lvl in enumerate(tax):
-        lvl = lvl.strip()
-        if i < len(tax) - 1 and len(tax[i + 1].strip()) == 3:
-            if tax[i].strip()[0] == 'g':
-                return lvl.split('_')[-1] + '_spp.'
-            else:
-                return 'Unclassified_' + lvl.split('_')[-1]
-        elif i == len(tax) - 1:
-            name = lvl.split('_')[-1]
-            if lvl[0] == 's':
-                name = tax[i-1].split('_')[-1] + '_' + name
-            return name
 
 
 def find_otu(otuid, tree):
@@ -51,7 +31,7 @@ def newick_replace_otuids(tree, biom):
     for row in biom['rows']:
         otu_loc = find_otu(row['id'], tree)
         if otu_loc is not None:
-            tree = tree[:otu_loc] + otu_name(row) + tree[otu_loc+len(row['id']):]
+            tree = tree[:otu_loc] + oc.otu_name_biom(row) + tree[otu_loc+len(row['id']):]
         else:
             print 'ID not found:', row['id']
     return tree
@@ -198,7 +178,7 @@ def main():
         elif args.analysis_metric == 'raw':
             results = bc.raw_abundance(biom, group.sids)
 
-        group.results.update({otu_name(oid_rows[oid]):results[oid]
+        group.results.update({oc.otu_name_biom(oid_rows[oid]):results[oid]
                                     for oid in results})
 
     # write iTol data set file
@@ -206,7 +186,7 @@ def main():
         itolF.write('LABELS\t' + '\t'.join(groups.keys())+'\n')
         itolF.write('COLORS\t{}\n'.format('\t'.join(['#ff0000'
 											    for _ in range(len(groups))])))
-        all_otus = frozenset({otu_name(row) for row in biom['rows']})
+        all_otus = frozenset({oc.otu_name_biom(row) for row in biom['rows']})
 
         for oname in all_otus:
             row = ['{name}']#\t{s:.2f}\t{ns:.2f}\n'
