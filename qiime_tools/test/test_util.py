@@ -1,7 +1,7 @@
 import unittest
 from qiime_tools import util as qtu
 
-class SplitPhylogenyTest(unittest.TestCase):
+class split_phylogeny_Test(unittest.TestCase):
     def test_split_phylogeny(self):
         """
         Testing split_phylogeny() function in util.py.
