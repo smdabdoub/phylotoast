@@ -131,6 +131,12 @@ def parse_taxonomy_table(idtaxFNH):
 
 
 def split_phylogeny(p, level='s'):
+	"""
+	Return the phylogenetic taxonomy of bacteria in string 'p' to level specified.
+	The different level of identification are kingdom (k), phylum (p), class (c),
+	order (o), family (f), genus (g) and species (s). If level is not provided, 
+	the default level of identification is species.
+	"""
     level = level+'__'
     result = p.split(level)
     return result[0]+level+result[1].split(';')[0]
