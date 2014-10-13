@@ -146,9 +146,9 @@ def split_phylogeny(p, level='s'):
 	:return: A QIIME-formatted taxonomy string up to the classification given by param 
 			level.
 	"""
-    level = level+'__'
-    result = p.split(level)
-    return result[0]+level+result[1].split(';')[0]
+	level = level+'__'
+	result = p.split(level)
+	return result[0]+level+result[1].split(';')[0]
 
 
 def ensure_dir(d):
