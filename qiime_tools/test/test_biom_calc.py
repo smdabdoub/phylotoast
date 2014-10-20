@@ -14,6 +14,7 @@ import qiime_tools
 from qiime_tools import biom_calc as bc
 import math
 
+
 class biom_calc_Test(unittest.TestCase):
 
     def setUp(self):
@@ -92,84 +93,89 @@ class biom_calc_Test(unittest.TestCase):
     def test_relative_abundance(self):
         """
         Testing relative abundance() function of biom.calc.py.
-    
-        :return: Returns OK, if testing goal is achieved, otherwise raises 
+
+        :return: Returns OK, if testing goal is achieved, otherwise raises
                 error.
         """
         sample = 'Sample3'
         self.result = bc.relative_abundance(self.biom, sample)
 
-        # List containing manual calculations  
+        # List containing manual calculations
         hand_calc = [1/4.0, 1/4.0, 1/4.0, 1/4.0]
-        
-        # Obtaining list of function calculated relative abundance for sample  
-        result1 = self.result.values()          # result1 is a list  
-        result2 = result1[0]                    # result2 is a dict  
-        func_calc = result2.values()            # list containing the calculated relative 
-                                                # abundance values  
-        
-        # Testing the validity of relative_abundance() function.  
+
+        # Obtaining list of function calculated relative abundance for sample
+        result1 = self.result.values()      # result1 is a list
+        result2 = result1[0]                # result2 is a dict
+        # list containing the calculated relative abundance values
+        func_calc = result2.values()
+
+        # Testing the validity of relative_abundance() function.
         for hand, res in zip(hand_calc, func_calc):
             self.assertAlmostEqual(hand, res, msg='Relative abundances not calculated accurately.')
 
     def test_mean_otu_pct_abundance(self):
         """
         Testing mean_otu_pct_abundance() function of biom_calc.py.
-    
-        :return: Returns OK, if testing goal was achieved, otherwise raises 
+
+        :return: Returns OK, if testing goal was achieved, otherwise raises
                 error.
         """
-        self.rel_a = bc.relative_abundance(self.biom,['Sample4'])
-        self.result = bc.mean_otu_pct_abundance(self.rel_a, ['GG_OTU_2', 'GG_OTU_3'])
-        
-        # Obtaining lists of function calculations and manual hand calculations.  
-        func_calc = self.result.values()
-        result1 = self.rel_a.values()            # result1 is a list
-        result2 = result1[0]                     # result2 is a dict
-        hand_calc = result2.values()             # list containing hand calculated 
-                                                 # relative abundance values
+        self.rel_a = bc.relative_abundance(self.biom, ['Sample4'])
+        self.result = bc.mean_otu_pct_abundance(
+            self.rel_a, ['GG_OTU_2', 'GG_OTU_3']
+            )
 
-        # Testing the validity of the calculations of mean_otu_pct_abundance().  
+        # Obtaining lists of function calculations and manual hand calculations
+        func_calc = self.result.values()
+        result1 = self.rel_a.values()       # result1 is a list
+        result2 = result1[0]                # result2 is a dict
+        # list containing hand calculated relative abundance values
+        hand_calc = result2.values()
+
+        # Testing the validity of the calculations of mean_otu_pct_abundance().
         for hand, res in zip(hand_calc, func_calc):
             self.assertAlmostEqual(hand*100, res, msg='Mean OTU not calculated accurately.')
 
     def test_MRA(self):
         """
-        Testing mean relative abundance calculation, MRA() function of biom_calc.py.
-    
-        :return: Returns OK, if testing goal was achieved, otherwise raises error.
+        Testing mean relative abundance calculation, MRA() function
+        of biom_calc.py.
+
+        :return: Returns OK, if testing goal was achieved, otherwise
+            raises error.
         """
         self.result = bc.MRA(self.biom, 'Sample4')
         self.mean_otu = bc.mean_otu_pct_abundance(
-                bc.relative_abundance(self.biom,['Sample4']), 
-                ['GG_OTU_1','GG_OTU_2', 'GG_OTU_3','GG_OUTU4','GG_OTU_5']
-                )
+            bc.relative_abundance(self.biom, ['Sample4']),
+            ['GG_OTU_1', 'GG_OTU_2', 'GG_OTU_3', 'GG_OUTU4', 'GG_OTU_5']
+            )
 
-        # Obtaining lists of function calculations and manual hand calculations.
+        # Obtaining lists of function calculations and manual hand calculations
         func_calc = self.result.values()
-        hand_calc = self.mean_otu.values()      # list containing hand calculated values
+        hand_calc = self.mean_otu.values()
 
-        # Testing the validity of the calculations of mean_otu_pct_abundance().  
+        # Testing the validity of the calculations of mean_otu_pct_abundance().
         for hand, res in zip(hand_calc, func_calc):
             self.assertAlmostEqual(hand, res, msg='Mean OTU not calculated accurately.')
 
     def test_raw_abundance(self):
         """
         Testing raw_abundance() function of biom_calc.py.
-        
-        :return: Returns OK, if testing goal is achieved, otherwise raises error.
+
+        :return: Returns OK, if testing goal is achieved, otherwise raises
+            error.
         """
         self.result = {}
         self.result = bc.raw_abundance(self.biom, ['Sample1', 'Sample3'])
 
-        # Lists containing hand and function calculated values.  
+        # Lists containing hand and function calculated values.
         hand_calc = [
-            math.log(1,10), math.log(5,10), math.log(1,10), 
-            math.log(3,10), math.log(1,10)
+            math.log(1, 10), math.log(5, 10), math.log(1, 10),
+            math.log(3, 10), math.log(1, 10)
             ]
         func_calc = self.result.values()
-        
-        # Testing validity of raw_abundance() function.  
+
+        # Testing validity of raw_abundance() function.
         for hand, res in zip(hand_calc, func_calc):
             self.assertAlmostEqual(hand, res, msg='Raw abundances not calculated accurately!')
 
