@@ -144,7 +144,7 @@ class biom_calc_Test(unittest.TestCase):
         self.result = bc.MRA(self.biom, 'Sample4')
         self.mean_otu = bc.mean_otu_pct_abundance(bc.relative_abundance(self.biom,['Sample4']), ['GG_OTU_1','GG_OTU_2', 'GG_OTU_3','GG_OUTU4','GG_OTU_5'])
 
-        #         Obtaining lists of function calculations and manual hand calculations.
+#         Obtaining lists of function calculations and manual hand calculations.
         func_calc = self.result.values()
         hand_calc = self.mean_otu.values()           #hand_calc is a list containing manually calculated values
 
