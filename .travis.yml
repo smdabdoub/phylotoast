@@ -3,7 +3,7 @@ python:
   - "2.7"
 # command to run tests
 script:
-  - unittest -m discover qiime-tools
+  - unittest
 # command for email notifications, set to no notifications via email
 notifications:
     email: false
