@@ -3,7 +3,7 @@ python:
   - "2.7"
 # command to run tests
 script:
-  - unittest
+  - make test
 # command for email notifications, set to no notifications via email
 notifications:
     email: false
