@@ -13,6 +13,7 @@ before_install:
 # commands to install
 install:
   - conda install --yes python=2.7 numpy
+  - pip install epydoc
   - pip install fuzzpy
 # command to run tests
 script:
