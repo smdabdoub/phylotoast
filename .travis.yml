@@ -13,9 +13,7 @@ before_install:
 # commands to install
 install:
   - conda install --yes python=2.7 numpy
-  - source activate env_name
   - pip install fuzzpy
-  - pip install -e . --no-deps
   - python setup.py install
 # command to run tests
 script:
