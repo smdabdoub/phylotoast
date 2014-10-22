@@ -12,7 +12,6 @@ before_install:
   - conda update --yes conda
 # commands to install
 install:
-  - python setup.py install
   - conda install --yes python=2.7 numpy
   - pip install fuzzpy
 # command to run tests
