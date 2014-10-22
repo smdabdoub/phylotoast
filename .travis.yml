@@ -12,9 +12,9 @@ before_install:
   - conda update --yes conda
 # commands to install
 install:
+  - python setup.py install
   - conda install --yes python=2.7 numpy
   - pip install fuzzpy
-  - python setup.py install
 # command to run tests
 script:
   - python -m unittest discover -v
