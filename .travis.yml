@@ -3,7 +3,7 @@ python:
   - "2.7"
 # command to run tests
 script:
-  - python qiime_tools/test/test_biom_calc.py -v
+  - python -m unittest discover -s qiime_tools/test/ -p test_biom_calc.py -v
 # command for email notifications, set to no notifications via email
 notifications:
     email: false
