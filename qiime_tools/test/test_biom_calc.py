@@ -10,9 +10,8 @@
 """
 import unittest
 import json
-import qiime_tools
-from qiime_tools import biom_calc as bc
 import math
+from qiime_tools import biom_calc as bc
 
 
 class biom_calc_Test(unittest.TestCase):
@@ -111,7 +110,10 @@ class biom_calc_Test(unittest.TestCase):
 
         # Testing the validity of relative_abundance() function.
         for hand, res in zip(hand_calc, func_calc):
-            self.assertAlmostEqual(hand, res, msg='Relative abundances not calculated accurately.')
+            self.assertAlmostEqual(
+                hand, res,
+                msg='Relative abundances not calculated accurately.'
+                )
 
     def test_mean_otu_pct_abundance(self):
         """
@@ -134,7 +136,10 @@ class biom_calc_Test(unittest.TestCase):
 
         # Testing the validity of the calculations of mean_otu_pct_abundance().
         for hand, res in zip(hand_calc, func_calc):
-            self.assertAlmostEqual(hand*100, res, msg='Mean OTU not calculated accurately.')
+            self.assertAlmostEqual(
+                hand*100, res,
+                msg='Mean OTU not calculated accurately.'
+                )
 
     def test_MRA(self):
         """
@@ -150,34 +155,68 @@ class biom_calc_Test(unittest.TestCase):
             ['GG_OTU_1', 'GG_OTU_2', 'GG_OTU_3', 'GG_OUTU4', 'GG_OTU_5']
             )
 
-        # Obtaining lists of function calculations and manual hand calculations
+        # Obtaining lists of function calculations and
+        # manual hand calculations
         func_calc = self.result.values()
         hand_calc = self.mean_otu.values()
 
         # Testing the validity of the calculations of mean_otu_pct_abundance().
         for hand, res in zip(hand_calc, func_calc):
-            self.assertAlmostEqual(hand, res, msg='Mean OTU not calculated accurately.')
+            self.assertAlmostEqual(
+                hand, res,
+                msg='Mean OTU not calculated accurately.'
+                )
 
     def test_raw_abundance(self):
         """
         Testing raw_abundance() function of biom_calc.py.
 
         :return: Returns OK, if testing goal is achieved, otherwise raises
-            error.
+                 error.
         """
-        self.result = {}
-        self.result = bc.raw_abundance(self.biom, ['Sample1', 'Sample3'])
+        self.result = bc.raw_abundance(self.biom, sample_abd=False)
+        self.result1 = bc.raw_abundance(self.biom)
 
         # Lists containing hand and function calculated values.
-        hand_calc = [
-            math.log(1, 10), math.log(5, 10), math.log(1, 10),
-            math.log(3, 10), math.log(1, 10)
-            ]
-        func_calc = self.result.values()
+        hand_calc = [7, 3, 4, 6, 3, 4]
+        hand_calc1 = [1, 12, 7, 5, 2]
+        hand_calc2 = ['Sample1', 'Sample2', 'Sample3', 'Sample4', 'Sample5',
+                      'Sample6']
+        hand_calc3 = ['GG_OTU_1', 'GG_OTU_2', 'GG_OTU_3', 'GG_OTU_4',
+                      'GG_OTU_5']
 
         # Testing validity of raw_abundance() function.
-        for hand, res in zip(hand_calc, func_calc):
-            self.assertAlmostEqual(hand, res, msg='Raw abundances not calculated accurately!')
+        self.assertItemsEqual(hand_calc, self.result.values(),
+                              msg='Raw abundances not calculated accurately.')
+        self.assertItemsEqual(hand_calc1, self.result1.values(),
+                              msg='Raw abundances not calculated accurately.')
+        self.assertItemsEqual(self.result.keys(), hand_calc2,
+                              msg='Abundances not calculated for SampleID\'s')
+        self.assertItemsEqual(self.result1.keys(), hand_calc3,
+                              msg='Abundances not calculated for OTUID\'s')
+
+    def test_transform_raw_abundance(self):
+        """
+        Testing transform_raw_abundance() function of biom_calc.py.
+
+        :return: Returns OK if testing goal is achieved, otherwise raises
+                 error.
+        """
+        self.result = bc.transform_raw_abundance(
+            self.biom, sample_abd=False
+            )
+        self.result1 = bc.raw_abundance(self.biom, sample_abd=False)
+
+        # Obtaining manual calculations for comparison testing
+        hand_calc = []
+        for num in self.result1.values():
+            hand_calc.append(math.log10(float(num)))
+
+        # Testing the validity of transform function
+        self.assertAlmostEqual(
+            self.result.values(), hand_calc, places=10,
+            msg='Function did not calculate the transformation accurately.'
+        )
 
     def tearDown(self):
         """
