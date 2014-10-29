@@ -17,7 +17,8 @@ install:
   - pip install fuzzpy
 # command to run tests
 script:
-  - python -m unittest discover -v
+  - python qiime_tools/test/test_biom_calc.py -v
+  - python qiime_tools/test/test_util.py -v
 # command for email notifications, set to no notifications via email
 notifications:
     email: false
