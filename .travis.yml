@@ -4,6 +4,7 @@ python:
 # command to run tests
 script:
   - python -m unittest discover -s qiime_tools/test/ -p test_biom_calc.py -v
+  - python -m unittest discover -s qiime_tools/test/ -p test_util.py -v
 # command for email notifications, set to no notifications via email
 notifications:
     email: false
