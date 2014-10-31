@@ -680,10 +680,7 @@ eigvals	3.38347924126	1.59161563383	1.4202121789	1.13114441112	0.775091898608	0.
         :return: Returns O if test goals were achieved, otherwise raises
                  error.
         """
-        path = '/Users/akshay/Desktop/akshay'
-        qtu.ensure_dir(path)
-        self.assertTrue(os.path.isdir(path), msg='Directory was not created.')
-        os.rmdir(path)
+        pass
 
     def test_file_handle(self):
         """
