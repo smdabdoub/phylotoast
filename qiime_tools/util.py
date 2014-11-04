@@ -19,6 +19,9 @@ def storeFASTA(fastaFNH):
     :param source: The data source from which to parse the FASTA records.
                     Expects the input to resolve to a collection that can be
                     iterated through, such as a list or an open file handle.
+
+    :rtype: tuple
+    :return: FASTA records containing entries for id, description and data.
     """
     fasta = file_handle(fastaFNH).read()
     return [
@@ -29,13 +32,16 @@ def storeFASTA(fastaFNH):
 
 def parseFASTA(fastaFNH):
     """
-    Parse the records in a FASTA-format file keeping the file open, and reading
-    through one line at a time.
+    Parse the records in a FASTA-format file keeping the file open, and
+    reading through one line at a time.
 
     :type source: list or open file handle
     :param source: The data source from which to parse the FASTA records.
                     Expects the input to resolve to a collection that can be
                     iterated through, such as a list or an open file handle.
+
+    :rtype: tuple
+    :return:FASTA records containing entries for id, description and data.
     """
     recs = []
     seq = []
@@ -70,12 +76,12 @@ def parse_map_file(mapFNH):
     required fields are SampleID, BarcodeSequence, LinkerPrimerSequence
     (in that order), and Description (which must be the final field).
 
-    :@type mapFNH: file or str
-    :@param mapFNH: Either the full path to the map file or an open file
+    :type mapFNH: file or str
+    :param mapFNH: Either the full path to the map file or an open file
                     handle
 
-    :@rtype: dict
-    :@return: A map associating each line of the mapping file with the
+    :rtype: dict
+    :return: A map associating each line of the mapping file with the
               appropriate sample ID (each value of the map also contains
               the sample ID). An OrderedDict is used so the returned map is
               guaranteed to have the same order as the input file.
@@ -102,14 +108,17 @@ def write_map_file(mapFNH, items, header):
     parse_mapping_file method) and a header line, write each row to the given
     input file with fields separated by tabs.
 
-    :@type mapFNH: file or str
-    :@param mapFNH: Either the full path to the map file or an open file handle
-    :@type items: list
-    :@param item: The list of row entries to be written to the mapping file
-    :@type header: list or str
-    :@param header: The descriptive column names that are required as the first
+    :type mapFNH: file or str
+    :param mapFNH: Either the full path to the map file or an open file handle
+
+    :type items: list
+    :param item: The list of row entries to be written to the mapping file
+
+    :type header: list or str
+    :param header: The descriptive column names that are required as the first
                     line of the mapping file
-    :@rtype: None
+
+    :rtype: None
     """
     if isinstance(header, list):
         header = '\t'.join(header)+'\n'
@@ -125,11 +134,12 @@ def parse_taxonomy_table(idtaxFNH):
     Greengenes provides a file each OTU a full taxonomic designation. This
     method parses that file into a map with (key,val) = (OTU, taxonomy).
 
-    :@type idtaxFNH: file or str
-    :@param idtaxFNH: Either the full path to the map file or an open file
+    :type idtaxFNH: file or str
+    :param idtaxFNH: Either the full path to the map file or an open file
                       handle
-    :@rtype: dict
-    :@return: A map associating each OTU ID with the taxonomic specifier.
+
+    :rtype: dict
+    :return: A map associating each OTU ID with the taxonomic specifier.
               An OrderedDict is used so the returned map is guaranteed to have
               the same order as the input file.
     """
@@ -156,7 +166,7 @@ def split_phylogeny(p, level='s'):
                 and species (s). If level is not provided, the default level
                 of identification is species.
 
-    :return type: str
+    :rtype: str
     :return: A QIIME-formatted taxonomy string up to the classification given
             by param level.
     """
@@ -169,6 +179,12 @@ def ensure_dir(d):
     """
     Check to make sure the supplied directory path does not exist, if so,
     create it.
+
+    :type d: str
+    :param d: It is the full path to a directory.
+
+    :return: Does not return anything, but creates a directory path if it
+             doesn't exist already.
     """
     if not os.path.exists(d):
         os.makedirs(d)
@@ -177,7 +193,16 @@ def ensure_dir(d):
 def file_handle(fnh, mode='rU'):
     """
     Takes either a file path or an open file handle, checks validity and
-    returns an open file handle or raises an appropriate Exception
+    returns an open file handle or raises an appropriate Exception.
+
+    :type fnh: str
+    :param fnh: It is the full path to a file, or open file handle
+
+    :type mode: str
+    :param mode: The way in which this file will be used, for example to read
+                 or write or both. By default, file will be opened in rU mode.
+
+    :return: Returns an opened file for appropriate usage.
     """
     handle = None
     if isinstance(fnh, file):
@@ -209,7 +234,7 @@ def gather_categories(imap, header, categories=None):
     :type categories: list
     :param categories: The list of user-specified categories from the mapping
                         file
-    :r type: OrderedDict
+    :rtype: dict
     :return: A sorted dictionary keyed on the combinations of all the types
               found within the user-specified categories. Each entry will
               contain an empty DataCategory namedtuple. If no categories are
@@ -249,12 +274,13 @@ def parse_unifrac(unifracFN):
     """
     Parses the unifrac results file into a dictionary
 
-    :@type unifracFN: str
-    :@param unifracFN: The path to the unifrac results file
-    :@rtype: dict
-    :@return: A dictionary with keys: 'pcd' (principle coordinates data) which
-              is a dictionary of the data keyed by sample ID,
-              'eigvals' (eigenvalues), and 'varexp' (variation explained)
+    :type unifracFN: str
+    :param unifracFN: The path to the unifrac results file
+
+    :rtype: dict
+    :return: A dictionary with keys: 'pcd' (principle coordinates data) which
+             is a dictionary of the data keyed by sample ID,
+             'eigvals' (eigenvalues), and 'varexp' (variation explained)
     """
     with open(unifracFN) as uF:
         unifrac = {'pcd': {}, 'eigvals': [], 'varexp': []}

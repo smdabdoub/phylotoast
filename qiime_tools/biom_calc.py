@@ -18,10 +18,10 @@ def relative_abundance(biom, sampleIDs):
     :type biom: A BIOM file format converted to JSON string format structure.
     :param biom: OTU table format.
 
-    :type sampleIDs: List
+    :type sampleIDs: list
     :param sampleIDs: A list of column id's from BIOM format OTU table.
 
-    :type return: Dict
+    :rtype: dict
     :return: Returns a keyed on SampleIDs, and the values are dictionaries
              keyed on OTUID's and their values represent the relative
              abundance of that OTUID in that SampleID.
@@ -56,8 +56,8 @@ def mean_otu_pct_abundance(ra, otuIDs):
     :param otuIDs: A list of OTUID's for which the percentage abundance needs
                    to be measured.
 
-    :type return: defaultdict
-    :return otumeans: A default dictionary of OTUID and their percent relative
+    :rtype: dict
+    :return: A dictionary of OTUID and their percent relative
                       abundance as key/value pair.
     """
     sids = ra.keys()
@@ -73,6 +73,16 @@ def mean_otu_pct_abundance(ra, otuIDs):
 def MRA(biom, sampleIDs):
     """
     Calculate the mean relative abundance.
+
+    :type biom: A BIOM file format converted to JSON string format structure.
+    :param biom: OTU table format.
+
+    :type sampleIDs: List
+    :param sampleIDs: A list of column id's from BIOM format OTU table.
+
+    :rtype: dict
+    :return: A dictionary keyed on OTUID's and their mean relative abundance
+             for a given number of sampleIDs.
     """
     ra = relative_abundance(biom, sampleIDs)
     otuIDs = {row['id'] for row in biom['rows']}
@@ -95,8 +105,8 @@ def raw_abundance(biom, sampleIDs=None, sample_abd=True):
                        SampleID's. By default, the output will be provided
                        for SampleID's.
 
-    :type return: dict
-    :return results: Returns a dictionary keyed on either OTUID's or SampleIDs
+    :rtype: dict
+    :return: Returns a dictionary keyed on either OTUID's or SampleIDs
                      and their respective abundance as values.
     """
     results = defaultdict(int)
@@ -126,7 +136,7 @@ def transform_raw_abundance(biom, fn=math.log10,
                another format. By default, the function has been given as
                base 10 logarithm.
 
-    :type return: dict
+    :rtype: dict
     :return: Returns a dictionary similar to output of raw_abundance function
              but with the abundance values modified by the mathematical
              operation. By default, the operation performed on the abundances
