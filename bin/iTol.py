@@ -37,60 +37,6 @@ def newick_replace_otuids(tree, biom):
     return tree
 
 
-# Meant to contain all the data necessary for calculating a single column of
-# an iTol data table
-DataCategory = namedtuple('DataCategory', 'sids results')
-
-def gather_categories(imap, header, categories=None):
-    """
-    Find the user specified categories in the map and create a dictionary
-    to contain the relevant data for each type within the categories. Multiple
-    categories will have their types combined such that each possible
-    combination will have its own entry in the dictionary.
-
-    :@type imap: dict
-    :@param imap: The input mapping file data keyed by SampleID
-    :@type header: list
-    :@param header: The header line from the input mapping file. This will be
-                    searched for the user-specified categories
-    :@type categories: list
-    :@param categories: The list of user-specified categories from the mapping
-                        file
-    :@rtype: OrderedDict
-    :@return: A sorted dictionary keyed on the combinations of all the types
-    		  found within the user-specified categories. Each entry will
-    		  contain an empty DataCategory namedtuple. If no categories are
-    		  specified, a single entry with the key 'default' will be returned
-    """
-    if categories is None:
-        return {'default': DataCategory(set(imap.keys()), {})}
-
-    cat_ids = [header.index(cat) for cat in categories if cat in header
-                                                         and '=' not in cat]
-    conditions = {}
-    for cat in categories:
-        if '=' in cat and cat.split('=')[0] in header:
-            conditions[header.index(cat.split('=')[0])] =  cat.split('=')[1]
-
-    if not cat_ids and not conditions:
-        return {'default': DataCategory(set(imap.keys()), {})}
-
-    if not cat_ids and conditions:
-        sids = {sid for sid,row in imap.iteritems() if
-                            all([row[c] == conditions[c] for c in conditions])}
-        return {'default': DataCategory(sids, {})}
-
-    table = {}
-    for sid,row in imap.iteritems():
-        if all([row[c] == conditions[c] for c in conditions]):
-            key = '_'.join([row[cid] for cid in cat_ids])
-            if not key in table:
-                table[key] = DataCategory(set(), {})
-            table[key].sids.add(sid)
-
-    return OrderedDict(sorted(table.items(), key=lambda t: t[0]))
-
-
 def handle_program_options():
     parser = argparse.ArgumentParser(description="Create files appropriate for\
                                      use in the iTol visualization program by \
@@ -130,7 +76,7 @@ def handle_program_options():
                               columns. Default is no categories and all the \
                               data will be treated as a single group.")
     parser.add_argument('-a', '--analysis_metric', default='MRA',
-                        choices=['MRA','NMRA','raw'],
+                        choices=['MRA', 'NMRA', 'raw'],
                         help="Specifies which metric is calculated on the \
                               abundance data in the OTU table. Available \
                               options: MRE - mean relative abundance \
@@ -164,32 +110,33 @@ def main():
                 tree = tree.replace("'", '')
             outF.write(newick_replace_otuids(tree, biom))
 
-    oid_rows = {row['id']:row for row in biom['rows']}
+    oid_rows = {row['id']: row for row in biom['rows']}
 
     # calculate analysis results
     categories = None
     if args.map_categories is not None:
         categories = args.map_categories.split(',')
 
-    groups = gather_categories(imap, map_header, categories)
+    groups = util.gather_categories(imap, map_header, categories)
     for group in groups.values():
-        if args.analysis_metric in ['MRA','NMRA']:
+        if args.analysis_metric in ['MRA', 'NMRA']:
             results = bc.MRA(biom, group.sids)
         elif args.analysis_metric == 'raw':
-            results = bc.raw_abundance(biom, group.sids)
+            results = bc.transform_raw_abundance(biom, sampleIDs=group.sids,
+                                                 sample_abd=False)
 
-        group.results.update({oc.otu_name_biom(oid_rows[oid]):results[oid]
-                                    for oid in results})
+        group.results.update({oc.otu_name_biom(oid_rows[oid]): results[oid]
+                             for oid in results})
 
     # write iTol data set file
     with open(args.output_itol_table, 'w') as itolF:
         itolF.write('LABELS\t' + '\t'.join(groups.keys())+'\n')
         itolF.write('COLORS\t{}\n'.format('\t'.join(['#ff0000'
-											    for _ in range(len(groups))])))
+                    for _ in range(len(groups))])))
         all_otus = frozenset({oc.otu_name_biom(row) for row in biom['rows']})
 
         for oname in all_otus:
-            row = ['{name}']#\t{s:.2f}\t{ns:.2f}\n'
+            row = ['{name}']        # \t{s:.2f}\t{ns:.2f}\n'
             row_data = {'name': oname}
             msum = 0
             for name, group in groups.iteritems():
@@ -201,8 +148,9 @@ def main():
                 msum += row_data[name]
             # normalize avg relative abundance data
             if args.analysis_metric == 'NMRA' and msum > 0:
-                row_data.update({key:data/msum for key,data in row_data.items()
-                                   if key != 'name'})
+                row_data.update({key: data/msum
+                                for key, data in row_data.items()
+                                if key != 'name'})
 
             itolF.write('\t'.join(row).format(**row_data) + '\n')
 
