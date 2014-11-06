@@ -1,17 +1,17 @@
-============
+================
 multi_qsub.py
-============
+================
 
 Submit multiple PBS job scripts to the queuing system (qsub) and store the
 output job IDs.
 
     .. code-block:: bash
-    
+
         usage: multi_qsub.py [-h] [-t] job_scripts [job_scripts ...]
 
 Required arguments
 ^^^^^^^^^^^^^^^^^^
-    
+
 .. cmdoption:: job_scripts
 
     The job script files to submit to the queuing system.
@@ -20,7 +20,7 @@ Optional arguments
 ^^^^^^^^^^^^^^^^^^
 
 .. cmdoption:: -h, --help
-    
+
     Show the help message and exit
 
 .. cmdoption::  -t, --test
