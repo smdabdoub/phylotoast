@@ -91,15 +91,18 @@ def parse_map_file(mapFNH):
     11.V13    ACGCTCGACA      GTTTGATCCTGGCTCAG    Disease Rat_Oral
     """
     m = OrderedDict()
+    map_header = None
 
     with file_handle(mapFNH) as mapF:
         for line in mapF:
+            if line.startswith('#SampleID'):
+                map_header = line.split('\t')
             if line.startswith('#') or not line:
                     continue
             line = line.strip().split('\t')
             m[line[0]] = line
 
-    return m
+    return map_header, m
 
 
 def write_map_file(mapFNH, items, header):
@@ -121,7 +124,7 @@ def write_map_file(mapFNH, items, header):
     :rtype: None
     """
     if isinstance(header, list):
-        header = '\t'.join(header)+'\n'
+        header = '\t'.join(header)
 
     with file_handle(mapFNH, 'w') as mapF:
         mapF.write(header)
