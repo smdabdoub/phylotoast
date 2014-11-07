@@ -1,8 +1,6 @@
 """
 :Author: Akshay Paropkari
 
-:Contact: paropkari.1@gmail.com
-
 :Date Created: 10/13/2014
 
 :Abstract: Automated tests for util.py functions.

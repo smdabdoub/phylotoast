@@ -2,8 +2,6 @@
 """
 :Author: Akshay Paropkari
 
-:Contact: paropkari.1@gmail.com
-
 :Date Created: 10/15/2014
 
 :Abstract: Automated Tests for BIOM calculation.
