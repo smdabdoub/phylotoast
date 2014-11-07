@@ -260,11 +260,11 @@ def main():
             otus[line[0]] = ' '.join(line[1:])
     header, imap = util.parse_map_file(args.mapping)
 
-        try:
-            category_idx = header.index(args.map_category)
-        except ValueError:
-            msg = "Error: Specified mapping category '{}' not found"
-            sys.exit(msg.format(args.map_category))
+    try:
+        category_idx = header.index(args.map_category)
+    except ValueError:
+        msg = "Error: Specified mapping category '{}' not found"
+        sys.exit(msg.format(args.map_category))
     category_ids = link_samples_to_categories(imap, category_idx)
 
     # plot samples based on relative abundance of some OTU ID
