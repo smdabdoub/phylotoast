@@ -51,8 +51,6 @@ def main():
         biom = json.loads(bF.readline())
 
     header, mapping = util.parse_map_file(args.mapping)
-#     with open(args.mapping, 'rU') as mF:
-#         header = mF.readline().strip().split('\t')
 
     try:
         category_id = header.index(args.map_category)

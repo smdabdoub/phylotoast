@@ -259,8 +259,7 @@ def main():
             line = line.split()
             otus[line[0]] = ' '.join(line[1:])
     header, imap = util.parse_map_file(args.mapping)
-#     with open(args.mapping) as mF:
-#         header = mF.readline().split('\t')
+
         try:
             category_idx = header.index(args.map_category)
         except ValueError:

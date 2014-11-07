@@ -99,8 +99,6 @@ def main():
     with open(args.otu_table) as bF:
         biom = json.loads(bF.readline())
     map_header, imap = util.parse_map_file(args.mapping)
-#     with open(args.mapping, 'rU') as mapF:
-#         map_header = mapF.readline()[1:].split()
 
     # rewrite tree file with otu names
     if args.input_tree:
