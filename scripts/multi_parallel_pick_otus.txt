@@ -1,5 +1,5 @@
 ===========================
-osc_parallel_pick_otus.py
+multi_parallel_pick_otus.py
 ===========================
 
 Generate PBS scripts for submission to the OSC to run the QIIME parallel blast
