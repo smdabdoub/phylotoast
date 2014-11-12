@@ -4,10 +4,9 @@ PCoA.py
 Create a series of 2D or 3D PCoA plots where the marker size varies by relative
 abundance of a particular OTU.
 
-    ..code-block:: bash
+.. code-block:: bash
 
-    usage: PCoA.py [-h] -i COORD_FP -m MAP_FP -b COLORBY [-o OUT_FN] [-d {2,3}]
-               [-t TITLE] [--save] [-c MAP_CATEGORIES] [-s POINT_SIZE]
+    usage: PCoA.py [-h] -i COORD_FP -m MAP_FP -b COLORBY [-o OUT_FN] [-d {2,3}][-t TITLE] [--save] [-c MAP_CATEGORIES] [-s POINT_SIZE]
 
 
 Required Arguments
