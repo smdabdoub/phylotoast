@@ -1,7 +1,7 @@
 '''
 Created on Feb 2, 2013
 
-@author: Shareef Dabdoub
+:author: Shareef Dabdoub
 '''
 from collections import namedtuple, OrderedDict
 import os
@@ -41,7 +41,7 @@ def parseFASTA(fastaFNH):
                     iterated through, such as a list or an open file handle.
 
     :rtype: tuple
-    :return:FASTA records containing entries for id, description and data.
+    :return: FASTA records containing entries for id, description and data.
     """
     recs = []
     seq = []

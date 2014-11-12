@@ -146,7 +146,7 @@ def print_membership(entry):
     :type entry: list
     :param entry: SampleID's from the output dict of assign_otu_membership().
 
-    :rrtype: str
+    :rtype: str
     :return: Returns OTU name and percentage relative abundance as membership
              for the given list of SampleID's.
     """

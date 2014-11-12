@@ -1,7 +1,7 @@
 '''
 Created on Feb 19, 2013
 
-@author: Shareef Dabdoub
+:author: Shareef Dabdoub
 
 This module provides methods for calculating various metrics with regards to
 each OTU in an input OTU abundance table. This is currently used by iTol.py
