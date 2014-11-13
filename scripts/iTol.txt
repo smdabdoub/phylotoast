@@ -7,28 +7,27 @@ the abundance data from a biom-format file and groups specified in a QIIME
 mapping file. The program also modifies a Newick-format phylogenetic tree file
 to use proper taxonomic names instead of OTU IDs for useful display in iTol.
 
-    .. code-block:: bash
-    
-        usage: iTol.py [-h] -i OTU_TABLE -m MAPPING [-t INPUT_TREE] [-e OUTPUT_TRE] 
-                       [-o OUTPUT_ITOL_TABLE] [-c MAP_CATEGORIES] [-a {MRA,NMRA,raw}]
+.. code-block:: bash
+
+        usage: iTol.py [-h] -i OTU_TABLE -m MAPPING [-t INPUT_TREE] [-e OUTPUT_TRE] [-o OUTPUT_ITOL_TABLE] [-c MAP_CATEGORIES] [-a {MRA,NMRA,raw}]
 
 Required arguments
 ^^^^^^^^^^^^^^^^^^^^
-    
+
 .. cmdoption:: -i OTU_TABLE, --otu_table OTU_TABLE
 
     The biom-format file with OTU-Sample abundance data.
-  
+
 .. cmdoption:: -m MAPPING, --mapping MAPPING
 
     The mapping file specifying group information for each sample.
 
 Optional arguments
 ^^^^^^^^^^^^^^^^^^
-    
+
 .. cmdoption:: -t INPUT_TREE, --input_tree INPUT_TREE
 
-    A phylogenetic tree in Newick format to be modified by exchanging the 
+    A phylogenetic tree in Newick format to be modified by exchanging the
     OTU ID node names for taxonomic names.
 
 .. cmdoption:: -e OUTPUT_TRE, --output_tre OUTPUT_TRE
@@ -52,7 +51,7 @@ Optional arguments
     categories with three types each will result in six
     data columns. Default is no categories and all the
     data will be treated as a single group.
- 
+
 .. cmdoption:: -a {MRA,NMRA,raw}, --analysis_metric {MRA,NMRA,raw}
 
     Specifies which metric is calculated on the abundance
@@ -63,7 +62,7 @@ Optional arguments
     normalized by the total MRE across the groups as
     specified in --map_categories), raw (outputs the
     actual sequence abundance data for each OTU).
-    
+
 .. cmdoption:: -h, --help
-    
+
     Show the help message and exit.
