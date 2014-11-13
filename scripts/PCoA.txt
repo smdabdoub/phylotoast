@@ -36,11 +36,11 @@ Optional Arguments
 
     Choose whether to plot 2D or 3D.
 
-..cmdoption:: -t TITLE, --title TITLE
+.. cmdoption:: -t TITLE, --title TITLE
 
     Title of the plot.
 
-..cmdoption:: --save
+.. cmdoption:: --save
 
     Specify that the figure should be saved directly instead of opening a
     window in which the plot can be viewed before saving.
