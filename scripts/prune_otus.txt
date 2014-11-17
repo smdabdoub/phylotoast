@@ -7,10 +7,9 @@ less than a user-defined percent of samples (default 5%). Second, remove any
 OTUs that make up less than a user-defined percentage of the overall sequences
 (default 0.01%)
 
-    .. code-block:: bash
-    
-        usage: prune_otus.py [-h] -i SEQS_OTUS_FN -t ID_TO_TAXONOMY_FN [-p PERCENT_OF_SAMPLES] [-s PERCENT_OF_SEQUENCES] [-l {k,p,c,o,f,g,s}] 
-                             [-o OUTPUT_PRUNED_OTUS_FN] [--output_removed_otus_fn OUTPUT_REMOVED_OTUS_FN] [-v]
+.. code-block:: bash
+
+        usage: prune_otus.py [-h] -i SEQS_OTUS_FN -t ID_TO_TAXONOMY_FN [-p PERCENT_OF_SAMPLES] [-s PERCENT_OF_SEQUENCES] [-l {k,p,c,o,f,g,s}] [-o OUTPUT_PRUNED_OTUS_FN] [--output_removed_otus_fn OUTPUT_REMOVED_OTUS_FN] [-v]
 
 Required arguments
 ^^^^^^^^^^^^^^^^^^
@@ -25,12 +24,12 @@ Required arguments
 
 Optional arguments
 ^^^^^^^^^^^^^^^^^^
-    
+
 .. cmdoption:: -p PERCENT_OF_SAMPLES, --percent_of_samples PERCENT_OF_SAMPLES
 
     OTUs that occur in less than this percent of samples
     will be removed. Default is 5 percent.
-    
+
 .. cmdoption:: -s PERCENT_OF_SEQUENCES, --percent_of_sequences PERCENT_OF_SEQUENCES
 
     OTUs that occur in less than this percent of total
@@ -40,18 +39,18 @@ Optional arguments
 
     Set the phylogenetic level at which to join OTUs for
     consideration in pruning. Default is 'g'(group).
-    
+
 .. cmdoption:: -o OUTPUT_PRUNED_OTUS_FN, --output_pruned_otus_fn OUTPUT_PRUNED_OTUS_FN
 
     The main output file that will contain the remaining
     OTUs and sequence IDs.
-    
+
 .. cmdoption:: --output_removed_otus_fn OUTPUT_REMOVED_OTUS_FN
-    
+
     The file to write out the set of OTUs that were removed by the filter.
 
 .. cmdoption:: -h, --help
-    
+
     Show the help message and exit
 
 .. cmdoption:: -v, --verbose

@@ -1,0 +1,78 @@
+PCoA.py
+=================
+
+Create a series of 2D or 3D PCoA plots where the marker size varies by relative
+abundance of a particular OTU.
+
+.. code-block:: bash
+
+    usage: PCoA.py [-h] -i COORD_FP -m MAP_FP -b COLORBY [-o OUT_FN] [-d {2,3}][-t TITLE] [--save] [-c MAP_CATEGORIES] [-s POINT_SIZE]
+
+
+Required Arguments
+---------------------
+
+.. cmdoption:: -i COORD_FP, --coord_fp COORD_FP
+
+    Input principal coordinates filepath (i.e., resulting file from principal_coordinates.py).
+
+.. cmdoption:: -m MAP_FP, --map_fp MAP_FP
+
+    Input metadata mapping file-path.
+
+.. cmdoption:: -b COLORBY, --colorby COLORBY
+
+     Metadata categories (column headers) to color by in the plots.
+
+
+Optional Arguments
+--------------------
+
+.. cmdoption:: -o OUT_FN, --out_fn OUT_FN
+
+    Output file path.
+
+.. cmdoption:: -d {2,3}, --dimensions {2,3}
+
+    Choose whether to plot 2D or 3D.
+
+.. cmdoption:: -t TITLE, --title TITLE
+
+    Title of the plot.
+
+.. cmdoption:: --save
+
+    Specify that the figure should be saved directly instead of opening a
+    window in which the plot can be viewed before saving.
+
+.. cmdoption:: -c MAP_CATEGORIES, --map_categories MAP_CATEGORIES
+
+    Any mapping categories, such as treatment type, that will be used to group
+    the data in the output iTol table. For example, one category with three
+    types will result in three data columns in the final output. Two
+    categories with three types each will result in six data columns. Default
+    is no categories and all the data will be treated as a single group.
+
+.. cmdoption:: -s POINT_SIZE, --point_size POINT_SIZE
+
+    Specify the size of the circles representing each of the samples in the plot.
+
+.. cmdoption:: -h, --help
+
+    Show the help message and exit.
+
+Example plots
+--------------
+
+2D PCoA plot with 2 metadata categories - DiseaseState and SmokingStatus.
+
+.. image:: PCoA/PCoA2.png
+   :scale: 50%
+   :align: center
+
+
+3d PCoA plot with 2 metadata categories - DiseaseState and SmokingStatus.
+
+.. image:: PCoA/PCoA3.png
+   :scale: 50%
+   :align: center
