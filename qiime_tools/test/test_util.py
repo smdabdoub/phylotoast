@@ -524,8 +524,8 @@ eigvals	3.38347924126	1.59161563383	1.4202121789	1.13114441112	0.775091898608	0.
             result = qtu.parse_map_file(temp_file7)
 
         # Obtaining lists to compare results
-        func_calc = result.values()[0]
-        func_calc1 = result.keys()[0]
+        func_calc = result[1].values()[0]
+        func_calc1 = result[1].keys()[0]
         hand_calc = 'PIDF102 ACAGAGAC AGRGTTTGATCMTGGCTCAG,GCAACGAGCGCAACCC \
         periimplantitis non-smoker DI HT/DI implant PIDF102'
 
@@ -550,25 +550,23 @@ eigvals	3.38347924126	1.59161563383	1.4202121789	1.13114441112	0.775091898608	0.
             temp_file8.write(self.implantdata)
             temp_file8.seek(0)
             result1 = qtu.parse_map_file(temp_file8)
-            items = result1.values()
-        topline = '#SampleID    BarcodeSequence LinkerPrimerSequence    \
-        DiseaseState    SmokingStatus   LocationHealth  PatientHealth   \
-        SampleLocation  Description'
-        header = topline.strip('\t').split()
         mapfile = tempfile.NamedTemporaryFile(delete=False)
-        qtu.write_map_file(mapfile.name, items, header)
+        qtu.write_map_file(mapfile.name, result1[1].values(), result1[0])
 
         # Obtaining original file to compare with results.
         temp_file9 = tempfile.NamedTemporaryFile(delete=False)
         temp_file9.write(self.implantdata)
         temp_file9.seek(0)
+        mapfile.seek(0)
+
+        data1 = list(mapfile)
+        data2 = list(temp_file9)
 
         # Testing the validity of the function.
-        for line1, line2 in zip(mapfile, temp_file9):
-            self.assertEqual(
-                line1, line2,
-                msg='Data not written accurately to file.'
-                )
+        self.assertListEqual(
+            data1, data2,
+            msg='Mapping file data not written accurately to temp file.'
+            )
         self.assertItemsEqual(
             mapfile, temp_file9,
             msg='Some data was not written into new mapping file.'
@@ -704,9 +702,9 @@ eigvals	3.38347924126	1.59161563383	1.4202121789	1.13114441112	0.775091898608	0.
             map_header = temp_file12.readline()[1:].strip().split('\t')
             map_data = qtu.parse_map_file(temp_file12)
 
-        result = qtu.gather_categories(map_data, map_header)
+        result = qtu.gather_categories(map_data[1], map_header)
         result1 = qtu.gather_categories(
-            map_data, map_header, ['SmokingStatus', 'DiseaseState']
+            map_data[1], map_header, ['SmokingStatus', 'DiseaseState']
             )
         sum = fsum([
             len(result1.values()[0][0]), len(result1.values()[1][0]),
