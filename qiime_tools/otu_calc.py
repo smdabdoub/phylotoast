@@ -3,6 +3,7 @@ from __future__ import division
 import ast
 from collections import (OrderedDict,defaultdict)
 import json
+import math
 # 3rd party
 from fuzz import FuzzySet, FuzzyElement
 import numpy as np
@@ -49,8 +50,8 @@ def sdi(fset):
     :rtype: float
     :return: The Shannon Diversity Index.
     """
-    p = np.array([e.mu for e in fset])
-    return -1*np.sum(p*np.log(p))
+    p = [e.mu for e in fset]
+    return -1*sum([entry*math.log(entry) for entry in p])
 
 
 def otu_name_biom(biom_row):
