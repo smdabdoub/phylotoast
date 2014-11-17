@@ -80,11 +80,12 @@ def parse_map_file(mapFNH):
     :param mapFNH: Either the full path to the map file or an open file
                     handle
 
-    :rtype: dict
-    :return: A map associating each line of the mapping file with the
-              appropriate sample ID (each value of the map also contains
-              the sample ID). An OrderedDict is used so the returned map is
-              guaranteed to have the same order as the input file.
+    :rtype: tuple
+    :return: A tuple of header line for mapping file and a map associating
+             each line of the mapping file with the appropriate sample ID
+             (each value of the map also contains the sample ID). An
+             OrderedDict is used for mapping so the returned map is guaranteed
+             to have the same order as the input file.
 
     Example data:
     #SampleID BarcodeSequence LinkerPrimerSequence State   Description
@@ -96,7 +97,7 @@ def parse_map_file(mapFNH):
     with file_handle(mapFNH) as mapF:
         for line in mapF:
             if line.startswith('#SampleID'):
-                map_header = line.split('\t')
+                map_header = line.strip().split('\t')
             if line.startswith('#') or not line:
                     continue
             line = line.strip().split('\t')
@@ -124,7 +125,7 @@ def write_map_file(mapFNH, items, header):
     :rtype: None
     """
     if isinstance(header, list):
-        header = '\t'.join(header)
+        header = '\t'.join(header) + '\n'
 
     with file_handle(mapFNH, 'w') as mapF:
         mapF.write(header)
