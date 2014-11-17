@@ -2,11 +2,11 @@
 '''
 Created on Feb 8, 2012
 
-@author: Shareef M Dabdoub
+Author: Shareef M Dabdoub
 '''
+import sys
 from qiime_tools import biom_calc as bc, otu_calc as oc, util
 import argparse
-from collections import namedtuple, OrderedDict
 import json
 import re
 
@@ -94,6 +94,24 @@ def handle_program_options():
 
 def main():
     args = handle_program_options()
+
+    try:
+        with open(args.otu_table):
+            pass
+    except IOError as ioe:
+        sys.exit(
+            '\nError with OTU_Sample abundance data file:{}\n'
+            .format(ioe)
+        )
+
+    try:
+        with open(args.mapping):
+            pass
+    except IOError as ioe:
+        sys.exit(
+            '\nError with mapping file:{}\n'
+            .format(ioe)
+        )
 
     # input data
     with open(args.otu_table) as bF:
