@@ -28,22 +28,9 @@ Required Arguments
 Optional Arguments
 --------------------
 
-.. cmdoption:: -o OUT_FN, --out_fn OUT_FN
-
-    Output file path.
-
 .. cmdoption:: -d {2,3}, --dimensions {2,3}
 
     Choose whether to plot 2D or 3D.
-
-.. cmdoption:: -t TITLE, --title TITLE
-
-    Title of the plot.
-
-.. cmdoption:: --save
-
-    Specify that the figure should be saved directly instead of opening a
-    window in which the plot can be viewed before saving.
 
 .. cmdoption:: -c MAP_CATEGORIES, --map_categories MAP_CATEGORIES
 
@@ -56,6 +43,40 @@ Optional Arguments
 .. cmdoption:: -s POINT_SIZE, --point_size POINT_SIZE
 
     Specify the size of the circles representing each of the samples in the plot.
+
+.. cmdoption:: --pc_order PC_ORDER
+
+    Choose which Principle Coordinates are displayed and in which order, for
+    example: 1,2 (Note the lack of any spaces around the comma).
+
+.. cmdoption:: --x_limits X_LIMITS X_LIMITS
+
+    Specify limits for the x-axis instead of automatic setting based on the
+    data range. Should take the form: --x_limits -0.5 0.5
+
+.. cmdoption:: --y_limits Y_LIMITS Y_LIMITS
+
+    Specify limits for the y-axis instead of automatic setting based on the
+    data range. Should take the form: --y_limits -0.5 0.5
+
+.. cmdoption:: --z_limits Z_LIMITS Z_LIMITS
+
+    Specify limits for the z-axis instead of automatic setting based on the
+    data range. Should take the form: --z_limits -0.5 0.5
+
+.. cmdoption:: -t TITLE, --title TITLE
+
+    Title of the plot.
+
+.. cmdoption:: --dpi DPI
+
+    Set plot quality in Dots Per Inch (DPI). Larger DPI will result in larger file size.
+
+.. cmdoption:: -o OUT_FP, --out_fp OUT_FP
+
+    The path and file name to save the plot under. If specified, the figure
+    will be saved directly instead of opening a window in which the plot can
+    be viewed before saving.
 
 .. cmdoption:: -h, --help
 
@@ -71,7 +92,7 @@ Example plots
    :align: center
 
 
-3d PCoA plot with 2 metadata categories - DiseaseState and SmokingStatus.
+3D PCoA plot with 2 metadata categories - DiseaseState and SmokingStatus.
 
 .. image:: PCoA/PCoA3.png
    :scale: 50%
