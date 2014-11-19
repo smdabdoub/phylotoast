@@ -11,16 +11,6 @@ biom_calc module
 
 --------------------------------
 
-otu_calc module
----------------------------
-
-.. automodule:: qiime_tools.otu_calc
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
---------------------------------
-
 util module
 -----------------------
 
