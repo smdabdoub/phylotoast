@@ -3,46 +3,55 @@
 '''
 Created on Dec 21, 2012
 
-Picking OTUs by BLAST with QIIME against an annotated reference set (such as 
-GreenGenes results in OTU IDs that are sequence IDs from the reference set 
-which can then be looked up directly from the reference set taxonomy table 
-(e.g. greengenes_tax.txt), thus bypassing the need for the assign_taxonomy 
+Picking OTUs by BLAST with QIIME against an annotated reference set (such as
+GreenGenes results in OTU IDs that are sequence IDs from the reference set
+which can then be looked up directly from the reference set taxonomy table
+(e.g. greengenes_tax.txt), thus bypassing the need for the assign_taxonomy
 methods (BLAST, RDP, RTAX)
 
-@author: Shareef Dabdoub
+Author: Shareef Dabdoub
 '''
 from qiime_tools import util
 import argparse
+import sys
 from Bio import SeqIO
-
 
 
 def handle_program_options():
     parser = argparse.ArgumentParser(description="Assign taxonomy to a rep \
                                      set of OTUs that were chosen by BLAST \
                                      from an annotated database.")
-    parser.add_argument('-i','--rep_set_fp', required=True, 
+    parser.add_argument('-i', '--rep_set_fp', required=True,
                         help="The set of representative sequences.")
-    parser.add_argument('-t','--id_to_taxonomy_fp', required=True, 
+    parser.add_argument('-t', '--id_to_taxonomy_fp', required=True,
                         help="Path to tab-delimited file mapping sequences to \
                         assigned taxonomy.")
-    
-    parser.add_argument('-o', '--assigned_taxonomy_fp', 
+
+    parser.add_argument('-o', '--assigned_taxonomy_fp',
                         default='assigned_taxonomy.txt',
                         help="The path to the result file. By default \
                               outputs to assigned_taxonomy.txt")
     parser.add_argument('-v', '--verbose', action='store_true')
-    
+
     return parser.parse_args()
 
 
 def main():
     args = handle_program_options()
-    
+
+    try:
+        with open(args.id_to_taxonomy_fp):
+            pass
+    except IOError as ioe:
+        sys.exit(
+            '\nError mapping sequences to assigned taxonomy filepath:{}\n'
+            .format(ioe)
+        )
+
     # input the ID to Taxonomy table and the rep set
     taxids = util.parse_taxonomy_table(args.id_to_taxonomy_fp)
     rep_set = SeqIO.to_dict(SeqIO.parse(args.rep_set_fp, 'fasta'))
-    
+
     # write out the assigned taxonomy file
     with open(args.assigned_taxonomy_fp, 'w') as outF:
         for taxid in rep_set:
@@ -52,6 +61,6 @@ def main():
     if args.verbose:
         print 'Taxonomy written to: {}'.format(args.assigned_taxonomy_fp)
         print '{} OTU records written'.format(len(rep_set))
-        
+
 if __name__ == '__main__':
     main()
