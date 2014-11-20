@@ -32,13 +32,14 @@ Optional Arguments
 
     Choose whether to plot 2D or 3D.
 
-.. cmdoption:: -c MAP_CATEGORIES, --map_categories MAP_CATEGORIES
+.. cmdoption:: -c COLORS, --colors COLORS
 
-    Any mapping categories, such as treatment type, that will be used to group
-    the data in the output iTol table. For example, one category with three
-    types will result in three data columns in the final output. Two
-    categories with three types each will result in six data columns. Default
-    is no categories and all the data will be treated as a single group.
+    A file containing user defined colors in hex values or matplotlib named colors, each on
+    separate line. If user color list is not sufficient or ont defined, program will use
+    Qualitative Set1 scheme from `brewer colors
+    <http://nbviewer.ipython.org/github/jiffyclub/brewer2mpl/blob/master/demo/brewer2mpl_maps.ipynb>`_.
+    More information on `matplotlib named colors
+    <http://stackoverflow.com/questions/22408237/named-colors-in-matplotlib>`_.
 
 .. cmdoption:: -s POINT_SIZE, --point_size POINT_SIZE
 
