@@ -10,6 +10,7 @@ in a set of result files that need to be merged into a single pick otus
 result.
 '''
 import sys
+import os
 import argparse
 from collections import defaultdict
 
@@ -43,15 +44,9 @@ def handle_program_options():
 def main():
     args = handle_program_options()
 
-    try:
-        with open(args.pick_otus_results):
-            pass
-    except IOError as ioe:
-        sys.exit(
-            '\nError with result files from multiple runs of a pick otus \
-            script:{}\n'
-            .format(ioe)
-        )
+    for file in args.pick_otus_results:
+        if not os.path.exists(file):
+            sys.exit('Error! {} could not be found.'.format(file))
 
     otus = merge_results(args.pick_otus_results)
 
