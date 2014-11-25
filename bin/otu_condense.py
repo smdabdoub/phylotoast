@@ -82,12 +82,6 @@ def main():
     except IOError as ioe:
         sys.exit('\nError with assign_taxonomy output file:{}\n'.format(ioe))
 
-    try:
-        with open(args.pruned_output_file):
-            pass
-    except IOError as ioe:
-        sys.exit('\nError with pruned taxonomy output file:{}\n'.format(ioe))
-
     with open(args.input_assigned_taxonomy, 'rU') as taxF:
         uniqueTaxonomies, nonuniqueTaxonomies = prune_taxonomy(taxF, args.phylogenetic_level)
 
