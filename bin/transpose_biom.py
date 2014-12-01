@@ -3,7 +3,7 @@
 '''
 Created on Jul 1, 2013
 
-@author: Shareef Dabdoub
+Author: Shareef Dabdoub
 '''
 import argparse
 import copy
@@ -13,20 +13,22 @@ import os.path as osp
 import sys
 from qiime_tools import util
 
+
 def split_by_category(biom_cols, mapping, category_id):
     """
     Split up the column data in a biom table by mapping category value.
     """
     columns = defaultdict(list)
-    for i,col in enumerate(biom_cols):
-        columns[mapping[col['id']][category_id]].append((i,col))
+    for i, col in enumerate(biom_cols):
+        columns[mapping[col['id']][category_id]].append((i, col))
 
     return columns
+
 
 def handle_program_options():
     parser = argparse.ArgumentParser(description="Transpose a BIOM-format file\
                                      so that the matrix is sample by species.")
-    parser.add_argument('-i','--input_biom_fp', required=True,
+    parser.add_argument('-i', '--input_biom_fp', required=True,
                         help="The BIOM-format file.")
     parser.add_argument('-m', '--mapping', required=True,
                         help="The mapping file specifying group information \
@@ -36,15 +38,29 @@ def handle_program_options():
                               that will be used to split the data into \
                               separate BIOM files; one for each value found\
                               in the category.")
-    parser.add_argument('-o','--output_biom_fp', default='transposed.biom',
+    parser.add_argument('-o', '--output_biom_fp', default='transposed.biom',
                         required=True, help="The BIOM-format file to write.")
 
     parser.add_argument('-v', '--verbose', action='store_true')
 
     return parser.parse_args()
 
+
 def main():
     args = handle_program_options()
+
+    try:
+        with open(args.input_biom_fp):
+            pass
+    except IOError as ioe:
+        sys.exit('\nError with input BIOM-format file:{}\n'.format(ioe))
+
+    try:
+        with open(args.mapping):
+            pass
+    except IOError as ioe:
+        sys.exit('\nError with mapping file:{}\n'.format(ioe))
+
     out_fp, ext = osp.splitext(args.output_biom_fp)
 
     with open(args.input_biom_fp) as bF:
@@ -79,22 +95,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

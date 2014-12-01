@@ -4,13 +4,14 @@
 """
 Created on Jan 10, 2013
 
-@author: Shareef M Dabdoub
+Author: Shareef M Dabdoub
 
 Generate cluster-computing job scripts for submission in order to run multiple
 simultaneous runs of the QIIME parallel BLAST pick OTUs script.
 """
 
 import argparse
+import sys
 import os.path as osp
 
 PBS_JOB_NAME_SIZE = 15
@@ -29,13 +30,13 @@ def handle_program_options():
                               1.fna, ..., n.fna).")
     parser.add_argument('-s', '--similarity', default=0.97, type=float,
                         help="Sequence similarity threshold [default: 0.97]")
-    parser.add_argument('-j', '--job_script_template', required=True, 
+    parser.add_argument('-j', '--job_script_template', required=True,
                         help="A file template containing placeholders for \
                               variables that this script will fill in \
                               when creating a new job script for each input \
                               FASTA query file. An example file for PBS \
                               systems is included with qiime-tools.")
-    parser.add_argument('-d', '--database', required=True, 
+    parser.add_argument('-d', '--database', required=True,
                         help="The path to the sequence database file to run \
                               the BLAST against.")
     parser.add_argument('-t', '--walltime', type=int, default=10,
@@ -49,22 +50,40 @@ def handle_program_options():
                               the jobs, so this parameter will be truncated if\
                               necessary to accommodate for the number of input\
                               files.")
-    parser.add_argument('-v', '--verbose', action='store_true', 
+    parser.add_argument('-v', '--verbose', action='store_true',
                         help="This will cause the program to print the full\
                         path for each output file to the command line. This \
                         can be used for informational purposes or to pipe (|)\
                         to the PBS multi-submission script to automate job\
                         submission as soon as the scripts are created.")
-    
+
     return parser.parse_args()
 
 
 def main():
     args = handle_program_options()
-    
+
+    try:
+        with open(args.job_script_template):
+            pass
+    except IOError as ioe:
+        sys.exit(
+            '\nError with template file:{}\n'
+            .format(ioe)
+        )
+
+    try:
+        with open(args.database):
+            pass
+    except IOError as ioe:
+        sys.exit(
+            '\nError with sequence database file:{}\n'
+            .format(ioe)
+        )
+
     with open(args.job_script_template, 'rU') as tF:
         template = tF.read()
-    
+
     for fname in args.input_fna:
         fnum = osp.splitext(osp.split(fname)[1])[0]
         job_id_len = len(str(len(args.input_fna))) + 1

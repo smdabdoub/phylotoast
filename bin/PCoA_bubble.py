@@ -3,7 +3,7 @@
 Create a series of PCoA plots where the marker size varies by relative
 abundance of a particular OTU
 
-@author: Shareef M Dabdoub
+Author: Shareef M Dabdoub
 '''
 from __future__ import division
 # built-in
@@ -45,17 +45,17 @@ def rel_abundance(otuID, sampleID, biom, scaling_factor=10000):
 
 
 def calculate_xy_range(data):
-    xr = [float('inf'),float('-inf')]
-    yr = [float('inf'),float('-inf')]
+    xr = [float('inf'), float('-inf')]
+    yr = [float('inf'), float('-inf')]
 
     for cat in data:
         pc1, pc2 = data[cat]['pc1'], data[cat]['pc2']
         if pc1:
-            xr[0] = min(min(pc1),xr[0])
-            xr[1] = max(max(pc1),xr[1])
+            xr[0] = min(min(pc1), xr[0])
+            xr[1] = max(max(pc1), xr[1])
         if pc2:
-            yr[0] = min(min(pc2),yr[0])
-            yr[1] = max(max(pc2),yr[1])
+            yr[0] = min(min(pc2), yr[0])
+            yr[1] = max(max(pc2), yr[1])
 
     return xr, yr
 
@@ -64,19 +64,20 @@ def parse_unifrac(unifracFN):
     """
     Parses the unifrac results file into a dictionary
 
-    :@type unifracFN: str
-    :@param unifracFN: The path to the unifrac results file
-    :@rtype: dict
-    :@return: A dictionary with keys: 'pcd' (principle coordinates data) which
+    :type unifracFN: str
+    :param unifracFN: The path to the unifrac results file
+    :rtype: dict
+    :return: A dictionary with keys: 'pcd' (principle coordinates data) which
               is a dictionary of the data keyed by sample ID,
               'eigvals' (eigenvalues), and 'varexp' (variation explained)
     """
     with open(unifracFN) as uF:
-        unifrac = {'pcd':{}, 'eigvals':[], 'varexp':[]}
+        unifrac = {'pcd': {}, 'eigvals': [], 'varexp': []}
 
         lines = uF.readlines()[1:]
         for line in lines:
-            if line == '\n': break
+            if line == '\n':
+                break
             line = line.split('\t')
             unifrac['pcd'][line[0]] = line[1:]
 
@@ -84,17 +85,18 @@ def parse_unifrac(unifracFN):
         unifrac['varexp'] = lines[-1].split('\t')
         return unifrac
 
+
 def link_samples_to_categories(imap, category_idx):
     """
     Creates a dictionary of category types with all the associated Sample IDs
 
-    :@type imap: dict
-    :@param imap: The mapping data that lists category information
-    :@type category_idx: int
-    :@param category_idx: The index in the mapping data of the user-specified
+    :type imap: dict
+    :param imap: The mapping data that lists category information
+    :type category_idx: int
+    :param category_idx: The index in the mapping data of the user-specified
                           category
-    :@rtype: OrderedDict
-    :@return: A dictionary of category types mapped to a list of corresponding
+    :rtype: OrderedDict
+    :return: A dictionary of category types mapped to a list of corresponding
               sample IDs
     """
     cat_types = defaultdict(list)
@@ -141,7 +143,7 @@ def rstyle(ax):
     ax.xaxis.set_ticks_position('bottom')
     ax.yaxis.set_ticks_position('left')
 
-    if ax.legend_ <> None:
+    if ax.legend_ is not None:
         lg = ax.legend_
         lg.get_frame().set_linewidth(0)
         lg.get_frame().set_alpha(0.5)
@@ -156,7 +158,7 @@ def plot_PCoA(cat_data, otu_name, unifrac, names, colors, xr, yr, outDir):
 #    fig.set_figwidth(10)
     legend = []
 
-    for i,cat in enumerate(cat_data):
+    for i, cat in enumerate(cat_data):
         p.scatter(cat_data[cat]['pc1'], cat_data[cat]['pc2'],
                   cat_data[cat]['size'], color=colors[i], alpha=0.85, marker='o',
                   edgecolor='black')
@@ -171,7 +173,7 @@ def plot_PCoA(cat_data, otu_name, unifrac, names, colors, xr, yr, outDir):
     p.xlim(round(xr[0]*1.5, 1), round(xr[1]*1.5, 1))
     p.ylim(round(yr[0]*1.5, 1), round(yr[1]*1.5, 1))
     rstyle(ax)
-    fig.savefig(os.path.join(outDir,'_'.join(otu_name.split())) + '.png',
+    fig.savefig(os.path.join(outDir, '_'.join(otu_name.split())) + '.png',
                 facecolor='0.75', edgecolor='none')
     p.plt.close(fig)
 
@@ -232,19 +234,43 @@ def handle_program_options():
 def main():
     args = handle_program_options()
 
+    try:
+        with open(args.otu_table):
+            pass
+    except IOError as ioe:
+        sys.exit('\nError with OTU/Sample abundance BIOM format file:{}\n'.format(ioe))
+
+    try:
+        with open(args.unifrac):
+            pass
+    except IOError as ioe:
+        sys.exit('\nError with principle coordinates analysis file:{}\n'.format(ioe))
+
+    try:
+        with open(args.names_colors_ids_fn):
+            pass
+    except IOError as ioe:
+        sys.exit('\nError with input data file:{}\n'.format(ioe))
+
+    try:
+        with open(args.mapping):
+            pass
+    except IOError as ioe:
+        sys.exit('\nError with mapping file:{}\n'.format(ioe))
+
     if not os.path.exists(args.output_dir):
         try:
             os.mkdir(args.output_dir)
-        except OSError, oe:
+        except OSError as oe:
             if os.errno == 2:
                 msg = ('One or more directories in the path provided for ' +
-                      '--output-dir ({}) do not exist. If you are specifying '+
-                      'a new directory for output, please ensure all other ' +
-                      'directories in the path currently exist.')
+                       '--output-dir ({}) do not exist. If you are specifying ' +
+                       'a new directory for output, please ensure all other ' +
+                       'directories in the path currently exist.')
                 sys.exit(msg.format(args.output_dir))
             else:
                 msg = ('An error occurred trying to create the output ' +
-                      'directory ({}) with message: {}')
+                       'directory ({}) with message: {}')
                 sys.exit(msg.format(args.output_dir, oe.strerror))
 
     with open(args.otu_table) as bF:
@@ -270,13 +296,13 @@ def main():
 
     # plot samples based on relative abundance of some OTU ID
     for otuID in otus:
-        cat_data = {cat:{'pc1':[], 'pc2':[], 'size':[], 'zpc1':[], 'zpc2':[]}
+        cat_data = {cat: {'pc1': [], 'pc2': [], 'size': [], 'zpc1': [], 'zpc2': []}
                     for cat in category_ids}
 
         for sid in unifrac['pcd']:
             category = cat_data[imap[sid][category_idx]]
             size = rel_abundance(otuID, sid, biom, args.scaling_factor)
-            #if size > 0:
+            # if size > 0:
             category['pc1'].append(float(unifrac['pcd'][sid][0]))
             category['pc2'].append(float(unifrac['pcd'][sid][1]))
             category['size'].append(size)

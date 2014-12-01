@@ -2,19 +2,20 @@
 '''
 Created on Jan 31, 2013
 
-@author: Shareef Dabdoub
+Author: Shareef Dabdoub
 
 From an input FASTA file, filter out all sequences with barcodes matching those
 in an input mapping file and write to a new file.
 '''
 import argparse
+import sys
 from Bio import SeqIO
 from Bio.Alphabet import generic_dna
 from qiime_tools import util
 
 
 def gather_sequences(fastaFN, mapFN):
-    barcodes = util.parse_map_file(mapFN, 1)[1].keys()
+    barcodes = [entry[1] for entry in util.parse_map_file(mapFN)[1].values()]
     seqs = []
     bcodelen = len(barcodes[0])
     count = 0
@@ -25,6 +26,7 @@ def gather_sequences(fastaFN, mapFN):
             seqs.append(record)
 
     return seqs, count
+
 
 def gather_quality_data(qualityFN, seqs):
     quals = []
@@ -41,11 +43,12 @@ def gather_quality_data(qualityFN, seqs):
 
     return quals
 
+
 def handle_program_options():
     parser = argparse.ArgumentParser(description="From an input FASTA file, \
                                      filter all sequences with barcodes \
                                      matching those in an input mapping file.")
-    parser.add_argument('-i','--input_fasta_fn', required=True,
+    parser.add_argument('-i', '--input_fasta_fn', required=True,
                         help="The sequence data file to be filtered.")
     parser.add_argument('-m', '--mapping_fn', required=True,
                         help="The mapping file containing the barcodes you \
@@ -61,9 +64,35 @@ def handle_program_options():
     return parser.parse_args()
 
 
-
 def main():
     args = handle_program_options()
+
+    try:
+        with open(args.input_fasta_fn):
+            pass
+    except IOError as ioe:
+        sys.exit(
+            '\nError with input sequence data file:{}\n'
+            .format(ioe)
+        )
+
+    try:
+        with open(args.mapping_fn):
+            pass
+    except IOError as ioe:
+        sys.exit(
+            '\nError with mapping file containing the barcodes:{}\n'
+            .format(ioe)
+        )
+
+    try:
+        with open(args.quality_fn):
+            pass
+    except IOError as ioe:
+        sys.exit(
+            '\nError with quality data file:{}\n'
+            .format(ioe)
+        )
 
     seqs, count = gather_sequences(args.input_fasta_fn, args.mapping_fn)
     SeqIO.write(seqs, args.output_prefix+'.fasta', 'fasta')
