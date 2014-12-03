@@ -95,16 +95,16 @@ class biom_calc_Test(unittest.TestCase):
                 error.
         """
         sample = 'Sample3'
-        self.result = bc.relative_abundance(self.biom, sample)
+        self.result = bc.relative_abundance(self.biom)
 
         # List containing manual calculations
         hand_calc = [1/4.0, 1/4.0, 1/4.0, 1/4.0]
 
         # Obtaining list of function calculated relative abundance for sample
-        result1 = self.result.values()      # result1 is a list
-        result2 = result1[0]                # result2 is a dict
+#         result1 = self.result.values()      # result1 is a list
+#         result2 = result1[0]                # result2 is a dict
         # list containing the calculated relative abundance values
-        func_calc = result2.values()
+        func_calc = self.result['Sample3'].values()
 
         # Testing the validity of relative_abundance() function.
         for hand, res in zip(hand_calc, func_calc):
@@ -120,17 +120,18 @@ class biom_calc_Test(unittest.TestCase):
         :return: Returns OK, if testing goal was achieved, otherwise raises
                 error.
         """
-        self.rel_a = bc.relative_abundance(self.biom, ['Sample4'])
+        self.rel_a = bc.relative_abundance(self.biom)
+
         self.result = bc.mean_otu_pct_abundance(
-            self.rel_a, ['GG_OTU_2', 'GG_OTU_3']
+            self.rel_a, ['GG_OTU_1','GG_OTU_2']
             )
 
         # Obtaining lists of function calculations and manual hand calculations
         func_calc = self.result.values()
         result1 = self.rel_a.values()       # result1 is a list
-        result2 = result1[0]                # result2 is a dict
+
         # list containing hand calculated relative abundance values
-        hand_calc = result2.values()
+        hand_calc = [0.25/6, (1.0+0.3333333333333333+0.25+0.7142857142857143+0.3333333333333333)/6]
 
         # Testing the validity of the calculations of mean_otu_pct_abundance().
         for hand, res in zip(hand_calc, func_calc):
@@ -147,10 +148,10 @@ class biom_calc_Test(unittest.TestCase):
         :return: Returns OK, if testing goal was achieved, otherwise
             raises error.
         """
-        self.result = bc.MRA(self.biom, 'Sample4')
+        self.result = bc.MRA(self.biom)
         self.mean_otu = bc.mean_otu_pct_abundance(
-            bc.relative_abundance(self.biom, ['Sample4']),
-            ['GG_OTU_1', 'GG_OTU_2', 'GG_OTU_3', 'GG_OUTU4', 'GG_OTU_5']
+            bc.relative_abundance(self.biom),
+            ['GG_OTU_1', 'GG_OTU_2', 'GG_OTU_3', 'GG_OTU_4', 'GG_OTU_5']
             )
 
         # Obtaining lists of function calculations and

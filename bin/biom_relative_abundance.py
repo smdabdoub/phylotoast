@@ -4,6 +4,7 @@ from __future__ import division
 import argparse
 import json
 import sys
+from qiime_tools import biom_calc as bc
 from qiime_tools import otu_calc as oc
 
 
@@ -21,14 +22,16 @@ def write_relative_abundance(biom, out_fn, sort_by=None):
                      the order in which the Sample IDs appear as columns in
                      the output file.
     """
-    rel_abd = oc.relative_abundance(biom)
+    rel_abd = bc.relative_abundance(biom)
 
     with open(out_fn, 'w') as out_f:
         sids = sorted(set([col['id'] for col in biom['columns']]), key=sort_by)
         out_f.write('#OTU ID\t{}\n'.format('\t'.join(sids)))
+
         for row in biom['rows']:
             otuName = oc.otu_name_biom(row)
-            sabd = [str(rel_abd[otuName][sid]) if sid in rel_abd[otuName] else '0' for sid in sids]
+            otuid = row['id']
+            sabd = [str(rel_abd[sid][otuid]) if sid in rel_abd and otuid in rel_abd[sid] else '0' for sid in sids]
             out_f.write('{}\t{}\n'.format(otuName, '\t'.join(sabd)))
 
 
