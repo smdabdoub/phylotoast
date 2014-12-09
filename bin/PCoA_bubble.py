@@ -175,6 +175,7 @@ def plot_PCoA(cat_data, otu_name, unifrac, names, colors, xr, yr, outDir):
     rstyle(ax)
     fig.savefig(os.path.join(outDir, '_'.join(otu_name.split())) + '.png',
                 facecolor='0.75', edgecolor='none')
+    p.plt.close(fig)
 
 
 def handle_program_options():
