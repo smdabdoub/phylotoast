@@ -139,7 +139,7 @@ def main():
             results = bc.MRA(biom, group.sids)
         elif args.analysis_metric == 'raw':
             results = bc.transform_raw_abundance(biom, sampleIDs=group.sids,
-                                                 sample_abd=True)
+                                                 sample_abd=False)
 
         group.results.update({oc.otu_name_biom(oid_rows[oid]): results[oid]
                              for oid in results})
