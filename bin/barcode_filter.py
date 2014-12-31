@@ -85,14 +85,15 @@ def main():
             .format(ioe)
         )
 
-    try:
-        with open(args.quality_fn):
-            pass
-    except IOError as ioe:
-        sys.exit(
-            '\nError with quality data file:{}\n'
-            .format(ioe)
-        )
+    if args.quality_fn:
+        try:
+            with open(args.quality_fn):
+                pass
+        except IOError as ioe:
+            sys.exit(
+                '\nError with quality data file:{}\n'
+                .format(ioe)
+            )
 
     seqs, count = gather_sequences(args.input_fasta_fn, args.mapping_fn)
     SeqIO.write(seqs, args.output_prefix+'.fasta', 'fasta')

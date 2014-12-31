@@ -11,7 +11,7 @@ from collections import defaultdict
 import math
 
 
-def relative_abundance(biom, sampleIDs):
+def relative_abundance(biom):
     """
     Calculate the relative abundance of each OTUID in a Sample.
 
@@ -26,17 +26,14 @@ def relative_abundance(biom, sampleIDs):
              keyed on OTUID's and their values represent the relative
              abundance of that OTUID in that SampleID.
     """
-    ra = {item['id']: defaultdict(int) for item in biom['columns']
-          if item['id'] in sampleIDs}
+    ra = {item['id']: defaultdict(int) for item in biom['columns']}
     totals = defaultdict(float)
 
     for row, col, amt in biom['data']:
         otuID = biom['rows'][row]['id']
         sampleID = biom['columns'][col]['id']
-
-        if sampleID in sampleIDs:
-            ra[sampleID][otuID] = amt
-            totals[sampleID] += amt
+        ra[sampleID][otuID] = amt
+        totals[sampleID] += amt
 
     return {sid: {oid: ra[sid][oid] / totals[sid] for oid in ra[sid]}
             for sid in ra}
@@ -70,7 +67,7 @@ def mean_otu_pct_abundance(ra, otuIDs):
     return otumeans
 
 
-def MRA(biom, sampleIDs):
+def MRA(biom):
     """
     Calculate the mean relative abundance.
 
@@ -84,7 +81,7 @@ def MRA(biom, sampleIDs):
     :return: A dictionary keyed on OTUID's and their mean relative abundance
              for a given number of sampleIDs.
     """
-    ra = relative_abundance(biom, sampleIDs)
+    ra = relative_abundance(biom)
     otuIDs = {row['id'] for row in biom['rows']}
     return mean_otu_pct_abundance(ra, otuIDs)
 
