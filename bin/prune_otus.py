@@ -11,10 +11,9 @@ OTUs that make up less than a user-defined percentage of the overall
 sequences (default 0.01%)
 '''
 import sys
-from qiime_tools import util
 import argparse
 from collections import defaultdict
-
+from phylotoast import util
 
 def filter_by_sample_pct(otus, nsamples, pct, phyl_level):
     """

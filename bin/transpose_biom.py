@@ -11,7 +11,7 @@ from collections import defaultdict
 import json
 import os.path as osp
 import sys
-from qiime_tools import util
+from phylotoast import util
 
 
 def split_by_category(biom_cols, mapping, category_id):

@@ -11,7 +11,7 @@ import argparse
 import sys
 from Bio import SeqIO
 from Bio.Alphabet import generic_dna
-from qiime_tools import util
+from phylotoast import util
 
 
 def gather_sequences(fastaFN, mapFN):

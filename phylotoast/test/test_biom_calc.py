@@ -9,7 +9,7 @@
 import unittest
 import json
 import math
-from qiime_tools import biom_calc as bc
+from phylotoast import biom_calc as bc
 
 
 class biom_calc_Test(unittest.TestCase):

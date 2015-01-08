@@ -9,7 +9,7 @@ restricted to the OTUs in the BIOM table.
 '''
 import argparse
 import json
-from qiime_tools import util
+from phylotoast import util
 
 
 def handle_program_options():

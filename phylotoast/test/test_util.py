@@ -9,7 +9,7 @@ import unittest
 import os
 import tempfile
 from math import fsum
-from qiime_tools import util as qtu
+from phylotoast import util as qtu
 
 
 class util_Test(unittest.TestCase):

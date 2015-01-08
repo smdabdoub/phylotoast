@@ -10,11 +10,11 @@ Split an input FASTA-formatted file into a user-specified number of
 smaller files such that the data is evenly distributed among them.
 '''
 import sys
-from qiime_tools import util
 import argparse
-from itertools import cycle
 import os
 import os.path as osp
+from itertools import cycle
+from phylotoast import util
 
 
 def split_data(fastaFN, partitions):

@@ -11,10 +11,10 @@ methods (BLAST, RDP, RTAX)
 
 Author: Shareef Dabdoub
 '''
-from qiime_tools import util
-import argparse
 import sys
+import argparse
 from Bio import SeqIO
+from phylotoast import util
 
 
 def handle_program_options():
