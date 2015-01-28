@@ -4,7 +4,7 @@ API
 biom_calc module
 ----------------------------
 
-.. automodule:: qiime_tools.biom_calc
+.. automodule:: phylotoast.biom_calc
     :members:
     :undoc-members:
     :show-inheritance:
@@ -14,7 +14,7 @@ biom_calc module
 util module
 -----------------------
 
-.. automodule:: qiime_tools.util
+.. automodule:: phylotoast.util
     :members:
     :undoc-members:
     :show-inheritance:
