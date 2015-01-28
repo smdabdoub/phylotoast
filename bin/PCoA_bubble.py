@@ -13,6 +13,10 @@ import json
 import os
 import sys
 # 3rd party
+try:
+    import matplotlib
+except ImportError as ie:
+    sys.exit('Import Error. Please install missign module: {}'.format(ie))
 import matplotlib
 matplotlib.use("Agg")  # for use on headless server
 import matplotlib.pylab as p

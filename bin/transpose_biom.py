@@ -7,10 +7,10 @@ Author: Shareef Dabdoub
 '''
 import argparse
 import copy
-from collections import defaultdict
 import json
 import os.path as osp
 import sys
+from collections import defaultdict
 from phylotoast import util
 
 

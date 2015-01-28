@@ -9,6 +9,10 @@ in an input mapping file and write to a new file.
 '''
 import argparse
 import sys
+try:
+    from Bio import SeqIO
+except ImportError as ie:
+    sys.exit('Import Error. Please install missing module: {}'.format(ie))
 from Bio import SeqIO
 from Bio.Alphabet import generic_dna
 from phylotoast import util

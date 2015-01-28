@@ -3,8 +3,12 @@ Created on Dec 6, 2012
 
 Author: Shareef M. Dabdoub
 '''
-import argparse
 import sys
+try:
+    from Bio import SeqIO
+except ImportError as ie:
+    sys.exit('Import Error. Please install missing module: {}'.format(ie))
+import argparse
 from Bio import SeqIO
 from Bio.Seq import Seq
 

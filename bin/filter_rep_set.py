@@ -9,6 +9,10 @@ Step 2 of the condensing process.
 '''
 import argparse
 import sys
+try:
+    from Bio import SeqIO
+except ImportError as ie:
+    sys.exit('Import Error. Please install missing module: {}'.format(ie))
 from Bio import SeqIO
 
 

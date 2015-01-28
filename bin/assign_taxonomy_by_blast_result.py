@@ -12,6 +12,10 @@ methods (BLAST, RDP, RTAX)
 Author: Shareef Dabdoub
 '''
 import sys
+try:
+    from Bio import SeqIO
+except ImportError as ie:
+    sys.exit('Import Error. Please install missing module: {}'.format(ie))
 import argparse
 from Bio import SeqIO
 from phylotoast import util
