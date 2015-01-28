@@ -25,7 +25,7 @@ To install PhyloToAST from PyPI:
 
 .. code-block:: bash
 
-    $ pip install phylotoast
+    $ pip install qiime-tools
     
 From source:
 
