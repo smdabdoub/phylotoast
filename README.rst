@@ -56,7 +56,7 @@ The `PhyloToAST source`_ is hosted on github.
 Citing
 ------
 
-A manuscript describing the qiime-tools software is currently in
+A manuscript describing the PhyloToAST software is currently in
 preparation. Until publication, please cite the github repository and
 the author: Shareef M. Dabdoub.
 
