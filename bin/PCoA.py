@@ -1,11 +1,4 @@
-#!usr/bin/env python
-"""
-Author: Akshay Paropkari
-
-Abstract: Python file for personal testing and debugging.
-"""
 #!/usr/bin/env python
-# coding: utf-8
 import argparse
 from collections import OrderedDict
 import itertools
