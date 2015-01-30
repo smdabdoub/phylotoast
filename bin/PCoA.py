@@ -14,7 +14,7 @@ except ImportError as ie:
     errors.append('matplotlib')
 if len(errors) != 0:
     for item in errors:
-        print 'Import Error. Please install missing module:{}', item
+        print 'Import Error. Please install missing module:', item
     sys.exit()
 from brewer2mpl import qualitative
 from mpl_toolkits.mplot3d import Axes3D
