@@ -113,9 +113,9 @@ def raw_abundance(biom, sampleIDs=None, sample_abd=True):
 
         if sampleIDs is None or sampleID in sampleIDs:
             if sample_abd:
-                results[otuID] += amt
-            else:
                 results[sampleID] += amt
+            else:
+                results[otuID] += amt
 
     return results
 
