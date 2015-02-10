@@ -7,11 +7,11 @@ Author: Shareef Dabdoub
 '''
 import argparse
 import copy
-from collections import defaultdict
 import json
 import os.path as osp
 import sys
-from qiime_tools import util
+from collections import defaultdict
+from phylotoast import util
 
 
 def split_by_category(biom_cols, mapping, category_id):

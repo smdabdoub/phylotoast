@@ -5,9 +5,9 @@ Automated tests for QIIME-tools
 '''
 import unittest
 
-import qiime_tools
-from qiime_tools import iTol
-from qiime_tools import sanger_qiimify
+import phylotoast
+from phylotoast import iTol
+from phylotoast import sanger_qiimify
 
 
 #################

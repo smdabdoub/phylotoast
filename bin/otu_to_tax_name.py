@@ -2,7 +2,7 @@
 
 import argparse
 import sys
-from qiime_tools import otu_calc as otuc, util
+from phylotoast import otu_calc as otuc, util
 
 
 def handle_program_options():

@@ -3,6 +3,28 @@
 Release History
 ---------------
 
+1.2.0 (2015-01-29)
+++++++++++++++++++
+
+**Improvements**
+
+- Renamed "QIIME-tools" to "PhyloToAST".
+- Added travis.yml file to implement continuous integration using Travis IC.
+- Modified the README file to conform with the name change.
+- Added PCOA.py script allowing users to create 2D or 3D plots.
+- Added restrict_repset.py script, which allows users to create a new OTU representative set file from a filtered BIOM table.
+- Updated imports in all the scripts to use "phylotoast" instead of "qiime_tools".
+- Improved error handling mechanism in all binary scripts.
+
+  - Added try...catch blocks for ImportError and IOError for all third party imports and user required input file handles.
+  - Added user friendly error message to enable quick debugging.
+  
+- Improved and updated all API scripts with new functions.
+
+  - Binary scripts now import API scripts and use the functions from API, thus, reducing binary script complexities.
+  
+- Modified all scripts to conform to PEP8 format using flake8 module.
+
 1.1.2 (2014-09-19)
 ++++++++++++++++++
 

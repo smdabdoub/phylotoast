@@ -21,7 +21,7 @@ setup(
   description='Useful additions to the QIIME analysis pipeline including tools for data visualization and cluster-computing.',
   author='Shareef M. Dabdoub',
   author_email='dabdoub.2@osu.edu',
-  packages=['qiime_tools', 'qiime_tools.test'],
+  packages=['phylotoast', 'phylotoast.test'],
   url='https://github.com/smdabdoub/qiime-tools',
   #install_requires=requires,
   scripts=scripts,

@@ -287,7 +287,7 @@ def parse_unifrac(unifracFN):
              'eigvals' (eigenvalues), and 'varexp' (variation explained)
     """
     with open(unifracFN) as uF:
-        unifrac = {'pcd': {}, 'eigvals': [], 'varexp': []}
+        unifrac = {'pcd': OrderedDict(), 'eigvals': [], 'varexp': []}
 
         lines = uF.readlines()[1:]
         for line in lines:

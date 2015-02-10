@@ -5,10 +5,10 @@ Created on Feb 8, 2012
 Author: Shareef M Dabdoub
 '''
 import sys
-from qiime_tools import biom_calc as bc, otu_calc as oc, util
-import argparse
 import json
 import re
+import argparse
+from phylotoast import biom_calc as bc, otu_calc as oc, util
 
 
 def find_otu(otuid, tree):

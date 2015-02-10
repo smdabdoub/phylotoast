@@ -11,10 +11,14 @@ methods (BLAST, RDP, RTAX)
 
 Author: Shareef Dabdoub
 '''
-from qiime_tools import util
-import argparse
 import sys
+try:
+    from Bio import SeqIO
+except ImportError as ie:
+    sys.exit('Import Error. Please install missing module: {}'.format(ie))
+import argparse
 from Bio import SeqIO
+from phylotoast import util
 
 
 def handle_program_options():

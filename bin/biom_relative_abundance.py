@@ -4,8 +4,8 @@ from __future__ import division
 import argparse
 import json
 import sys
-from qiime_tools import biom_calc as bc
-from qiime_tools import otu_calc as oc
+from phylotoast import biom_calc as bc
+from phylotoast import otu_calc as oc
 
 
 def write_relative_abundance(biom, out_fn, sort_by=None):

@@ -11,8 +11,8 @@ import json
 import os
 import tempfile
 import sys
-from qiime_tools import otu_calc as oc
-from qiime_tools import biom_calc as bc
+from phylotoast import otu_calc as oc
+from phylotoast import biom_calc as bc
 
 
 class otu_calc_Test(unittest.TestCase):

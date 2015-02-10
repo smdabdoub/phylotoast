@@ -1,13 +1,25 @@
 #!/usr/bin/env python
-# coding: utf-8
 import argparse
 from collections import OrderedDict
 import itertools
 import sys
+errors=[]
+try:
+    from brewer2mpl import qualitative
+except ImportError as ie:
+    errors.append('brewer2mpl')
+try:
+    from mpl_toolkits.mplot3d import Axes3D
+except ImportError as ie:
+    errors.append('matplotlib')
+if len(errors) != 0:
+    for item in errors:
+        print 'Import Error. Please install missing module:', item
+    sys.exit()
 from brewer2mpl import qualitative
 from mpl_toolkits.mplot3d import Axes3D
 from pylab import *
-from qiime_tools import util
+from phylotoast import util
 
 def parse_colors(file, categories=None):
     """
@@ -33,7 +45,7 @@ def parse_colors(file, categories=None):
                 colors.append(line)
 
     diff = len(categories) - len(colors)
-    bmap = qualitative.Set1[9]
+    bmap = qualitative.Paired[12]
     brewer_colors = itertools.cycle(bmap.hex_colors)
     colors.extend([brewer_colors.next() for _ in range(diff)])
 
@@ -141,12 +153,12 @@ def main():
     categories = OrderedDict([(condition, {'pc1': [], 'pc2': [], 'pc3': []})
                   for condition in data_gather.keys()])
 
-    bmap = qualitative.Set1[9]
+    bmap = qualitative.Paired[12]
     bcolors = itertools.cycle(bmap.hex_colors)
     if not args.colors:
         colors = [bcolors.next() for _ in categories]
     else:
-        colors = parse_colors(args.colors, args.colorby)
+        colors = parse_colors(args.colors, categories)
 
     parsed_unifrac = util.parse_unifrac(args.coord_fp)
 
@@ -161,11 +173,11 @@ def main():
             if sid in dc.sids:
                 cat = condition
                 break
-        categories[cat]['pc1'].append(float(points[pco[0] - 1]))
-        categories[cat]['pc2'].append(float(points[pco[1] - 1]))
+        categories[cat]['pc1'].append((sid, float(points[pco[0] - 1])))
+        categories[cat]['pc2'].append((sid, float(points[pco[1] - 1])))
 
         if args.dimensions == 3:
-            categories[cat]['pc3'].append(float(points[pco[2] - 1]))
+            categories[cat]['pc3'].append((sid, float(points[pco[2] - 1])))
 
     axis_str = "PC{} - Percent variation explained {:.2f}%"
     # initialize plot
@@ -182,19 +194,29 @@ def main():
     # plot data
     for i, cat in enumerate(categories):
         if args.dimensions == 3:
-            ax.scatter(xs=categories[cat]['pc1'], ys=categories[cat]['pc2'],
-                       zs=categories[cat]['pc3'], zdir='z', c=colors[i],
+            ax.scatter(xs=[e[1] for e in categories[cat]['pc1']],
+                       ys=[e[1] for e in categories[cat]['pc2']],
+                       zs=[e[1] for e in categories[cat]['pc3']], zdir='z',
+                       c=colors[i],
                        s=args.point_size)
         else:
-            ax.scatter(categories[cat]['pc1'], categories[cat]['pc2'],
+            ax.scatter([e[1] for e in categories[cat]['pc1']],
+                       [e[1] for e in categories[cat]['pc2']],
                        c=colors[i], s=args.point_size)
+
+# Script to annotate PCoA points.
+#             for x, y in zip(categories[cat]['pc1'], categories[cat]['pc2']):
+#                 ax.annotate(
+#                     x[0], xy=(x[1], y[1]), xytext=(-10, -10),
+#                     textcoords='offset points', ha='center', va='center',
+#                     )
 
     # customize plot options
     if args.x_limits:
         ax.set_xlim(args.x_limits)
     if args.y_limits:
         ax.set_ylim(args.y_limits)
-    
+
     ax.set_xlabel(axis_str.format(pco[0], float(pc1v)))
     ax.set_ylabel(axis_str.format(pco[1], float(pc2v)))
 
