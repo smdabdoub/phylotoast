@@ -185,13 +185,13 @@ class biom_calc_Test(unittest.TestCase):
                       'GG_OTU_5']
 
         # Testing validity of raw_abundance() function.
-        self.assertItemsEqual(hand_calc, self.result.values(),
+        self.assertItemsEqual(hand_calc1, self.result.values(),
                               msg='Raw abundances not calculated accurately.')
-        self.assertItemsEqual(hand_calc1, self.result1.values(),
+        self.assertItemsEqual(hand_calc, self.result1.values(),
                               msg='Raw abundances not calculated accurately.')
-        self.assertItemsEqual(self.result.keys(), hand_calc2,
+        self.assertItemsEqual(self.result.keys(), hand_calc3,
                               msg='Abundances not calculated for SampleID\'s')
-        self.assertItemsEqual(self.result1.keys(), hand_calc3,
+        self.assertItemsEqual(self.result1.keys(), hand_calc2,
                               msg='Abundances not calculated for OTUID\'s')
 
     def test_transform_raw_abundance(self):
