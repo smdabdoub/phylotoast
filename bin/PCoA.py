@@ -207,7 +207,7 @@ def main():
 # Script to annotate PCoA points.
 #             for x, y in zip(categories[cat]['pc1'], categories[cat]['pc2']):
 #                 ax.annotate(
-#                     x[0], xy=(x[1], y[1]), xytext=(-10, -10),
+#                     x[0], xy=(x[1], y[1]), xytext=(-10, -15),
 #                     textcoords='offset points', ha='center', va='center',
 #                     )
 
