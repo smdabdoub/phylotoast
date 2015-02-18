@@ -141,3 +141,14 @@ def transform_raw_abundance(biom, fn=math.log10,
     """
     totals = raw_abundance(biom, sampleIDs, sample_abd)
     return {sid: fn(abd) for sid, abd in totals.items()}
+
+
+def arcsine_sqrt_transform(rel_abd):
+    """
+    Takes the proportion data from relative_abundance() and applies the variance
+    stabilizing arcsine square root transformation:
+    
+        X = sin^{-1} \sqrt p
+    """
+    arcsint = lambda p: math.asin(math.sqrt(p))
+    return {col_id: {row_id: arcsint(rel_abd[col_id][row_id]) for row_id in rel_abd[col_id]} for col_id in rel_abd}
