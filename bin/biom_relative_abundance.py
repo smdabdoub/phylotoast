@@ -1,5 +1,9 @@
 #!/usr/bin/env python
-
+"""
+Given a BIOM table, calculate per-sample relative abundance for
+each OTU and write out to a tab-separated file listing OTUs as
+rows and Samples as columns.
+"""
 from __future__ import division
 import argparse
 import json
@@ -8,7 +12,7 @@ from phylotoast import biom_calc as bc
 from phylotoast import otu_calc as oc
 
 
-def write_relative_abundance(biom, out_fn, sort_by=None):
+def write_relative_abundance(rel_abd, biom, out_fn, sort_by=None):
     """
     Given a BIOM table, calculate per-sample relative abundance for
     each OTU and write out to a tab-separated file listing OTUs as
@@ -22,8 +26,6 @@ def write_relative_abundance(biom, out_fn, sort_by=None):
                      the order in which the Sample IDs appear as columns in
                      the output file.
     """
-    rel_abd = bc.relative_abundance(biom)
-
     with open(out_fn, 'w') as out_f:
         sids = sorted(set([col['id'] for col in biom['columns']]), key=sort_by)
         out_f.write('#OTU ID\t{}\n'.format('\t'.join(sids)))
@@ -43,6 +45,9 @@ def handle_program_options():
                         help="The BIOM file path.")
     parser.add_argument('-o', '--output_tsv_fp', default='relative_abundance.tsv',
                         help="A TSV table of relative OTU abundance data.")
+    parser.add_argument('--stabilize_variance', action='store_true',
+                        help="Apply the variance-stabilizing arcsine square\
+                              root transformation to the OTU proportion data.")
 
     return parser.parse_args()
 
@@ -54,14 +59,15 @@ def main():
         with open(args.input_biom_fp):
             pass
     except IOError as ioe:
-        sys.exit(
-            '\nError in BIOM file path:{}\n'
-            .format(ioe)
-        )
+        sys.exit('\nError in BIOM file path: {}\n'.format(ioe))
 
     with open(args.input_biom_fp, 'rU') as in_f:
         biom = json.load(in_f)
-        write_relative_abundance(biom, args.output_tsv_fp)
+        rel_abd = bc.relative_abundance(biom)
+        if args.stabilize_variance:
+            rel_abd = bc.arcsine_sqrt_transform(rel_abd)
+        
+        write_relative_abundance(rel_abd, biom, args.output_tsv_fp)
 
 if __name__ == '__main__':
     main()
