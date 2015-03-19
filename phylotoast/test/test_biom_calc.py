@@ -217,6 +217,27 @@ class biom_calc_Test(unittest.TestCase):
             msg='Function did not calculate the transformation accurately.'
         )
 
+    def test_arcsine_sqrt_transform(self):
+        """
+        Testing arcsine_sqrt_transform() function of biom_calc.py.
+
+        :return: Returns OK if testing goal is achieved, otherwise raises
+                 error.
+        """
+        self.result1 = bc.relative_abundance(self.biom)
+        self.result2 = bc.arcsine_sqrt_transform(self.result1)
+
+        # Obtaining results to compare.
+        hand_calc = [1.00685369, 0.563942641]
+        func_calc = self.result2.values()[3].values()
+
+        # Testing validity of the transforms.
+        for hand, func in zip(hand_calc, func_calc):
+            self.assertAlmostEqual(
+                hand, func, places=7,
+                msg='Function did not calculate trnasformation accurately.'
+            )
+
     def tearDown(self):
         """
         No particular event to clean, delete or close in testing biom_calc.py.
