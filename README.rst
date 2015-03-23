@@ -12,7 +12,12 @@ PhyloToAST
     :target: https://pypi.python.org/pypi/qiime-tools/
     :alt: Download format
 
-.. image:: images/PCoA2.png
+.. figure:: images/PCoA2.png
+   :scale: 75%
+   :alt: PCoA figure
+.. figure:: iamges/iTol_5_categories.png
+   :scale: 75%
+   :alt: iTol tree
 
 The PhyloToAST project is a collection of python code and scripts that
 modify the original QIIME [1] pipeline by adding/changing several
