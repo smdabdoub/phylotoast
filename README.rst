@@ -15,7 +15,7 @@ PhyloToAST
 .. figure:: images/PCoA2.png
    :scale: 75%
    :alt: PCoA figure
-.. figure:: iamges/iTol_5_categories.png
+.. figure:: images/iTol_5_categories.png
    :scale: 75%
    :alt: iTol tree
 
