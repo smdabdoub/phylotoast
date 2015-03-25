@@ -12,11 +12,7 @@ PhyloToAST
     :target: https://pypi.python.org/pypi/qiime-tools/
     :alt: Download format
 
-.. image:: images/iTol3.png
-   :align: center
-   :scale: 50%
-
-.. image:: images/PCoA2.png
+.. image:: images/readmepic.png
    :align: center
    :scale: 50%
 
