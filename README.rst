@@ -12,6 +12,10 @@ PhyloToAST
     :target: https://pypi.python.org/pypi/qiime-tools/
     :alt: Download format
 
+.. image:: images/readmepic.png
+   :align: center
+   :scale: 50%
+
 The PhyloToAST project is a collection of python code and scripts that
 modify the original QIIME [1] pipeline by adding/changing several
 steps including: support for cluster-computing, multiple primer support
@@ -26,7 +30,7 @@ To install PhyloToAST from PyPI:
 .. code-block:: bash
 
     $ pip install qiime-tools
-    
+
 From source:
 
 .. code-block:: bash
@@ -63,10 +67,10 @@ the author: Shareef M. Dabdoub.
 Publications using PhyloToAST
 ------------------------------
 
-Mason et al., *The subgingival microbiome of clinically healthy current 
+Mason et al., *The subgingival microbiome of clinically healthy current
 and never smokers*. The ISME Journal, 2014; `doi:10.1038/ismej.2014.114`_
 
-Dabdoub et al., *Patient-specific Analysis of Periodontal and Peri-implant Microbiomes*. 
+Dabdoub et al., *Patient-specific Analysis of Periodontal and Peri-implant Microbiomes*.
 Journal of Dental Research, 2013; `doi: 10.1177/0022034513504950`_
 
 References
