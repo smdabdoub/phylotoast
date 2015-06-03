@@ -87,6 +87,9 @@ def handle_program_options():
                               as specified in --map_categories), raw (outputs \
                               the actual sequence abundance data for \
                               each OTU).")
+    parser.add_argument('--stabilize_variance', action='store_true', default=False,
+                        help="Apply the variance-stabilizing arcsine square\
+                              root transformation to the OTU proportion data.")
 #    parser.add_argument('-v', '--verbose', action='store_true')
 
     return parser.parse_args()
@@ -133,10 +136,13 @@ def main():
     if args.map_categories is not None:
         categories = args.map_categories.split(',')
 
+    # set transform if --stabilize_variance is specfied
+    tform = bc.arcsine_sqrt_transform if args.stabilize_variance else None
+
     groups = util.gather_categories(imap, map_header, categories)
     for group in groups.values():
         if args.analysis_metric in ['MRA', 'NMRA']:
-            results = bc.MRA(biom, group.sids)
+            results = bc.MRA(biom, group.sids, transform=tform)
         elif args.analysis_metric == 'raw':
             results = bc.transform_raw_abundance(biom, sampleIDs=group.sids,
                                                  sample_abd=False)
