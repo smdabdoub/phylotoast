@@ -18,7 +18,7 @@ scripts = ['bin/PCoA_bubble.py', 'bin/biom_relative_abundance.py', 'bin/filter_r
 
 setup(
   name='phylotoast',
-  version='1.1.2',
+  version='1.2.0',
   description='Useful additions to the QIIME analysis pipeline including tools for data visualization and cluster-computing.',
   author='Shareef M. Dabdoub',
   author_email='dabdoub.2@osu.edu',
