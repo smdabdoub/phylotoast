@@ -35,7 +35,7 @@ def handle_program_options():
                               variables that this script will fill in \
                               when creating a new job script for each input \
                               FASTA query file. An example file for PBS \
-                              systems is included with qiime-tools.")
+                              systems is included with phylotoast.")
     parser.add_argument('-d', '--database', required=True,
                         help="The path to the sequence database file to run \
                               the BLAST against.")
