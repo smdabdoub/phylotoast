@@ -11,7 +11,7 @@ from collections import defaultdict
 import math
 
 
-def relative_abundance(biom):
+def relative_abundance(biom, sampleIDs=None):
     """
     Calculate the relative abundance of each OTUID in a Sample.
 
@@ -26,14 +26,20 @@ def relative_abundance(biom):
              keyed on OTUID's and their values represent the relative
              abundance of that OTUID in that SampleID.
     """
-    ra = {item['id']: defaultdict(int) for item in biom['columns']}
+    if sampleIDs is None:
+        sampleIDs = [col['id'] for col in biom['columns']]
+
+    ra = {item['id']: defaultdict(int) for item in biom['columns']
+          if item['id'] in sampleIDs}
     totals = defaultdict(float)
 
     for row, col, amt in biom['data']:
         otuID = biom['rows'][row]['id']
         sampleID = biom['columns'][col]['id']
-        ra[sampleID][otuID] = amt
-        totals[sampleID] += amt
+
+        if sampleID in sampleIDs:
+            ra[sampleID][otuID] = amt
+            totals[sampleID] += amt
 
     return {sid: {oid: ra[sid][oid] / totals[sid] for oid in ra[sid]}
             for sid in ra}
@@ -67,21 +73,20 @@ def mean_otu_pct_abundance(ra, otuIDs):
     return otumeans
 
 
-def MRA(biom):
+def MRA(biom, sampleIDs=None, transform=None):
     """
     Calculate the mean relative abundance.
 
     :type biom: A BIOM file format converted to JSON string format structure.
     :param biom: OTU table format.
 
-    :type sampleIDs: List
-    :param sampleIDs: A list of column id's from BIOM format OTU table.
-
     :rtype: dict
     :return: A dictionary keyed on OTUID's and their mean relative abundance
              for a given number of sampleIDs.
     """
-    ra = relative_abundance(biom)
+    ra = relative_abundance(biom, sampleIDs)
+    if transform is not None:
+        ra = transform(ra)
     otuIDs = {row['id'] for row in biom['rows']}
     return mean_otu_pct_abundance(ra, otuIDs)
 
