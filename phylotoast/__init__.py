@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-__title__ = 'qiime-tools'
+__title__ = 'phylotoast'
 __version__ = '1.1.2'
 __author__ = 'Shareef M Dabdoub'
 __license__ = 'MIT'

@@ -17,17 +17,17 @@ scripts = ['bin/PCoA_bubble.py', 'bin/biom_relative_abundance.py', 'bin/filter_r
            'bin/restrict_repset.py', 'bin/LDA.py']
 
 setup(
-  name='qiime-tools',
+  name='phylotoast',
   version='1.1.2',
   description='Useful additions to the QIIME analysis pipeline including tools for data visualization and cluster-computing.',
   author='Shareef M. Dabdoub',
   author_email='dabdoub.2@osu.edu',
   packages=['phylotoast', 'phylotoast.test'],
-  url='https://github.com/smdabdoub/qiime-tools',
+  url='https://github.com/smdabdoub/phylotoast',
   #install_requires=requires,
   scripts=scripts,
   data_files=[('data', ['data/pbs_job_template.pbs', 'data/slurm_job_template.sbatch'])],
-  keywords=['bioinformatics', 'QIIME', 'microbial ecology', '16S', 'microbiology'],
+  keywords=['bioinformatics', 'QIIME', 'phylotoast', 'microbial ecology', '16S', 'microbiology'],
   license='MIT',
   classifiers=[
         'Development Status :: 5 - Production/Stable',

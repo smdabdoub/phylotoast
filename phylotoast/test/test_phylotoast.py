@@ -1,5 +1,5 @@
 '''
-Automated tests for QIIME-tools
+Automated tests for PhyloToAST
 
 @author: Shareef Dabdoub
 '''
