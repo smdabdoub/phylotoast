@@ -21,7 +21,6 @@ Contents:
    :maxdepth: 2
 
    scripts/index.txt
-   phylotoast
 
 
 Citations:
