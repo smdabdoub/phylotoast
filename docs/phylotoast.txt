@@ -1,0 +1,22 @@
+API
+===================
+
+biom_calc module
+----------------------------
+
+.. automodule:: phylotoast.biom_calc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+--------------------------------
+
+util module
+-----------------------
+
+.. automodule:: phylotoast.util
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
