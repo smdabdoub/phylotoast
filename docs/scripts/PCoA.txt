@@ -1,0 +1,100 @@
+PCoA.py
+=================
+
+Create a series of 2D or 3D PCoA plots where the marker size varies by relative
+abundance of a particular OTU.
+
+.. code-block:: bash
+
+    usage: PCoA.py [-h] -i COORD_FP -m MAP_FP -b COLORBY [-o OUT_FN] [-d {2,3}][-t TITLE] [--save] [-c MAP_CATEGORIES] [-s POINT_SIZE]
+
+
+Required Arguments
+---------------------
+
+.. cmdoption:: -i COORD_FP, --coord_fp COORD_FP
+
+    Input principal coordinates filepath (i.e., resulting file from principal_coordinates.py).
+
+.. cmdoption:: -m MAP_FP, --map_fp MAP_FP
+
+    Input metadata mapping file-path.
+
+.. cmdoption:: -b COLORBY, --colorby COLORBY
+
+     Metadata categories (column headers) to color by in the plots.
+
+
+Optional Arguments
+--------------------
+
+.. cmdoption:: -d {2,3}, --dimensions {2,3}
+
+    Choose whether to plot 2D or 3D.
+
+.. cmdoption:: -c COLORS, --colors COLORS
+
+    A file containing user defined colors in hex values or matplotlib named colors, each on
+    separate line. If user color list is not sufficient or ont defined, program will use
+    Qualitative Set1 scheme from `brewer colors
+    <http://nbviewer.ipython.org/github/jiffyclub/brewer2mpl/blob/master/demo/brewer2mpl_maps.ipynb>`_.
+    More information on `matplotlib named colors
+    <http://stackoverflow.com/questions/22408237/named-colors-in-matplotlib>`_.
+
+.. cmdoption:: -s POINT_SIZE, --point_size POINT_SIZE
+
+    Specify the size of the circles representing each of the samples in the plot.
+
+.. cmdoption:: --pc_order PC_ORDER
+
+    Choose which Principle Coordinates are displayed and in which order, for
+    example: 1,2 (Note the lack of any spaces around the comma).
+
+.. cmdoption:: --x_limits X_LIMITS X_LIMITS
+
+    Specify limits for the x-axis instead of automatic setting based on the
+    data range. Should take the form: --x_limits -0.5 0.5
+
+.. cmdoption:: --y_limits Y_LIMITS Y_LIMITS
+
+    Specify limits for the y-axis instead of automatic setting based on the
+    data range. Should take the form: --y_limits -0.5 0.5
+
+.. cmdoption:: --z_limits Z_LIMITS Z_LIMITS
+
+    Specify limits for the z-axis instead of automatic setting based on the
+    data range. Should take the form: --z_limits -0.5 0.5
+
+.. cmdoption:: -t TITLE, --title TITLE
+
+    Title of the plot.
+
+.. cmdoption:: --dpi DPI
+
+    Set plot quality in Dots Per Inch (DPI). Larger DPI will result in larger file size.
+
+.. cmdoption:: -o OUT_FP, --out_fp OUT_FP
+
+    The path and file name to save the plot under. If specified, the figure
+    will be saved directly instead of opening a window in which the plot can
+    be viewed before saving.
+
+.. cmdoption:: -h, --help
+
+    Show the help message and exit.
+
+Example plots
+--------------
+
+2D PCoA plot with 2 metadata categories - DiseaseState and SmokingStatus.
+
+.. image:: PCoA/PCoA2.png
+   :scale: 50%
+   :align: center
+
+
+3D PCoA plot with 2 metadata categories - DiseaseState and SmokingStatus.
+
+.. image:: PCoA/PCoA3.png
+   :scale: 50%
+   :align: center

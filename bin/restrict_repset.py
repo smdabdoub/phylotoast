@@ -37,11 +37,13 @@ def main():
         biom_otus = {row['id'] for row in  json.load(bf)['rows']}
 
     repset = util.parseFASTA(args.repset_fp)
+    seq_ids = set()
 
     with open(args.repset_out_fp, 'w') as out_f:
         fasta_str = ">{} {}\n{}\n"
         for seq in repset:
-            if seq.id in biom_otus:
+            if seq.id not in seq_ids and seq.id in biom_otus:
+                seq_ids.add(seq.id)
                 out_f.write(fasta_str.format(seq.id, seq.descr, seq.data))
 
 

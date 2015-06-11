@@ -5,6 +5,9 @@
 *.fasta
 *.biom
 
+# Spinx
+_build
+
 # Miscellaneous
 .project
 .pydevproject
