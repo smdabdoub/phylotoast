@@ -60,9 +60,9 @@ The `PhyloToAST source`_ is hosted on github.
 Citing
 ------
 
-A manuscript describing the PhyloToAST software is currently in
-preparation. Until publication, please cite the github repository and
-the author: Shareef M. Dabdoub.
+Dabdoub, S.M. and Kumar, P.S., *PhyloToAST: Bioinformatics tools for
+species-level analysis and visualization of complex microbial communities*.
+2015. (Manuscript in preparation).
 
 Publications using PhyloToAST
 ------------------------------
