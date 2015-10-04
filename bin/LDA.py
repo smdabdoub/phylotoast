@@ -93,6 +93,9 @@ def handle_program_options():
     parser.add_argument('--dpi', default=200, type=int,
                         help="Set plot quality in Dots Per Inch (DPI). Larger\
                               DPI will result in larger file size.")
+    parser.add_argument('--save_lda_input',
+                        help="Save a CSV-format file of the transposed LDA-input\
+                              table to the file specifed by this option.")
     parser.add_argument('-o', '--out_fp', default="",
                         help="The path and file name to save the plot under.\
                               If specified, the figure will be saved directly\
@@ -121,6 +124,9 @@ def main():
     class_colors = merge_dicts(*[{class_map[sid]: color for sid in color_gather[color].sids} for color in color_gather])
 
     df.insert(0, "Condition", [class_map[entry] for entry in df.index])
+
+    if args.save_lda_input:
+      df.to_csv(args.save_lda_input)
 
     X_lda, y_lda = run_LDA(df)
 
