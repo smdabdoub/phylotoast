@@ -9,6 +9,7 @@ warnings.filterwarnings("ignore")
 
 import sys
 import argparse
+import csv
 import itertools
 import os.path as osp
 importerrors = []
@@ -121,6 +122,20 @@ def plot_group_diversity(diversities, grp_colors, title, diversity_type, out_dir
     fig_div.savefig(osp.join(out_dir, diversity_type+'.'+plot_ext), facecolor='white',
                     edgecolor='none', bbox_inches='tight', pad_inches=0.5)
 
+def write_diversity_metrics(data, fp=None):
+    """
+    Given a dictionary of diversity calculations (keyed by method)
+    write out the data to a file.
+    """
+    if fp is None:
+        fp = "./diversity_data.txt"
+    
+    with open(fp, 'w') as outf:
+        out = csv.writer(outf, delimiter='\t')
+        out.writerow(data.keys())
+        for line in zip(*data.values()):
+            out.writerow(line)
+
 
 def handle_program_options():
     """Parses the given options passed in at the command line."""
@@ -159,8 +174,9 @@ def handle_program_options():
                         help="The directory plots will be saved to.")
     parser.add_argument('--image_type', default='png',
                         help="The type of image to save: PNG, SVG, PDF, EPS, etc...")
-    parser.add_argument('--save_calculation',
-                        help="A text file containing the calculated metrics will be output.")
+    parser.add_argument('--save_calculations',
+                        help="A text file containing the calculated metrics will be stored\
+                        to the file system. Default: 'diversity_data.txt'")
     return parser.parse_args()
 
 
@@ -211,7 +227,9 @@ def main():
             print_KruskalWallisH(div_calc.values())
         print
 
-
+        if args.save_calculations:
+            prefix = '_'.join(x_label.split())
+            write_diversity_metrics(div_calc, osp.join(args.out_dir, '_'.join([prefix, args.save_calculations])))
 
 
     # # Chao1 Diversity
