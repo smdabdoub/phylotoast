@@ -76,14 +76,16 @@ def gather_samples(biomT):
 
 def calc_diversity(method, parsed_mapf, biom, cats, cats_index):
     counts = {cat: [] for cat in cats}
+    sample_ids = []
 
     for sid, sample_counts in gather_samples(biom).items():
+        sample_ids.append(sid)
         if sid in parsed_mapf:
             counts[parsed_mapf[sid][cats_index]].append(sample_counts)
 
     div_calc = {cat: [method(count) for count in counts] for cat, counts in counts.items()}
    
-    return div_calc
+    return div_calc, sample_ids
 
 
 def print_WilcoxonSRT(x, y=None):
@@ -122,7 +124,7 @@ def plot_group_diversity(diversities, grp_colors, title, diversity_type, out_dir
     fig_div.savefig(osp.join(out_dir, diversity_type+'.'+plot_ext), facecolor='white',
                     edgecolor='none', bbox_inches='tight', pad_inches=0.5)
 
-def write_diversity_metrics(data, fp=None):
+def write_diversity_metrics(data, sample_ids, fp=None):
     """
     Given a dictionary of diversity calculations (keyed by method)
     write out the data to a file.
@@ -132,8 +134,9 @@ def write_diversity_metrics(data, fp=None):
     
     with open(fp, 'w') as outf:
         out = csv.writer(outf, delimiter='\t')
-        out.writerow(data.keys())
-        for line in zip(*data.values()):
+        out.writerow(['Sample ID'] + data.keys())
+        for i, line in enumerate(zip(*data.values())):
+            line = [sample_ids[i]] + list(line)
             out.writerow(line)
 
 
@@ -214,7 +217,7 @@ def main():
         if method not in alpha.__all__:
             sys.exit("ERROR: Diversity metric not found: " + method)
         metric = eval('alpha.'+method)
-        div_calc = calc_diversity(metric, sample_map, biom_tbl, cat_vals, cat_idx)
+        div_calc, sample_ids = calc_diversity(metric, sample_map, biom_tbl, cat_vals, cat_idx)
         
         plot_group_diversity(div_calc, colors, plot_title, x_label,
                              args.out_dir, args.image_type)
@@ -229,7 +232,7 @@ def main():
 
         if args.save_calculations:
             prefix = '_'.join(x_label.split())
-            write_diversity_metrics(div_calc, osp.join(args.out_dir, '_'.join([prefix, args.save_calculations])))
+            write_diversity_metrics(div_calc, sample_ids, osp.join(args.out_dir, '_'.join([prefix, args.save_calculations])))
 
 
     # # Chao1 Diversity
