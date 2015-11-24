@@ -134,10 +134,10 @@ def write_diversity_metrics(data, sample_ids, fp=None):
     
     with open(fp, 'w') as outf:
         out = csv.writer(outf, delimiter='\t')
-        out.writerow(['Sample ID'] + data.keys())
-        for i, line in enumerate(zip(*data.values())):
-            line = [sample_ids[i]] + list(line)
-            out.writerow(line)
+        out.writerow(['calculation', 'group'])
+        for group in data:
+            for entry in data[group]:
+                out.writerow([entry, group])
 
 
 def handle_program_options():
@@ -232,7 +232,7 @@ def main():
 
         if args.save_calculations:
             prefix = '_'.join(x_label.split())
-            write_diversity_metrics(div_calc, sample_ids, osp.join(args.out_dir, '_'.join([prefix, args.save_calculations])))
+            write_diversity_metrics(div_calc, sample_ids, osp.join(args.out_dir, args.save_calculations))
 
 
     # # Chao1 Diversity
