@@ -4,7 +4,7 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from sklearn.lda import LDA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from phylotoast import util
 
 
@@ -19,27 +19,29 @@ def merge_dicts(*dict_args):
     return result
 
 
-def plot_LDA(X_lda, y_lda, class_colors, out_fp="", dpi=150, title=""):
+def plot_LDA(X_lda, y_lda, class_colors, out_fp="", dpi=150, title=None):
     cats = class_colors.keys()
     group_lda = {c: [] for c in cats}
 
     for i, target_name in zip(range(len(cats)), cats):
-        cat_x = X_lda[:,0][y_lda == target_name]
+        cat_x = X_lda[:, 0][y_lda == target_name]
         if X_lda.shape[1] == 1:
-          cat_y = np.ones((cat_x.shape[0],1)) + i
+            cat_y = np.ones((cat_x.shape[0], 1)) + i
         else:
-          cat_y = X_lda[:,1][y_lda == target_name]
+            cat_y = X_lda[:, 1][y_lda == target_name]
         group_lda[target_name].append(cat_x)
         group_lda[target_name].append(cat_y)
-        plt.scatter(x=cat_x, y=cat_y, label=target_name, 
-                    color=class_colors[target_name], alpha=1, s=80)
+        plt.scatter(x=cat_x, y=cat_y, label=target_name,
+                    color=class_colors[target_name],
+                    alpha=0.85, s=80, edgecolors='k')
 
     if X_lda.shape[1] == 1:
         plt.ylim((0.5, 2.5))
     plt.xlabel('LD1')
     plt.ylabel('LD2')
     plt.legend(loc='best')
-    plt.title('LDA')
+    if title:
+        plt.title(title)
 
     # save or display result
     if out_fp:
@@ -49,19 +51,20 @@ def plot_LDA(X_lda, y_lda, class_colors, out_fp="", dpi=150, title=""):
     else:
         plt.show()
 
+
 def run_LDA(df):
     # Prep variables for sklearn LDA
-    X = df[range(2, df.shape[1])].values     # read all numbers from each row into an array
-    y = df['Condition'].values         # read categories for each sample
+    X = df[range(2, df.shape[1])].values     # input data matrix
+    y = df['Condition'].values               # data categories list
 
     # Calculate LDA
     sklearn_lda = LDA(n_components=2)
     X_lda_sklearn = sklearn_lda.fit_transform(X, y)
 
     # Quality Test - can be ignored
-    print len(X_lda_sklearn)
-    # print sklearn_lda.predict_proba(X)
-    print(sklearn_lda.score(X, y))
+#     print len(X_lda_sklearn)
+#     print sklearn_lda.predict_proba(X)
+#     print(sklearn_lda.score(X, y))
 
     return X_lda_sklearn, y
 
@@ -96,16 +99,19 @@ def handle_program_options():
     parser.add_argument('--save_lda_input',
                         help="Save a CSV-format file of the transposed LDA-input\
                               table to the file specifed by this option.")
+    parser.add_argument('--plot_title', default=None,
+                        help="Plot title. Default is no title.")
     parser.add_argument('-o', '--out_fp', default="",
                         help="The path and file name to save the plot under.\
                               If specified, the figure will be saved directly\
-                              instead of opening a window in which the plot can\
-                              be viewed before saving")
+                              instead of opening a window in which the plot \
+                              can be viewed before saving")
 
     return parser.parse_args()
 
+
 def main():
-    args = handle_program_options()    
+    args = handle_program_options()
 
     map_header, imap = util.parse_map_file(args.map_fp)
 
@@ -115,22 +121,27 @@ def main():
 
     cat_gather = util.gather_categories(imap, map_header, args.group_by)
     if len(cat_gather) < 2:
-      sys.stderr.write("ERROR: Only one category value found. Linear Discriminant Analysis requires at least two categories to compare.")
-      return
+        sys.stderr.write("ERROR: Only one category value found. Linear \
+        Discriminant Analysis requires at least two categories to compare.")
+        return
 
     color_gather = util.gather_categories(imap, map_header, [args.color_by])
-    
-    class_map = merge_dicts(*[{sid: cat for sid in cat_gather[cat].sids} for cat in cat_gather])
-    class_colors = merge_dicts(*[{class_map[sid]: color for sid in color_gather[color].sids} for color in color_gather])
+
+    class_map = merge_dicts(*[{sid: cat for sid in cat_gather[cat].sids}
+                              for cat in cat_gather])
+    class_colors = merge_dicts(*[{class_map[sid]: color
+                                  for sid in color_gather[color].sids}
+                                 for color in color_gather])
 
     df.insert(0, "Condition", [class_map[entry] for entry in df.index])
 
     if args.save_lda_input:
-      df.to_csv(args.save_lda_input)
+        df.to_csv(args.save_lda_input)
 
     X_lda, y_lda = run_LDA(df)
 
-    plot_LDA(X_lda, y_lda, class_colors, out_fp=args.out_fp, dpi=args.dpi)
+    plot_LDA(X_lda, y_lda, class_colors, out_fp=args.out_fp, dpi=args.dpi,
+             title=args.plot_title)
 
 
 if __name__ == "__main__":
