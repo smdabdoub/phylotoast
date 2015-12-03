@@ -10,11 +10,25 @@ Step 1 of the condensing process.
 import argparse
 import sys
 
+def pad_taxonomy(tax):
+    blank_taxonomy = "k__; p__; c__; o__; f__; g__; s__".split('; ')
+    levels = tax.split('; ')
+    
+    if len(levels) < len(blank_taxonomy):
+        return '; '.join(levels + blank_taxonomy[len(levels):])
+    return tax
 
-def split_phylogeny(p, level='s'):
+
+def split_taxonomy(p, level='s'):
+    blank_taxonomy = "k__; p__; c__; o__; f__; g__; s__".split('; ')
     level = level+'__'
     result = p.split(level)
-    return result[0]+level+result[1].split(';')[0]
+    try:
+        new_tax = result[0]+level+result[1].split(';')[0]
+    except IndexError as ie:
+        print "---------\nERROR SPLITTING TAXONOMY STRING\n"+' '.join(result)+"\n---------"
+        sys.exit(1)
+    return new_tax
 
 
 def prune_taxonomy(taxF, level):
@@ -32,8 +46,15 @@ def prune_taxonomy(taxF, level):
     nuTax = {}  # non-unique taxonomies
 
     for line in taxF:
-        otuID, tax, floatVal, otuIDr = line.strip().split('\t')
-        tax = split_phylogeny(tax, level)
+        try:
+            otuID, tax, floatVal, otuIDr = line.strip().split('\t')
+        except ValueError as ve:
+            print "----------"
+            print "ERROR SPLITTING TAXONOMY LINE:"
+            print line
+            print ve
+            print "----------"
+        tax = split_taxonomy(pad_taxonomy(tax), level)
         if tax not in uniqueTax:
             uniqueTax[tax] = otuID, floatVal, otuIDr
             nuTax[uniqueTax[tax][0]] = []
