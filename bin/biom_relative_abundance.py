@@ -65,7 +65,7 @@ def main():
 
 #     with open(args.input_biom_fp, 'rU') as in_f:
     biomf = biom.load_table(args.input_biom_fp)
-    norm_biomf = biomf.norm(axis="observation", inplace=False)
+    norm_biomf = biomf.norm(inplace=False)
     rel_abd = bc.relative_abundance(norm_biomf)
     if args.stabilize_variance:
         rel_abd = bc.arcsine_sqrt_transform(rel_abd)
