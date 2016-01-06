@@ -9,6 +9,8 @@
 import unittest
 import json
 import math
+import numpy as np
+from biom.table import Table
 from phylotoast import biom_calc as bc
 
 
@@ -86,6 +88,11 @@ class biom_calc_Test(unittest.TestCase):
                         }"""
 
         self.biom = json.loads(self.biom_text)
+        sampleids = [self.biom['columns'][i]['id'] for i in range(6)]
+        otuids = [self.biom['rows'][j]['id'] for j in range(5)]
+        data = np.arange(30).reshape(5, 6)
+        self.biomf = Table(data, otuids, sampleids)
+        self.norm_biomf = self.biomf.norm(inplace=False)
 
     def test_relative_abundance(self):
         """
@@ -94,16 +101,13 @@ class biom_calc_Test(unittest.TestCase):
         :return: Returns OK, if testing goal is achieved, otherwise raises
                 error.
         """
-        sample = 'Sample3'
-        self.result = bc.relative_abundance(self.biom)
+        self.result = bc.relative_abundance(self.norm_biomf)
 
         # List containing manual calculations
-        hand_calc = [1/4.0, 1/4.0, 1/4.0, 1/4.0]
+        hand_calc = [0.02857142857, 0.11428571429, 0.2, 0.28571428571,
+                     0.37142857143]
 
-        # Obtaining list of function calculated relative abundance for sample
-#         result1 = self.result.values()      # result1 is a list
-#         result2 = result1[0]                # result2 is a dict
-        # list containing the calculated relative abundance values
+        # List containing the calculated relative abundance values
         func_calc = self.result['Sample3'].values()
 
         # Testing the validity of relative_abundance() function.
@@ -120,18 +124,20 @@ class biom_calc_Test(unittest.TestCase):
         :return: Returns OK, if testing goal was achieved, otherwise raises
                 error.
         """
-        self.rel_a = bc.relative_abundance(self.biom)
+        self.rel_a = bc.relative_abundance(self.norm_biomf)
 
         self.result = bc.mean_otu_pct_abundance(
-            self.rel_a, ['GG_OTU_1','GG_OTU_2']
+            self.rel_a, ['GG_OTU_1', 'GG_OTU_2']
             )
 
         # Obtaining lists of function calculations and manual hand calculations
         func_calc = self.result.values()
-        result1 = self.rel_a.values()       # result1 is a list
 
         # list containing hand calculated relative abundance values
-        hand_calc = [0.25/6, (1.0+0.3333333333333333+0.25+0.7142857142857143+0.3333333333333333)/6]
+        hand_calc = [(0 + 0.0153846153846 + 0.0285714285714 + 0.04 + 0.05 +
+                      0.0588235294118)/6,
+                     (0.1 + 0.107692307692 + 0.114285714286 + 0.12 + 0.125 +
+                      0.129411764706)/6]
 
         # Testing the validity of the calculations of mean_otu_pct_abundance().
         for hand, res in zip(hand_calc, func_calc):
@@ -148,18 +154,17 @@ class biom_calc_Test(unittest.TestCase):
         :return: Returns OK, if testing goal was achieved, otherwise
             raises error.
         """
-        self.result = bc.MRA(self.biom)
+        self.result = bc.MRA(self.norm_biomf)
         self.mean_otu = bc.mean_otu_pct_abundance(
-            bc.relative_abundance(self.biom),
+            bc.relative_abundance(self.norm_biomf),
             ['GG_OTU_1', 'GG_OTU_2', 'GG_OTU_3', 'GG_OTU_4', 'GG_OTU_5']
             )
 
-        # Obtaining lists of function calculations and
-        # manual hand calculations
+        # Obtaining lists of function calculations and manual hand calculations
         func_calc = self.result.values()
         hand_calc = self.mean_otu.values()
 
-        # Testing the validity of the calculations of mean_otu_pct_abundance().
+        # Testing the validity of the calculations of mean_otu_pct_abundance()
         for hand, res in zip(hand_calc, func_calc):
             self.assertAlmostEqual(
                 hand, res,
@@ -224,18 +229,18 @@ class biom_calc_Test(unittest.TestCase):
         :return: Returns OK if testing goal is achieved, otherwise raises
                  error.
         """
-        self.result1 = bc.relative_abundance(self.biom)
+        self.result1 = bc.relative_abundance(self.norm_biomf)
         self.result2 = bc.arcsine_sqrt_transform(self.result1)
 
         # Obtaining results to compare.
-        hand_calc = [1.00685369, 0.563942641]
+        hand_calc = [0, 0.32175055439, 0.463647609, 0.57963974036, 0.684719203]
         func_calc = self.result2.values()[3].values()
 
         # Testing validity of the transforms.
         for hand, func in zip(hand_calc, func_calc):
             self.assertAlmostEqual(
                 hand, func, places=7,
-                msg='Function did not calculate trnasformation accurately.'
+                msg='Function did not calculate transformation accurately.'
             )
 
     def tearDown(self):
