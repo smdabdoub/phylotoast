@@ -29,8 +29,9 @@ def relative_abundance(biomf, sampleIDs=None):
     if sampleIDs is None:
         sampleIDs = biomf.ids()
     otuIDs = biomf.ids(axis="observation")
+    norm_biomf = biomf.norm(inplace=False)
 
-    return {sample: {otuID: biomf.get_value_by_ids(otuID, sample)
+    return {sample: {otuID: norm_biomf.get_value_by_ids(otuID, sample)
                      for otuID in otuIDs} for sample in sampleIDs}
 
 

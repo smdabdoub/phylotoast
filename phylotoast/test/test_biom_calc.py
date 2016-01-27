@@ -101,7 +101,7 @@ class biom_calc_Test(unittest.TestCase):
         :return: Returns OK, if testing goal is achieved, otherwise raises
                 error.
         """
-        self.result = bc.relative_abundance(self.norm_biomf)
+        self.result = bc.relative_abundance(self.biomf)
 
         # List containing manual calculations
         hand_calc = [0.02857142857, 0.11428571429, 0.2, 0.28571428571,
