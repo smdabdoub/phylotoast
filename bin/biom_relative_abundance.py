@@ -31,21 +31,23 @@ def write_relative_abundance(rel_abd, biomf, out_fn, sort_by=None):
         out_f.write('#OTU ID\t{}\n'.format('\t'.join(sids)))
 
         for otuid in biomf.ids(axis="observation"):
-            otuName = oc.otu_name(biomf.metadata(otuid, "observation")\
-                      ["taxonomy"])
-            sabd = [str(rel_abd[sid][otuid]) 
-                    if sid in rel_abd and otuid in rel_abd[sid] else '0' 
+            otuName = oc.otu_name(biomf.metadata(otuid, "observation")
+                                  ["taxonomy"])
+            sabd = [str(rel_abd[sid][otuid])
+                    if sid in rel_abd and otuid in rel_abd[sid] else '0'
                     for sid in sids]
             out_f.write('{}\t{}\n'.format(otuName, '\t'.join(sabd)))
 
 
 def handle_program_options():
-    parser = argparse.ArgumentParser(description="Convert a BIOM file of OTU abundance \
-                                                  data into a TSV file of relative \
-                                                  abundance data.")
+    parser = argparse.ArgumentParser(description="Convert a BIOM file of OTU \
+                                                  abundance data into a TSV \
+                                                  file of relative abundance \
+                                                  data.")
     parser.add_argument('-i', '--input_biom_fp',
                         help="BIOM file path.")
-    parser.add_argument('-o', '--output_tsv_fp', default='relative_abundance.tsv',
+    parser.add_argument('-o', '--output_tsv_fp',
+                        default='relative_abundance.tsv',
                         help="A TSV table of relative OTU abundance data.")
     parser.add_argument('--stabilize_variance', action='store_true',
                         help="Apply the variance-stabilizing arcsine square\
@@ -65,12 +67,11 @@ def main():
 
 #     with open(args.input_biom_fp, 'rU') as in_f:
     biomf = biom.load_table(args.input_biom_fp)
-    norm_biomf = biomf.norm(inplace=False)
-    rel_abd = bc.relative_abundance(norm_biomf)
+    rel_abd = bc.relative_abundance(biomf)
     if args.stabilize_variance:
         rel_abd = bc.arcsine_sqrt_transform(rel_abd)
 
-    write_relative_abundance(rel_abd, norm_biomf, args.output_tsv_fp)
+    write_relative_abundance(rel_abd, biomf, args.output_tsv_fp)
 
 if __name__ == '__main__':
     main()
