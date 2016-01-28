@@ -5,10 +5,13 @@ Created on Feb 8, 2012
 Author: Shareef M Dabdoub
 '''
 import sys
-import json
 import re
 import argparse
 from phylotoast import biom_calc as bc, otu_calc as oc, util
+try:
+    import biom
+except ImportError:
+    sys.exit("Please install missing module: {}.".format("biom-format"))
 
 
 def find_otu(otuid, tree):
@@ -23,17 +26,17 @@ def find_otu(otuid, tree):
     return None
 
 
-def newick_replace_otuids(tree, biom):
+def newick_replace_otuids(tree, biomf):
     """
     Replace the OTU ids in the Newick phylogenetic tree format with truncated
     OTU names
     """
-    for row in biom['rows']:
-        otu_loc = find_otu(row['id'], tree)
+    for val, id_, md in biomf.iter(axis="observation"):
+        otu_loc = find_otu(id_, tree)
         if otu_loc is not None:
-            tree = tree[:otu_loc] + oc.otu_name_biom(row) + tree[otu_loc+len(row['id']):]
-        else:
-            print 'ID not found:', row['id']
+            tree = tree[:otu_loc] + \
+                   oc.otu_name(md["taxonomy"]) + \
+                   tree[otu_loc + len(id_):]
     return tree
 
 
@@ -87,10 +90,10 @@ def handle_program_options():
                               as specified in --map_categories), raw (outputs \
                               the actual sequence abundance data for \
                               each OTU).")
-    parser.add_argument('--stabilize_variance', action='store_true', default=False,
+    parser.add_argument('--stabilize_variance', action='store_true',
+                        default=False,
                         help="Apply the variance-stabilizing arcsine square\
                               root transformation to the OTU proportion data.")
-#    parser.add_argument('-v', '--verbose', action='store_true')
 
     return parser.parse_args()
 
@@ -117,8 +120,7 @@ def main():
         )
 
     # input data
-    with open(args.otu_table) as bF:
-        biom = json.loads(bF.readline())
+    biomf = biom.load_table(args.otu_table)
     map_header, imap = util.parse_map_file(args.mapping)
 
     # rewrite tree file with otu names
@@ -127,9 +129,10 @@ def main():
             tree = treF.readline()
             if "'" in tree:
                 tree = tree.replace("'", '')
-            outF.write(newick_replace_otuids(tree, biom))
+            outF.write(newick_replace_otuids(tree, biomf))
 
-    oid_rows = {row['id']: row for row in biom['rows']}
+    oid_rows = {id_: md["taxonomy"]
+                for val, id_, md in biomf.iter(axis="observation")}
 
     # calculate analysis results
     categories = None
@@ -142,12 +145,12 @@ def main():
     groups = util.gather_categories(imap, map_header, categories)
     for group in groups.values():
         if args.analysis_metric in ['MRA', 'NMRA']:
-            results = bc.MRA(biom, group.sids, transform=tform)
+            results = bc.MRA(biomf, group.sids, transform=tform)
         elif args.analysis_metric == 'raw':
-            results = bc.transform_raw_abundance(biom, sampleIDs=group.sids,
+            results = bc.transform_raw_abundance(biomf, sampleIDs=group.sids,
                                                  sample_abd=False)
 
-        group.results.update({oc.otu_name_biom(oid_rows[oid]): results[oid]
+        group.results.update({oc.otu_name(oid_rows[oid]): results[oid]
                              for oid in results})
 
     # write iTol data set file
@@ -155,7 +158,9 @@ def main():
         itolF.write('LABELS\t' + '\t'.join(groups.keys())+'\n')
         itolF.write('COLORS\t{}\n'.format('\t'.join(['#ff0000'
                     for _ in range(len(groups))])))
-        all_otus = frozenset({oc.otu_name_biom(row) for row in biom['rows']})
+        all_otus = frozenset({oc.otu_name(md["taxonomy"])
+                              for val, id_, md in
+                              biomf.iter(axis="observation")})
 
         for oname in all_otus:
             row = ['{name}']        # \t{s:.2f}\t{ns:.2f}\n'
