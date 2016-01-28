@@ -65,7 +65,6 @@ def main():
     except IOError as ioe:
         sys.exit('\nError in BIOM file path: {}\n'.format(ioe))
 
-#     with open(args.input_biom_fp, 'rU') as in_f:
     biomf = biom.load_table(args.input_biom_fp)
     rel_abd = bc.relative_abundance(biomf)
     if args.stabilize_variance:
