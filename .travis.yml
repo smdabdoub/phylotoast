@@ -3,9 +3,15 @@ python:
   - "2.7"
 #  - "3.3" for future usage
 
+virtualenv:
+  system_site_packages: true
+
+before_install:
+ - sudo apt-get install -qq python-scipy python-numpy
+
 # command to run tests
 script:
-  # - python -m unittest discover -s phylotoast/test/ -p test_biom_calc.py -vf
+  - python -m unittest discover -s phylotoast/test/ -p test_biom_calc.py -vf
   - python -m unittest discover -s phylotoast/test/ -p test_util.py -vf
 
 # command for email notifications, set to no notifications via email
