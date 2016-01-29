@@ -6,13 +6,24 @@
 
 :Abstract: Automated Tests for BIOM calculation.
 """
-import unittest
+importerrors = [] 
+import sys
 import json
 import math
-import numpy as np
-from biom.table import Table
+import unittest
 from phylotoast import biom_calc as bc
-
+try: 
+    import numpy as np
+except ImportError:
+    importerrors.append("numpy")
+try:
+    from biom.table import Table
+except ImportError:
+    importerrors.append("biom-format")
+if len(importerrors) > 0:
+    for err in importerrors:
+        print "Please install missing module: {}".format(err)
+    sys.exit()
 
 class biom_calc_Test(unittest.TestCase):
 
