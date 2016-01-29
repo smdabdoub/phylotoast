@@ -23,8 +23,10 @@ install:
   - pip install .
 
 script:
-  - python -m unittest discover -s phylotoast/test/ -p test_biom_calc.py -vf --doctest-modules --pep8 coveralls -v --cov coveralls --cov-report term-missing
-  - python -m unittest discover -s phylotoast/test/ -p test_util.py -vf --doctest-modules --pep8 coveralls -v --cov coveralls --cov-report term-missing
+  - python -m unittest discover -s phylotoast/test/ -p test_biom_calc.py -vf
+  - coverage report -m phylotoast/test/test_biom_calc.py
+  - python -m unittest discover -s phylotoast/test/ -p test_util.py -vf
+  - coverage report -m phylotoast/test/test_util.py
 
 after_success:
   - coveralls
