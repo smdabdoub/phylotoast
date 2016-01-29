@@ -17,7 +17,7 @@ try:
 except ImportError:
     importerrors.append("numpy")
 try:
-    from biom.table import Table
+    import biom
 except ImportError:
     importerrors.append("biom-format")
 if len(importerrors) > 0:
@@ -102,7 +102,7 @@ class biom_calc_Test(unittest.TestCase):
         sampleids = [self.biom["columns"][i]["id"] for i in range(6)]
         otuids = [self.biom["rows"][j]["id"] for j in range(5)]
         data = np.arange(30).reshape(5, 6)
-        self.biomf = Table(data, otuids, sampleids)
+        self.biomf = biom.table.Table(data, otuids, sampleids)
 
     def test_relative_abundance(self):
         """
