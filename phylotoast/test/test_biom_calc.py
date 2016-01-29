@@ -6,16 +6,14 @@
 
 :Abstract: Automated Tests for BIOM calculation.
 """
-import sys
 import json
-import math
 import unittest
 from phylotoast import biom_calc as bc
 import numpy as np
 import biom
 
-class biom_calc_Test(unittest.TestCase):
 
+class biom_calc_Test(unittest.TestCase):
     def setUp(self):
         """
         Initializing BIOM format file.
