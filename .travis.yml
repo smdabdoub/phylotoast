@@ -3,13 +3,6 @@ python:
   - "2.7"
 #  - "3.3" for future usage
 
-virtualenv:
-    system_site_packages: true
-
-# Build/test dependencies
-# install:
-#   - pip install -r requirements.txt
-
 # command to run tests
 script:
   - python phylotoast/test/test_biom_calc.py -vf
