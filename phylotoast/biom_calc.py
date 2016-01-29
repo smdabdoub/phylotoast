@@ -7,15 +7,15 @@ This module provides methods for calculating various metrics with regards to
 each OTU in an input OTU abundance table. This is currently used by iTol.py
 to offload the different methods.
 '''
-from collections import defaultdict
 import math
+from collections import defaultdict
 
 
 def relative_abundance(biomf, sampleIDs=None):
     """
     Calculate the relative abundance of each OTUID in a Sample.
 
-    :type biomf: A BIOM file format converted to JSON string format structure.
+    :type biomf: A BIOM file.
     :param biomf: OTU table format.
 
     :type sampleIDs: list
@@ -67,7 +67,7 @@ def MRA(biomf, sampleIDs=None, transform=None):
     """
     Calculate the mean relative abundance.
 
-    :type biomf: A BIOM file format converted to JSON string format structure.
+    :type biomf: A BIOM file.
     :param biomf: OTU table format.
 
     :type sampleIDs: list
@@ -88,7 +88,7 @@ def raw_abundance(biomf, sampleIDs=None, sample_abd=True):
     """
     Calculate the total number of sequences in each OTU or SampleID.
 
-    :type biomf: A BIOM file format converted to JSON string format structure.
+    :type biomf: A BIOM file.
     :param biomf: OTU table format.
 
     :type sampleIDs: List
@@ -105,26 +105,27 @@ def raw_abundance(biomf, sampleIDs=None, sample_abd=True):
                      and their respective abundance as values.
     """
     results = defaultdict(int)
-    for row, col, amt in biomf['data']:
-        otuID = biomf['rows'][row]['id']
-        sampleID = biomf['columns'][col]['id']
+    if sampleIDs is None:
+        sampleIDs = biomf.ids()
+    otuIDs = biomf.ids(axis="observation")
 
-        if sampleIDs is None or sampleID in sampleIDs:
+    for sampleID in sampleIDs:
+        for otuID in otuIDs:
+            abd = biomf.get_value_by_ids(otuID, sampleID)
             if sample_abd:
-                results[sampleID] += amt
+                results[sampleID] += abd
             else:
-                results[otuID] += amt
-
+                results[otuID] += abd
     return results
 
 
-def transform_raw_abundance(biomf, fn=math.log10,
-                            sampleIDs=None, sample_abd=True):
+def transform_raw_abundance(biomf, fn=math.log10, sampleIDs=None,
+                            sample_abd=True):
     """
     Function to transform the total abundance calculation for each sample ID
     to another format based on user given transformation function.
 
-    :type biomf: A BIOM file format converted to JSON string format structure.
+    :type biomf: A BIOM file.
     :param biomf: OTU table format.
 
     :param fn: Mathematical function which is used to transform smax to
