@@ -23,12 +23,12 @@ install:
   - pip install .
 
 script:
-  - python -m unittest discover -s phylotoast/test/ -p test_biom_calc.py -vf
-  - python -m unittest discover -s phylotoast/test/ -p test_util.py -vf
+  - python -m unittest discover -s phylotoast/test/ -p test_biom_calc.py -vf --doctest-modules --pep8 coveralls -v --cov coveralls --cov-report term-missing
+  - python -m unittest discover -s phylotoast/test/ -p test_util.py -vf --doctest-modules --pep8 coveralls -v --cov coveralls --cov-report term-missing
+
+after_success:
+  - coveralls
 
 # command for email notifications, set to no notifications via email
 notifications:
     email: false
-
-# after_success:
-#   - coveralls
