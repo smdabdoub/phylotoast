@@ -1,17 +1,19 @@
 language: python
 python:
   - "2.7"
-#  - "3.3"
+#  - "3.3" for future usage
+
+virtualenv:
+    system_site_packages: true
 
 # Build/test dependencies
-#install:
-#  - pip install -r requirements.txt
+install:
+  - pip install -r requirements.txt
 
 # command to run tests
 script:
-  - python phylotoast/test/test_biom_calc.py -vf 
-#  - python -m unittest discover -s phylotoast/test/ -v
-#  - python -m unittest discover -s phylotoast/test/ -p test_util.py -v
+  - python phylotoast/test/test_biom_calc.py -vf
+  - python phylotoast/test/test_util.py -vf
 
 # command for email notifications, set to no notifications via email
 notifications:
