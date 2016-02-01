@@ -7,19 +7,19 @@ This module provides methods for calculating various metrics with regards to
 each OTU in an input OTU abundance table. This is currently used by iTol.py
 to offload the different methods.
 '''
-from collections import defaultdict
 import math
+from collections import defaultdict
 
 
-def relative_abundance(biom, sampleIDs=None):
+def relative_abundance(biomf, sampleIDs=None):
     """
     Calculate the relative abundance of each OTUID in a Sample.
 
-    :type biom: A BIOM file format converted to JSON string format structure.
-    :param biom: OTU table format.
+    :type biomf: A BIOM file.
+    :param biomf: OTU table format.
 
     :type sampleIDs: list
-    :param sampleIDs: A list of column id's from BIOM format OTU table.
+    :param sampleIDs: A list of sample id's from BIOM format OTU table.
 
     :rtype: dict
     :return: Returns a keyed on SampleIDs, and the values are dictionaries
@@ -27,22 +27,12 @@ def relative_abundance(biom, sampleIDs=None):
              abundance of that OTUID in that SampleID.
     """
     if sampleIDs is None:
-        sampleIDs = [col['id'] for col in biom['columns']]
+        sampleIDs = biomf.ids()
+    otuIDs = biomf.ids(axis="observation")
+    norm_biomf = biomf.norm(inplace=False)
 
-    ra = {item['id']: defaultdict(int) for item in biom['columns']
-          if item['id'] in sampleIDs}
-    totals = defaultdict(float)
-
-    for row, col, amt in biom['data']:
-        otuID = biom['rows'][row]['id']
-        sampleID = biom['columns'][col]['id']
-
-        if sampleID in sampleIDs:
-            ra[sampleID][otuID] = amt
-            totals[sampleID] += amt
-
-    return {sid: {oid: ra[sid][oid] / totals[sid] for oid in ra[sid]}
-            for sid in ra}
+    return {sample: {otuID: norm_biomf.get_value_by_ids(otuID, sample)
+                     for otuID in otuIDs} for sample in sampleIDs}
 
 
 def mean_otu_pct_abundance(ra, otuIDs):
@@ -73,30 +63,33 @@ def mean_otu_pct_abundance(ra, otuIDs):
     return otumeans
 
 
-def MRA(biom, sampleIDs=None, transform=None):
+def MRA(biomf, sampleIDs=None, transform=None):
     """
     Calculate the mean relative abundance.
 
-    :type biom: A BIOM file format converted to JSON string format structure.
-    :param biom: OTU table format.
+    :type biomf: A BIOM file.
+    :param biomf: OTU table format.
+
+    :type sampleIDs: list
+    :param sampleIDs: A list of sample id's from BIOM format OTU table.
 
     :rtype: dict
     :return: A dictionary keyed on OTUID's and their mean relative abundance
              for a given number of sampleIDs.
     """
-    ra = relative_abundance(biom, sampleIDs)
+    ra = relative_abundance(biomf, sampleIDs)
     if transform is not None:
         ra = transform(ra)
-    otuIDs = {row['id'] for row in biom['rows']}
+    otuIDs = biomf.ids(axis="observation")
     return mean_otu_pct_abundance(ra, otuIDs)
 
 
-def raw_abundance(biom, sampleIDs=None, sample_abd=True):
+def raw_abundance(biomf, sampleIDs=None, sample_abd=True):
     """
     Calculate the total number of sequences in each OTU or SampleID.
 
-    :type biom: A BIOM file format converted to JSON string format structure.
-    :param biom: OTU table format.
+    :type biomf: A BIOM file.
+    :param biomf: OTU table format.
 
     :type sampleIDs: List
     :param sampleIDs: A list of column id's from BIOM format OTU table. By
@@ -112,27 +105,28 @@ def raw_abundance(biom, sampleIDs=None, sample_abd=True):
                      and their respective abundance as values.
     """
     results = defaultdict(int)
-    for row, col, amt in biom['data']:
-        otuID = biom['rows'][row]['id']
-        sampleID = biom['columns'][col]['id']
+    if sampleIDs is None:
+        sampleIDs = biomf.ids()
+    otuIDs = biomf.ids(axis="observation")
 
-        if sampleIDs is None or sampleID in sampleIDs:
+    for sampleID in sampleIDs:
+        for otuID in otuIDs:
+            abd = biomf.get_value_by_ids(otuID, sampleID)
             if sample_abd:
-                results[sampleID] += amt
+                results[sampleID] += abd
             else:
-                results[otuID] += amt
-
+                results[otuID] += abd
     return results
 
 
-def transform_raw_abundance(biom, fn=math.log10,
-                            sampleIDs=None, sample_abd=True):
+def transform_raw_abundance(biomf, fn=math.log10, sampleIDs=None,
+                            sample_abd=True):
     """
     Function to transform the total abundance calculation for each sample ID
     to another format based on user given transformation function.
 
-    :type biom: A BIOM file format converted to JSON string format structure.
-    :param biom: OTU table format.
+    :type biomf: A BIOM file.
+    :param biomf: OTU table format.
 
     :param fn: Mathematical function which is used to transform smax to
                another format. By default, the function has been given as
@@ -144,16 +138,17 @@ def transform_raw_abundance(biom, fn=math.log10,
              operation. By default, the operation performed on the abundances
              is base 10 logarithm.
     """
-    totals = raw_abundance(biom, sampleIDs, sample_abd)
+    totals = raw_abundance(biomf, sampleIDs, sample_abd)
     return {sid: fn(abd) for sid, abd in totals.items()}
 
 
 def arcsine_sqrt_transform(rel_abd):
     """
-    Takes the proportion data from relative_abundance() and applies the variance
-    stabilizing arcsine square root transformation:
-    
-        X = sin^{-1} \sqrt p
+    Takes the proportion data from relative_abundance() and applies the
+    variance stabilizing arcsine square root transformation:
+
+    X = sin^{-1} \sqrt p
     """
     arcsint = lambda p: math.asin(math.sqrt(p))
-    return {col_id: {row_id: arcsint(rel_abd[col_id][row_id]) for row_id in rel_abd[col_id]} for col_id in rel_abd}
+    return {col_id: {row_id: arcsint(rel_abd[col_id][row_id])
+                     for row_id in rel_abd[col_id]} for col_id in rel_abd}
