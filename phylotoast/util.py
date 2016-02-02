@@ -289,13 +289,49 @@ def parse_unifrac(unifracFN):
     with open(unifracFN) as uF:
         unifrac = {'pcd': OrderedDict(), 'eigvals': [], 'varexp': []}
 
-        lines = uF.readlines()[1:]
-        for line in lines:
-            if line == '\n':
-                break
-            line = line.rstrip('\n').split('\t')
-            unifrac['pcd'][line[0]] = line[1:]
+        first = uF.next().split('\t')
+        lines = [line.strip() for line in uF]
 
-        unifrac['eigvals'] = lines[-2].split('\t')
-        unifrac['varexp'] = lines[-1].split('\t')
-        return unifrac
+        if first[0] == "pc vector number":
+            return parse_unifrac_v1_8(unifrac, lines)
+        elif first[0] == "Eigvals":
+            return parse_unifrac_v1_9(unifrac, lines)
+        else:
+            # raise file format not supported/recognized error
+            pass
+
+def parse_unifrac_v1_8(unifrac, file_data):
+    for line in file_data:
+        if line == '':
+            break
+        line = line.split('\t')
+        unifrac['pcd'][line[0]] = line[1:]
+
+    unifrac['eigvals'] = [float(entry) for entry in file_data[-2].split('\t')[1:]]
+    unifrac['varexp'] = [float(entry) for entry in file_data[-1].split('\t')[1:]]
+    return unifrac
+
+
+def parse_unifrac_v1_9(unifrac, file_data):
+    unifrac['eigvals'] = [float(entry) for entry in file_data[0].split('\t')]
+    unifrac['varexp'] = [float(entry)*100 for entry in file_data[3].split('\t')]
+
+    for line in file_data[8:]:
+        if line == '':
+            break
+        line = line.split('\t')
+        unifrac['pcd'][line[0]] = line[1:]
+    return unifrac
+
+
+
+
+
+
+
+
+
+
+
+
+
