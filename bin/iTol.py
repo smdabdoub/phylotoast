@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-'''
+"""
 Created on Feb 8, 2012
 
 Author: Shareef M Dabdoub
-'''
+"""
 import sys
 import re
 import argparse
@@ -21,7 +21,7 @@ def find_otu(otuid, tree):
     """
     for m in re.finditer(otuid, tree):
         before, after = tree[m.start()-1], tree[m.start()+len(otuid)]
-        if before in ['(', ',', ')'] and after in [':', ';']:
+        if before in ["(", ",", ")"] and after in [":", ";"]:
             return m.start()
     return None
 
@@ -50,26 +50,26 @@ def handle_program_options():
                                      tree file to use proper taxonomic names \
                                      instead of OTU IDs for useful display in \
                                      iTol.")
-    parser.add_argument('-i', '--otu_table', required=True,
+    parser.add_argument("-i", "--otu_table", required=True,
                         help="The biom-format file with OTU-Sample abundance \
                               data.")
-    parser.add_argument('-m', '--mapping', required=True,
+    parser.add_argument("-m", "--mapping", required=True,
                         help="The mapping file specifying group information \
                               for each sample.")
-    parser.add_argument('-t', '--input_tree', default='',
+    parser.add_argument("-t", "--input_tree", default="",
                         help="A phylogenetic tree in Newick format to be \
                               modified by exchanging the OTU ID node names for\
                               taxonomic names.")
-    parser.add_argument('-e', '--output_tre', default='iTol.tre',
+    parser.add_argument("-e", "--output_tre", default="iTol.tre",
                         help="The output .tre file")
-    parser.add_argument('-o', '--output_itol_table', default='iTol_table.txt',
+    parser.add_argument("-o", "--output_itol_table", default="iTol_table.txt",
                         help="Other than a phylogenetic tree, the main input \
                               to iTol is a dataset file containing some \
                               representation of the abundance of every OTU \
                               across the specified data groups. This program \
                               provides multiple calculation methods. See the \
                               --analysis_metric option for details.")
-    parser.add_argument('-c', '--map_categories', default=None,
+    parser.add_argument("-c", "--map_categories", default=None,
                         help="Any mapping categories, such as treatment type, \
                               that will be used to group the data in the \
                               output iTol table. For example, one category \
@@ -78,8 +78,8 @@ def handle_program_options():
                               three types each will result in six data \
                               columns. Default is no categories and all the \
                               data will be treated as a single group.")
-    parser.add_argument('-a', '--analysis_metric', default='MRA',
-                        choices=['MRA', 'NMRA', 'raw'],
+    parser.add_argument("-a", "--analysis_metric", default="MRA",
+                        choices=["MRA", "NMRA", "raw"],
                         help="Specifies which metric is calculated on the \
                               abundance data in the OTU table. Available \
                               options: MRE - mean relative abundance \
@@ -90,7 +90,7 @@ def handle_program_options():
                               as specified in --map_categories), raw (outputs \
                               the actual sequence abundance data for \
                               each OTU).")
-    parser.add_argument('--stabilize_variance', action='store_true',
+    parser.add_argument("--stabilize_variance", action="store_true",
                         default=False,
                         help="Apply the variance-stabilizing arcsine square\
                               root transformation to the OTU proportion data.")
@@ -106,7 +106,7 @@ def main():
             pass
     except IOError as ioe:
         sys.exit(
-            '\nError with OTU_Sample abundance data file:{}\n'
+            "\nError with OTU_Sample abundance data file:{}\n"
             .format(ioe)
         )
 
@@ -115,7 +115,7 @@ def main():
             pass
     except IOError as ioe:
         sys.exit(
-            '\nError with mapping file:{}\n'
+            "\nError with mapping file:{}\n"
             .format(ioe)
         )
 
@@ -125,7 +125,7 @@ def main():
 
     # rewrite tree file with otu names
     if args.input_tree:
-        with open(args.input_tree) as treF, open(args.output_tre, 'w') as outF:
+        with open(args.input_tree) as treF, open(args.output_tre, "w") as outF:
             tree = treF.readline()
             if "'" in tree:
                 tree = tree.replace("'", '')
@@ -137,16 +137,24 @@ def main():
     # calculate analysis results
     categories = None
     if args.map_categories is not None:
-        categories = args.map_categories.split(',')
+        categories = args.map_categories.split(",")
 
     # set transform if --stabilize_variance is specfied
     tform = bc.arcsine_sqrt_transform if args.stabilize_variance else None
 
     groups = util.gather_categories(imap, map_header, categories)
     for group in groups.values():
-        if args.analysis_metric in ['MRA', 'NMRA']:
+        if args.analysis_metric in ["MRA", "NMRA"]:
             results = bc.MRA(biomf, group.sids, transform=tform)
-        elif args.analysis_metric == 'raw':
+        elif args.analysis_metric == "raw":
+            try:
+                for sid in group.sids:
+                    assert sid in biomf.ids()
+            except AssertionError:
+                sys.exit("\nERROR: While calculating raw total abundance, the "
+                         "sampleIDs from mapping file do not match the ones in"
+                         " OTU table. Please check that the mapping file "
+                         "corresponds to the OTU table provided to iTol.\n")
             results = bc.transform_raw_abundance(biomf, sampleIDs=group.sids,
                                                  sample_abd=False)
 
@@ -154,8 +162,8 @@ def main():
                              for oid in results})
 
     # write iTol data set file
-    with open(args.output_itol_table, 'w') as itolF:
-        if args.analysis_metric == 'raw':
+    with open(args.output_itol_table, "w") as itolF:
+        if args.analysis_metric == "raw":
             itolF.write("DATASET_GRADIENT\nSEPARATOR TAB\n")
             itolF.write("DATASET_LABEL\tLog Total Abundance\n")
             itolF.write("COLOR\t#000000\n")
@@ -168,14 +176,14 @@ def main():
         else:
             itolF.write("DATASET_MULTIBAR\nSEPARATOR TAB\n")
             itolF.write("DATASET_LABEL\tNMRA\n")
-            itolF.write('FIELD_COLORS\t{}\n'.format('\t'.join(['#ff0000'
+            itolF.write("FIELD_COLORS\t{}\n".format("\t".join(["#ff0000"
                         for _ in range(len(groups))])))
-            itolF.write('FIELD_LABELS\t' + '\t'.join(groups.keys())+'\n')
+            itolF.write("FIELD_LABELS\t" + "\t".join(groups.keys())+"\n")
             itolF.write("LEGEND_TITLE\tNMRA\n")
             itolF.write("LEGEND_SHAPES\t1\t1\t1\t1\n")
-            itolF.write('LEGEND_COLORS\t{}\n'.format('\t'.join(['#ff0000'
+            itolF.write("LEGEND_COLORS\t{}\n".format("\t".join(["#ff0000"
                         for _ in range(len(groups))])))
-            itolF.write('LEGEND_LABELS\t' + '\t'.join(groups.keys())+'\n')
+            itolF.write("LEGEND_LABELS\t" + "\t".join(groups.keys())+"\n")
             itolF.write("WIDTH\t300\n")
         itolF.write("DATA\n")
         all_otus = frozenset({oc.otu_name(md["taxonomy"])
@@ -183,22 +191,22 @@ def main():
                               biomf.iter(axis="observation")})
 
         for oname in all_otus:
-            row = ['{name}']        # \t{s:.2f}\t{ns:.2f}\n'
-            row_data = {'name': oname}
+            row = ["{name}"]        # \t{s:.2f}\t{ns:.2f}\n"
+            row_data = {"name": oname}
             msum = 0
             for name, group in groups.iteritems():
-                row.append('{{{}:.5f}}'.format(name))
+                row.append("{{{}:.5f}}".format(name))
                 if oname in group.results:
                     row_data[name] = group.results[oname]
                 else:
                     row_data[name] = 0.0
                 msum += row_data[name]
             # normalize avg relative abundance data
-            if args.analysis_metric == 'NMRA' and msum > 0:
+            if args.analysis_metric == "NMRA" and msum > 0:
                 row_data.update({key: data/msum
                                 for key, data in row_data.items()
-                                if key != 'name'})
-            itolF.write('\t'.join(row).format(**row_data) + '\n')
+                                if key != "name"})
+            itolF.write("\t".join(row).format(**row_data) + "\n")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
