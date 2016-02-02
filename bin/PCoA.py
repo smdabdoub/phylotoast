@@ -162,7 +162,10 @@ def main():
 
     parsed_unifrac = util.parse_unifrac(args.coord_fp)
 
-    pco = args.pc_order if args.dimensions == 2 else [1, 2, 3]
+    pco = [dim - 1 for dim in args.pc_order] 
+    if args.dimensions == 3:
+      pco.append(2)
+
     pc1v = parsed_unifrac['varexp'][pco[0]]
     pc2v = parsed_unifrac['varexp'][pco[1]]
     if args.dimensions == 3:
@@ -173,11 +176,11 @@ def main():
             if sid in dc.sids:
                 cat = condition
                 break
-        categories[cat]['pc1'].append((sid, float(points[pco[0] - 1])))
-        categories[cat]['pc2'].append((sid, float(points[pco[1] - 1])))
+        categories[cat]['pc1'].append((sid, points[pco[0]]))
+        categories[cat]['pc2'].append((sid, points[pco[1]]))
 
         if args.dimensions == 3:
-            categories[cat]['pc3'].append((sid, float(points[pco[2] - 1])))
+            categories[cat]['pc3'].append((sid, points[pco[2]]))
 
     axis_str = "PC{} - Percent variation explained {:.2f}%"
     # initialize plot
@@ -185,7 +188,7 @@ def main():
     if args.dimensions == 3:
         ax = fig.add_subplot(111, projection='3d')
         ax.view_init(elev=23., azim=-134.5)
-        ax.set_zlabel(axis_str.format(pco[2], float(pc3v)))
+        ax.set_zlabel(axis_str.format(pco[2], pc3v))
         if args.z_limits:
             ax.set_zlim(args.z_limits)
     else:
