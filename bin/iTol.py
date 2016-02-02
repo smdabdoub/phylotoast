@@ -155,9 +155,29 @@ def main():
 
     # write iTol data set file
     with open(args.output_itol_table, 'w') as itolF:
-        itolF.write('LABELS\t' + '\t'.join(groups.keys())+'\n')
-        itolF.write('COLORS\t{}\n'.format('\t'.join(['#ff0000'
-                    for _ in range(len(groups))])))
+        if args.analysis_metric == 'raw':
+            itolF.write("DATASET_GRADIENT\nSEPARATOR TAB\n")
+            itolF.write("DATASET_LABEL\tLog Total Abundance\n")
+            itolF.write("COLOR\t#000000\n")
+            itolF.write("LEGEND_TITLE\tLog Total Abundance\n")
+            itolF.write("LEGEND_SHAPE\t1\n")
+            itolF.write("LEGEND_COLORS\t#000000\n")
+            itolF.write("LEGEND_LABELS\tLog Total Abundance\n")
+            itolF.write("COLOR_MIN\t#FFFFFF\n")
+            itolF.write("COLOR_MAX\t#000000\n")
+        else:
+            itolF.write("DATASET_MULTIBAR\nSEPARATOR TAB\n")
+            itolF.write("DATASET_LABEL\tNMRA\n")
+            itolF.write('FIELD_COLORS\t{}\n'.format('\t'.join(['#ff0000'
+                        for _ in range(len(groups))])))
+            itolF.write('FIELD_LABELS\t' + '\t'.join(groups.keys())+'\n')
+            itolF.write("LEGEND_TITLE\tNMRA\n")
+            itolF.write("LEGEND_SHAPES\t1\t1\t1\t1\n")
+            itolF.write('LEGEND_COLORS\t{}\n'.format('\t'.join(['#ff0000'
+                        for _ in range(len(groups))])))
+            itolF.write('LEGEND_LABELS\t' + '\t'.join(groups.keys())+'\n')
+            itolF.write("WIDTH\t300\n")
+        itolF.write("DATA\n")
         all_otus = frozenset({oc.otu_name(md["taxonomy"])
                               for val, id_, md in
                               biomf.iter(axis="observation")})
@@ -178,7 +198,6 @@ def main():
                 row_data.update({key: data/msum
                                 for key, data in row_data.items()
                                 if key != 'name'})
-
             itolF.write('\t'.join(row).format(**row_data) + '\n')
 
 if __name__ == '__main__':
