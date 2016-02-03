@@ -147,17 +147,8 @@ def main():
         if args.analysis_metric in ["MRA", "NMRA"]:
             results = bc.MRA(biomf, group.sids, transform=tform)
         elif args.analysis_metric == "raw":
-            try:
-                for sid in group.sids:
-                    assert sid in biomf.ids()
-            except AssertionError:
-                sys.exit("\nERROR: While calculating raw total abundance, the "
-                         "sampleIDs from mapping file do not match the ones in"
-                         " OTU table. Please check that the mapping file "
-                         "corresponds to the OTU table provided to iTol.\n")
             results = bc.transform_raw_abundance(biomf, sampleIDs=group.sids,
                                                  sample_abd=False)
-
         group.results.update({oc.otu_name(oid_rows[oid]): results[oid]
                              for oid in results})
 
