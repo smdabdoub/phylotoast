@@ -1,4 +1,4 @@
-'''
+"""
 Created on Feb 19, 2013
 
 :author: Shareef Dabdoub
@@ -6,7 +6,7 @@ Created on Feb 19, 2013
 This module provides methods for calculating various metrics with regards to
 each OTU in an input OTU abundance table. This is currently used by iTol.py
 to offload the different methods.
-'''
+"""
 import math
 from collections import defaultdict
 
@@ -28,6 +28,15 @@ def relative_abundance(biomf, sampleIDs=None):
     """
     if sampleIDs is None:
         sampleIDs = biomf.ids()
+    else:
+        try:
+            for sid in sampleIDs:
+                assert sid in biomf.ids()
+        except AssertionError:
+            raise ValueError(
+                "\nError while calculating relative abundances: The sampleIDs "
+                "provided do not match the sampleIDs in biom file. Please "
+                "double check the sampleIDs provided.\n")
     otuIDs = biomf.ids(axis="observation")
     norm_biomf = biomf.norm(inplace=False)
 
@@ -107,6 +116,15 @@ def raw_abundance(biomf, sampleIDs=None, sample_abd=True):
     results = defaultdict(int)
     if sampleIDs is None:
         sampleIDs = biomf.ids()
+    else:
+        try:
+            for sid in sampleIDs:
+                assert sid in biomf.ids()
+        except AssertionError:
+            raise ValueError(
+                "\nError while calculating raw total abundances: The "
+                "sampleIDs provided do not match the sampleIDs in biom file. "
+                "Please double check the sampleIDs provided.\n")
     otuIDs = biomf.ids(axis="observation")
 
     for sampleID in sampleIDs:
