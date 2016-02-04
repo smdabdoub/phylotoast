@@ -305,7 +305,7 @@ def parse_unifrac_v1_8(unifrac, file_data):
         if line == '':
             break
         line = line.split('\t')
-        unifrac['pcd'][line[0]] = line[1:]
+        unifrac['pcd'][line[0]] = [float(e) for e in line[1:]]
 
     unifrac['eigvals'] = [float(entry) for entry in file_data[-2].split('\t')[1:]]
     unifrac['varexp'] = [float(entry) for entry in file_data[-1].split('\t')[1:]]
@@ -320,7 +320,7 @@ def parse_unifrac_v1_9(unifrac, file_data):
         if line == '':
             break
         line = line.split('\t')
-        unifrac['pcd'][line[0]] = line[1:]
+        unifrac['pcd'][line[0]] = [float(e) for e in line[1:]]
     return unifrac
 
 

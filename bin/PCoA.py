@@ -199,7 +199,8 @@ def main():
         if args.dimensions == 3:
             ax.scatter(xs=[e[1] for e in categories[cat]['pc1']],
                        ys=[e[1] for e in categories[cat]['pc2']],
-                       zs=[e[1] for e in categories[cat]['pc3']], zdir='z',
+                       zs=[e[1] for e in categories[cat]['pc3']], 
+                       zdir='z',
                        c=colors[i],
                        s=args.point_size)
         else:
