@@ -37,7 +37,7 @@ Optional Arguments
     A file containing user defined colors in hex values or matplotlib named colors, each on
     separate line. If user color list is not sufficient or ont defined, program will use
     Qualitative Set1 scheme from `brewer colors
-    <http://nbviewer.ipython.org/github/jiffyclub/brewer2mpl/blob/master/demo/brewer2mpl_maps.ipynb>`_.
+    <https://jiffyclub.github.io/palettable/colorbrewer/qualitative/>`_.
     More information on `matplotlib named colors
     <http://stackoverflow.com/questions/22408237/named-colors-in-matplotlib>`_.
 
