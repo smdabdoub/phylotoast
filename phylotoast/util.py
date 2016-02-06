@@ -1,8 +1,8 @@
-'''
+"""
 Created on Feb 2, 2013
 
 :author: Shareef Dabdoub
-'''
+"""
 from collections import namedtuple, OrderedDict
 import os
 
@@ -25,8 +25,8 @@ def storeFASTA(fastaFNH):
     """
     fasta = file_handle(fastaFNH).read()
     return [
-        FASTARecord(rec[0].split()[0], rec[0], ''.join(rec[1:]))
-        for rec in (x.strip().split('\n') for x in fasta.split('>')[1:])
+        FASTARecord(rec[0].split()[0], rec[0], "".join(rec[1:]))
+        for rec in (x.strip().split("\n") for x in fasta.split(">")[1:])
         ]
 
 
@@ -45,27 +45,27 @@ def parseFASTA(fastaFNH):
     """
     recs = []
     seq = []
-    ID = ''
-    descr = ''
+    ID = ""
+    descr = ""
 
     for line in file_handle(fastaFNH):
         line = line.strip()
-        if line[0] == ';':
+        if line[0] == ";":
             continue
-        if line[0] == '>':
+        if line[0] == ">":
             # conclude previous record
             if seq:
-                recs.append(FASTARecord(ID, descr, ''.join(seq)))
+                recs.append(FASTARecord(ID, descr, "".join(seq)))
                 seq = []
             # start new record
             line = line[1:].split()
-            ID, descr = line[0], ' '.join(line[1:])
+            ID, descr = line[0], " ".join(line[1:])
         else:
             seq.append(line)
 
     # catch last seq in file
     if seq:
-        recs.append(FASTARecord(ID, descr, ''.join(seq)))
+        recs.append(FASTARecord(ID, descr, "".join(seq)))
     return recs
 
 
@@ -96,11 +96,11 @@ def parse_map_file(mapFNH):
 
     with file_handle(mapFNH) as mapF:
         for line in mapF:
-            if line.startswith('#SampleID'):
-                map_header = line.strip().split('\t')
-            if line.startswith('#') or not line:
+            if line.startswith("#SampleID"):
+                map_header = line.strip().split("\t")
+            if line.startswith("#") or not line:
                     continue
-            line = line.strip().split('\t')
+            line = line.strip().split("\t")
             m[line[0]] = line
 
     return map_header, m
@@ -125,12 +125,12 @@ def write_map_file(mapFNH, items, header):
     :rtype: None
     """
     if isinstance(header, list):
-        header = '\t'.join(header) + '\n'
+        header = "\t".join(header) + "\n"
 
-    with file_handle(mapFNH, 'w') as mapF:
+    with file_handle(mapFNH, "w") as mapF:
         mapF.write(header)
         for row in items:
-            mapF.write('\t'.join(row)+'\n')
+            mapF.write("\t".join(row)+"\n")
 
 
 def parse_taxonomy_table(idtaxFNH):
@@ -150,13 +150,13 @@ def parse_taxonomy_table(idtaxFNH):
     idtax = OrderedDict()
     with file_handle(idtaxFNH) as idtxF:
         for line in idtxF:
-            ID, tax = line.strip().split('\t')[:2]
+            ID, tax = line.strip().split("\t")[:2]
             idtax[ID] = tax
 
     return idtax
 
 
-def split_phylogeny(p, level='s'):
+def split_phylogeny(p, level="s"):
     """
     Return either the full or truncated version of a QIIME-formatted
     taxonomy string.
@@ -174,9 +174,9 @@ def split_phylogeny(p, level='s'):
     :return: A QIIME-formatted taxonomy string up to the classification given
             by param level.
     """
-    level = level+'__'
+    level = level+"__"
     result = p.split(level)
-    return result[0]+level+result[1].split(';')[0]
+    return result[0]+level+result[1].split(";")[0]
 
 
 def ensure_dir(d):
@@ -194,7 +194,7 @@ def ensure_dir(d):
         os.makedirs(d)
 
 
-def file_handle(fnh, mode='rU'):
+def file_handle(fnh, mode="rU"):
     """
     Takes either a file path or an open file handle, checks validity and
     returns an open file handle or raises an appropriate Exception.
@@ -211,7 +211,7 @@ def file_handle(fnh, mode='rU'):
     handle = None
     if isinstance(fnh, file):
         if fnh.closed:
-            raise ValueError('Input file is closed.')
+            raise ValueError("Input file is closed.")
         handle = fnh
     elif isinstance(fnh, str):
         handle = open(fnh, mode)
@@ -220,7 +220,7 @@ def file_handle(fnh, mode='rU'):
 
 # Meant to contain all the data necessary for calculating a single column of
 # an iTol data table
-DataCategory = namedtuple('DataCategory', 'sids results')
+DataCategory = namedtuple("DataCategory", "sids results")
 
 
 def gather_categories(imap, header, categories=None):
@@ -246,27 +246,27 @@ def gather_categories(imap, header, categories=None):
               returned
     """
     if categories is None:
-        return {'default': DataCategory(set(imap.keys()), {})}
+        return {"default": DataCategory(set(imap.keys()), {})}
 
     cat_ids = [header.index(cat)
-               for cat in categories if cat in header and '=' not in cat]
+               for cat in categories if cat in header and "=" not in cat]
     conditions = {}
     for cat in categories:
-        if '=' in cat and cat.split('=')[0] in header:
-            conditions[header.index(cat.split('=')[0])] = cat.split('=')[1]
+        if "=" in cat and cat.split("=")[0] in header:
+            conditions[header.index(cat.split("=")[0])] = cat.split("=")[1]
 
     if not cat_ids and not conditions:
-        return {'default': DataCategory(set(imap.keys()), {})}
+        return {"default": DataCategory(set(imap.keys()), {})}
 
     if not cat_ids and conditions:
         sids = {sid for sid, row in imap.iteritems()
                 if all([row[c] == conditions[c] for c in conditions])}
-        return {'default': DataCategory(sids, {})}
+        return {"default": DataCategory(sids, {})}
 
     table = {}
     for sid, row in imap.iteritems():
         if all([row[c] == conditions[c] for c in conditions]):
-            key = '_'.join([row[cid] for cid in cat_ids])
+            key = "_".join([row[cid] for cid in cat_ids])
             if key not in table:
                 table[key] = DataCategory(set(), {})
             table[key].sids.add(sid)
@@ -287,9 +287,9 @@ def parse_unifrac(unifracFN):
              'eigvals' (eigenvalues), and 'varexp' (variation explained)
     """
     with open(unifracFN) as uF:
-        unifrac = {'pcd': OrderedDict(), 'eigvals': [], 'varexp': []}
+        unifrac = {"pcd": OrderedDict(), "eigvals": [], "varexp": []}
 
-        first = uF.next().split('\t')
+        first = uF.next().split("\t")
         lines = [line.strip() for line in uF]
 
         if first[0] == "pc vector number":
@@ -300,38 +300,46 @@ def parse_unifrac(unifracFN):
             # raise file format not supported/recognized error
             pass
 
-def parse_unifrac_v1_8(unifrac, file_data):
-    for line in file_data:
-        if line == '':
-            break
-        line = line.split('\t')
-        unifrac['pcd'][line[0]] = [float(e) for e in line[1:]]
 
-    unifrac['eigvals'] = [float(entry) for entry in file_data[-2].split('\t')[1:]]
-    unifrac['varexp'] = [float(entry) for entry in file_data[-1].split('\t')[1:]]
+def parse_unifrac_v1_8(unifrac, file_data):
+    """
+    Function to parse data from older version of unifrac file obtained from
+    Qiime version 1.8 and earlier.
+
+    :type unifracFN: str
+    :param unifracFN: The path to the unifrac results file
+
+    :type file_data: list
+    :param file_data: Unifrac data lines after stripping whitespace characters.
+    """
+    for line in file_data:
+        if line == "":
+            break
+        line = line.split("\t")
+        unifrac["pcd"][line[0]] = [float(e) for e in line[1:]]
+
+    unifrac["eigvals"] = [float(entry) for entry in file_data[-2].split("\t")[1:]]
+    unifrac["varexp"] = [float(entry) for entry in file_data[-1].split("\t")[1:]]
     return unifrac
 
 
 def parse_unifrac_v1_9(unifrac, file_data):
-    unifrac['eigvals'] = [float(entry) for entry in file_data[0].split('\t')]
-    unifrac['varexp'] = [float(entry)*100 for entry in file_data[3].split('\t')]
+    """
+    Function to parse data from newer version of unifrac file obtained from
+    Qiime version 1.9 and later.
+
+    :type unifracFN: str
+    :param unifracFN: The path to the unifrac results file
+
+    :type file_data: list
+    :param file_data: Unifrac data lines after stripping whitespace characters.
+    """
+    unifrac["eigvals"] = [float(entry) for entry in file_data[0].split("\t")]
+    unifrac["varexp"] = [float(entry)*100 for entry in file_data[3].split("\t")]
 
     for line in file_data[8:]:
-        if line == '':
+        if line == "":
             break
-        line = line.split('\t')
-        unifrac['pcd'][line[0]] = [float(e) for e in line[1:]]
+        line = line.split("\t")
+        unifrac["pcd"][line[0]] = [float(e) for e in line[1:]]
     return unifrac
-
-
-
-
-
-
-
-
-
-
-
-
-

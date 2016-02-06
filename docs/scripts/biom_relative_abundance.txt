@@ -6,8 +6,8 @@ Convert a BIOM file of OTU abundance data into a CSV of relative abundance
 data.
 
     .. code-block:: bash
-    
-        usage: biom_relative_abundance.py [-h] -i INPUT_BIOM_FP [-o OUTPUT_CSV_FP] [-v]
+
+        usage: biom_relative_abundance.py [-h] [-i INPUT_BIOM_FP] [-o OUTPUT_TSV_FP] [--stabilize_variance] [-v]
 
 Required arguments
 ^^^^^^^^^^^^^^^^^^
@@ -22,6 +22,11 @@ Optional arguments
 .. cmdoption:: -o OUTPUT_CSV_FP, --output_csv_fp OUTPUT_CSV_FP
 
     A CSV table of relative OTU abundance data.
+
+.. cmdoption:: --stabilize_variance
+
+    Apply the variance-stabilizing arcsine square root transformation to the 
+    OTU proportion data.
 
 .. cmdoption:: -h, --help
     

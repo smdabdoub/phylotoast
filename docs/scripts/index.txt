@@ -12,6 +12,7 @@ Contents:
    condense_workflow
    filter_rep_set
    iTol
+   LDA
    multi_parallel_pick_otus
    otu_condense
    otu_to_tax_name

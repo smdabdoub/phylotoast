@@ -11,6 +11,9 @@ PhyloToAST
 .. image:: https://pypip.in/format/phylotoast/badge.svg
     :target: https://pypi.python.org/pypi/phylotoast/
     :alt: Download format
+.. image:: https://travis-ci.org/smdabdoub/phylotoast.svg?branch=master
+    :target: https://travis-ci.org/smdabdoub/phylotoast
+    :alt: Travis CI
 
 .. image:: images/readmepic.png
    :align: center
