@@ -22,10 +22,9 @@ PhyloToAST Scripts
 .. toctree::
    :maxdepth: 1
 
-   scripts/visualization.txt
    scripts/api.txt
-   scripts/subsetting.txt
    scripts/other.txt
+   scripts/visualization.txt
 
 Citations:
 
