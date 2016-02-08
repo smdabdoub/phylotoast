@@ -1,0 +1,44 @@
+============
+diversity.py
+============
+Calculate and plot for two sample categories: Shannon diversity, Chao1 diversity, and a Jaccard similiarity distance matrix heatmap.
+
+.. code-block:: bash
+
+    usage: usage: diversity.py [-h][-c {shannon,chao1,jaccard} [{shannon,chao1,jaccard} ...]] [-p IMAGE_TYPE] map_file biom_file category plot_title out_dir
+
+Required arguments
+-------------------
+.. cmdoption:: map_file
+
+    QIIME mapping file.
+
+.. cmdoption:: biom_file
+
+    BIOM table file name
+
+.. cmdoption:: category
+
+    Specific category from the mapping file.
+
+.. cmdoption:: plot_title
+
+    The name of a PDF file the pathway map will be written to.
+
+.. cmdoption:: out_dir
+
+    The directory all plots will be saved to.
+
+Optional arguments
+------------------
+.. cmdoption:: -h, --help
+
+    show this help message and exit
+
+.. cmdoption:: -c {shannon,chao1,jaccard} [{shannon,chao1,jaccard} ...]
+
+    Choose the type of calculation needed. Default value is "None", which will output all 3 types of calculations.
+
+.. cmdoption:: -p IMAGE_TYPE, --image_type IMAGE_TYPE
+
+    The type of image to save: PNG, SVG, etc.
