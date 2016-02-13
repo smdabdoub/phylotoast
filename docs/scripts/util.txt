@@ -1,0 +1,248 @@
+===========
+util module
+===========
+
+ensure_dir
+----------
+Check to make sure the supplied directory path does not exist, if so, create it.
+
+.. code-block:: bash
+
+	usage: phylotoast.util.ensure_dir(d)
+
+.. cmdoption:: d:
+
+	It is the full path to a directory.
+
+.. cmdoption:: return:
+
+	Does not return anything, but creates a directory path if it doesn't exist already.
+
+-----------------------------
+
+file_handle
+-----------
+Takes either a file path or an open file handle, checks validity and returns an open file handle or raises an appropriate Exception.
+
+.. code-block:: bash
+
+	usage: phylotoast.util.file_handle(fnh, mode='rU')
+
+.. cmdoption:: fnh:
+
+	It is the full path to a file, or open file handle.
+
+.. cmdoption:: mode:
+
+	The way in which this file will be used, for example to read or write or both. By default, file will be opened in rU mode.
+
+.. cmdoption:: return:
+	Returns an opened file for appropriate usage.
+
+-----------------------------
+
+gather_categories
+-----------------
+Find the user specified categories in the map and create a dictionary to contain the relevant data for each type within the categories. Multiple categories will have their types combined such that each possible combination will have its own entry in the dictionary.
+
+.. code-block:: bash
+
+	usage: phylotoast.util.gather_categories(imap, header, categories=None)
+
+.. cmdoption:: imap:
+
+	The input mapping file data keyed by SampleID.
+
+.. cmdoption:: header:
+
+	The header line from the input mapping file. This will be searched for the user-specified categories.
+
+.. cmdoption:: categories:
+
+	The list of user-specified categories from the mapping file.
+
+.. cmdoption:: return:
+
+	A sorted dictionary keyed on the combinations of all the types found within the user-specified categories. Each entry will contain an empty DataCategory namedtuple. If no categories are specified, a single entry with the key 'default' will be returned.
+
+-----------------------------
+
+parseFASTA
+----------
+Parse the records in a FASTA-format file by first reading the entire file into memory.
+
+.. code-block:: bash
+
+	usage: phylotoast.util.parseFASTA(fastaFNH)
+
+.. cmdoption:: fastaFNH:
+
+	The data source from which to parse the FASTA records. Expects the input to resolve to a collection that can be iterated through, such as a list or an open file handle.
+
+.. cmdoption:: return:
+
+	FASTA records containing entries for id, description and data.
+
+-----------------------------
+
+parse_map_file
+--------------
+Opens a QIIME mapping file and stores the contents in a dictionary keyed on SampleID (default) or a user-supplied one. The only required fields are SampleID, BarcodeSequence, LinkerPrimerSequence (in that order), and Description (which must be the final field).
+
+.. code-block:: bash
+
+	usage: phylotoast.util.parse_map_file(mapFNH)
+
+.. cmdoption:: mapFNH:
+
+	Either the full path to the map file or an open file handle.
+
+.. cmdoption:: return:
+
+    A tuple of header line for mapping file and a map associating each line of the mapping file with the appropriate sample ID (each value of the map also contains the sample ID). An OrderedDict is used for mapping so the returned map is guaranteed to have the same order as the input file.
+
+-----------------------------
+
+parse_taxonomy_table
+--------------------
+Greengenes provides a file each OTU a full taxonomic designation. This method parses that file into a map with (key,val) = (OTU, taxonomy).
+
+.. code-block:: bash
+
+	usage: phylotoast.util.parse_taxonomy_table(idtaxFNH)
+
+.. cmdoption:: idtaxFNH:
+
+	Either the full path to the map file or an open file handle.
+
+.. cmdoption:: return:
+
+	A map associating each OTU ID with the taxonomic specifier. An OrderedDict is used so the returned map is guaranteed to have the same order as the input file.
+
+-----------------------------
+
+parse_unifrac
+-------------
+Parses the unifrac results file into a dictionary.
+
+.. code-block:: bash
+
+	usage: phylotoast.util.parse_unifrac(unifracFN)
+
+.. cmdoption:: unifracFN:
+
+	The path to the unifrac results file.
+
+.. cmdoption:: return:
+
+	A dictionary with keys: 'pcd' (principle coordinates data) which is a dictionary of the data keyed by sample ID, 'eigvals' (eigenvalues), and 'varexp' (variation explained).
+
+-----------------------------
+
+parse_unifrac_v1_8
+-------------------
+Function to parse data from older version of unifrac file obtained from Qiime version 1.8 and earlier.
+
+.. code-block:: bash
+
+	usage: phylotoast.util.parse_unifrac_v1_8(unifrac, file_data)
+
+.. cmdoption:: unifrac:
+
+	The path to the unifrac results file.
+
+.. cmdoption:: file_data
+
+    Unifrac data lines after stripping whitespace characters.
+
+.. cmdoption:: return:
+
+	A dictionary with keys: 'pcd' (principle coordinates data) which is a dictionary of the data keyed by sample ID, 'eigvals' (eigenvalues), and 'varexp' (variation explained).
+
+-----------------------------
+
+parse_unifrac_v1_9
+-------------------
+Function to parse data from newer version of unifrac file obtained from Qiime version 1.9 and later.
+
+.. code-block:: bash
+
+	usage: phylotoast.util.parse_unifrac_v1_9(unifrac, file_data)
+
+.. cmdoption:: unifrac:
+
+	The path to the unifrac results file.
+
+.. cmdoption:: file_data
+
+    Unifrac data lines after stripping whitespace characters.
+
+.. cmdoption:: return:
+
+	A dictionary with keys: 'pcd' (principle coordinates data) which is a dictionary of the data keyed by sample ID, 'eigvals' (eigenvalues), and 'varexp' (variation explained).
+
+-----------------------------
+
+split_phylogeny
+---------------
+Return either the full or truncated version of a QIIME-formatted taxonomy string.
+
+.. code-block:: bash
+
+	usage: phylotoast.util.split_phylogeny(p, level='s')
+
+.. cmdoption:: p:
+
+	A QIIME-formatted taxonomy string: k__Foo; p__Bar; ...
+
+.. cmdoption:: level:
+
+	The different level of identification are kingdom (k), phylum (p), class (c),order (o), family (f), genus (g) and species (s). The default level of identification is species.
+
+.. cmdoption:: return:
+
+	A QIIME-formatted taxonomy string up to the classification given by param level.
+
+-----------------------------
+
+storeFASTA
+----------
+Parse the records in a FASTA-format file by first reading the entire file into memory.
+
+.. code-block:: bash
+
+	usage: phylotoast.util.storeFASTA(fastaFNH)
+
+.. cmdoption:: fastaFNH:
+
+	The data source from which to parse the FASTA records. Expects the input to resolve to a collection that can be iterated through, such as a list or an open file handle.
+
+.. cmdoption:: return:
+
+	FASTA records containing entries for id, description and data.
+
+-----------------------------
+
+write_map_file
+--------------
+Given a list of mapping items (in the form described by the parse_mapping_file method) and a header line, write each row to the given input file with fields separated by tabs.
+
+.. code-block:: bash
+
+	usage: phylotoast.util.write_map_file(mapFNH, items, header)
+
+.. cmdoption:: mapFNH:
+
+	Either the full path to the map file or an open file handle.
+
+.. cmdoption:: items:
+
+	The list of row entries to be written to the mapping file.
+
+.. cmdoption:: header:
+
+	The descriptive column names that are required as the first line of the mapping file.
+
+.. cmdoption:: return:
+
+	None.

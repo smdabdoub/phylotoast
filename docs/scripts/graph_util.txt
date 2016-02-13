@@ -1,0 +1,31 @@
+==========
+graph_util
+==========
+
+plot_kde
+--------
+Plot a smoothed (by kernel density estimate) histogram.
+
+.. code-block:: bash
+
+	usage: phylotoast.graph_util.plot_kde(data, ax, title=None, color='r', fill_bt=True)
+
+.. cmdoption:: data: 
+
+	An array containing the data to be plotted.
+
+.. cmdoption:: ax: 
+
+	The Axes object to draw to.
+
+.. cmdoption:: title: 
+
+	The plot title.
+
+.. cmdoption:: color: 
+
+	The color of the histogram line and fill. Note that the fill will be plotted with an alpha of 0.35.
+
+.. cmdoption:: fill_bt: 
+	
+	Specify whether to fill the area beneath the histogram line.

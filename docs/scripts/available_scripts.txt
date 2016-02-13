@@ -1,7 +1,6 @@
 Available Scripts
 ========================
-
-Contents:
+Various PhyloToAST scripts.
 
 .. toctree::
    :maxdepth: 1
@@ -10,14 +9,11 @@ Contents:
    barcode_filter
    biom_relative_abundance
    condense_workflow
+   filter_keep_otus_by_sample.txt
    filter_rep_set
-   iTol
-   LDA
    multi_parallel_pick_otus
    otu_condense
    otu_to_tax_name
-   PCoA
-   PCoA_bubble
    pick_otus_condense
    multi_qsub
    merge_otu_results

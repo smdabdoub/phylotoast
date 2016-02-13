@@ -1,5 +1,5 @@
 Welcome to PhyloToAST documentation!
-=======================================
+====================================
 
 The PhyloToAST project is a collection of python scripts that modifies the original QIIME [1]_ pipeline:
 
@@ -13,16 +13,18 @@ by adding or modifying several steps (as seen below) including support for PBS-b
    :scale: 45 %
    :align: center
 
-Available Scripts
-======================
-Contents:
+Download and install PhyloToAST_ package.
 
+.. _PhyloToAST: https://pypi.python.org/pypi/qiime-tools/1.1.2
+   
+PhyloToAST Scripts
+==================
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
-   scripts/index.txt
-   phylotoast.txt
-
+   scripts/api.txt
+   scripts/other.txt
+   scripts/visualization.txt
 
 Citations:
 
@@ -36,4 +38,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

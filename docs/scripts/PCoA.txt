@@ -83,6 +83,15 @@ Optional Arguments
 
     Show the help message and exit.
 
+Workflow for generating PCoA plots using PhyloToAST
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**Step 1** :
+Obtain unifrac principal coordinates file from QIIME's `beta_diversity_through_plots.py <http://qiime.org/scripts/beta_diversity_through_plots.html>`_ script.
+
+**Step 2** :
+Run ``PCoA.py`` script with ``-t Path to the tree file`` parameters.
+
 Example plots
 --------------
 

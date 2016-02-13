@@ -1,0 +1,36 @@
+===========================
+filter_keep_otus_by_sample
+===========================
+This filter allows for the removal of sequences not contained within a user-
+specified list of Sample IDs. This script examines each OTU and removes any
+sequences not originating from the specified set of allowed Sample IDs. Any
+empty OTUs that result are removed.
+
+.. code-block:: bash
+	
+	usage: filter_keep_otus_by_sample.py [-h] -i OTU_MAP -k SAMPLES_TO_KEEP_FP -o OUTPUT_OTU_MAP_FP [-v]
+
+Required Arguments
+-------------------
+
+.. cmdoption:: -i OTU_MAP, --otu_map OTU_MAP
+    
+	Path to the input OTU map (i.e., the output from pick_otus.py)
+
+.. cmdoption:: -k SAMPLES_TO_KEEP_FP, --samples_to_keep_fp SAMPLES_TO_KEEP_FP
+    
+	Path to the file containing Sample IDs to keep in the new OTU map. One Sample ID per line.
+
+.. cmdoption:: -o OUTPUT_OTU_MAP_FP, --output_otu_map_fp OUTPUT_OTU_MAP_FP
+    
+	Path to the output filtered OTU map
+
+Optional Arguments
+-------------------
+.. cmdoption:: -h, --help
+    
+	Show this help message and exit
+
+.. cmdoption:: -v, --verbose
+    
+	Specify for verbose description of the script output.

@@ -1,0 +1,9 @@
+============
+Subsetting
+============
+PhyloToAST script for enabling user to work with subset of the overall data.
+
+.. toctree::
+   :maxdepth: 1
+
+   filter_keep_otus_by_sample.txt
