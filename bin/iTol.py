@@ -159,7 +159,7 @@ def main():
             itolF.write("DATASET_LABEL\tLog Total Abundance\n")
             itolF.write("COLOR\t#000000\n")
             itolF.write("LEGEND_TITLE\tLog Total Abundance\n")
-            itolF.write("LEGEND_SHAPE\t1\n")
+            itolF.write("LEGEND_SHAPES\t1\n")
             itolF.write("LEGEND_COLORS\t#000000\n")
             itolF.write("LEGEND_LABELS\tLog Total Abundance\n")
             itolF.write("COLOR_MIN\t#FFFFFF\n")
@@ -171,7 +171,8 @@ def main():
                         for _ in range(len(groups))])))
             itolF.write("FIELD_LABELS\t" + "\t".join(groups.keys())+"\n")
             itolF.write("LEGEND_TITLE\tNMRA\n")
-            itolF.write("LEGEND_SHAPES\t1\t1\t1\t1\n")
+            itolF.write("LEGEND_SHAPES\t{}\n".format("\t".join(["1"
+                        for _ in range(len(groups))])))
             itolF.write("LEGEND_COLORS\t{}\n".format("\t".join(["#ff0000"
                         for _ in range(len(groups))])))
             itolF.write("LEGEND_LABELS\t" + "\t".join(groups.keys())+"\n")
