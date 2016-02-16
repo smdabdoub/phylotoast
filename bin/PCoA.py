@@ -38,7 +38,7 @@ def parse_colors(file, categories=None):
              mapping categories.
     """
     colors = []
-    with open(file, 'r') as colorfile:
+    with open(file, 'rU') as colorfile:
         for line in colorfile:
             line = line.strip()
             if line:
@@ -117,6 +117,9 @@ def handle_program_options():
     parser.add_argument('--dpi', default=200, type=int,
                         help="Set plot quality in Dots Per Inch (DPI). Larger\
                               DPI will result in larger file size.")
+    parser.add_argument('-a', '--annotate_points', default=False,
+                        help="Set to 'True' to annotate points with their \
+                             sample labels. Default is 'False'.")
     parser.add_argument('-o', '--out_fp', default=None,
                         help="The path and file name to save the plot under.\
                               If specified, the figure will be saved directly\
@@ -188,7 +191,7 @@ def main():
     if args.dimensions == 3:
         ax = fig.add_subplot(111, projection='3d')
         ax.view_init(elev=23., azim=-134.5)
-        ax.set_zlabel(axis_str.format(pco[2], pc3v))
+        ax.set_zlabel(axis_str.format(3, pc3v))
         if args.z_limits:
             ax.set_zlim(args.z_limits)
     else:
@@ -209,11 +212,12 @@ def main():
                        c=colors[i], s=args.point_size)
 
 # Script to annotate PCoA points.
-#             for x, y in zip(categories[cat]['pc1'], categories[cat]['pc2']):
-#                 ax.annotate(
-#                     x[0], xy=(x[1], y[1]), xytext=(-10, -15),
-#                     textcoords='offset points', ha='center', va='center',
-#                     )
+        if args.annotate_points:
+            for x, y in zip(categories[cat]['pc1'], categories[cat]['pc2']):
+                ax.annotate(
+                    x[0], xy=(x[1], y[1]), xytext=(-10, -15),
+                    textcoords='offset points', ha='center', va='center',
+                    )
 
     # customize plot options
     if args.x_limits:
@@ -221,8 +225,8 @@ def main():
     if args.y_limits:
         ax.set_ylim(args.y_limits)
 
-    ax.set_xlabel(axis_str.format(pco[0], float(pc1v)))
-    ax.set_ylabel(axis_str.format(pco[1], float(pc2v)))
+    ax.set_xlabel(axis_str.format(1, float(pc1v)))
+    ax.set_ylabel(axis_str.format(2, float(pc2v)))
 
     ax.legend([Rectangle((0, 0), 1, 1, fc=colors[i])
               for i in range(len(categories))], categories.keys(), loc='best')
