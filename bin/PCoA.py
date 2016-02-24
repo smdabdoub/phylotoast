@@ -111,9 +111,6 @@ def handle_program_options():
     parser.add_argument('--figsize', default=[14, 8], type=int, nargs=2,
                         help="Set plot quality in Dots Per Inch (DPI). Larger\
                               DPI will result in larger file size.")
-    parser.add_argument('-a', '--annotate_points', default=False,
-                        help="Set to 'True' to annotate points with their \
-                             sample labels. Default is 'False'.")
     parser.add_argument('-o', '--out_fp', default=None,
                         help="The path and file name to save the plot under.\
                               If specified, the figure will be saved directly\
@@ -204,7 +201,7 @@ def main():
                        [e[1] for e in categories[cat]['pc2']],
                        c=colors[i], s=args.point_size)
 
-# Script to annotate PCoA points.
+        # Script to annotate PCoA points.
         if args.annotate_points:
             for x, y in zip(categories[cat]['pc1'], categories[cat]['pc2']):
                 ax.annotate(
