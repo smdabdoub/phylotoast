@@ -111,6 +111,9 @@ def handle_program_options():
     parser.add_argument('--figsize', default=[14, 8], type=int, nargs=2,
                         help="Set plot quality in Dots Per Inch (DPI). Larger\
                               DPI will result in larger file size.")
+    parser.add_argument('--annotate_points', action='store_true',
+                        help="If specified, each graphed point will be\
+                              labeled with its sample ID.")
     parser.add_argument('-o', '--out_fp', default=None,
                         help="The path and file name to save the plot under.\
                               If specified, the figure will be saved directly\
