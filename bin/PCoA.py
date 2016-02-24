@@ -114,7 +114,7 @@ def handle_program_options():
                         automatic setting based on the data range. Should\
                         take the form: --z_limits -0.5 0.5")
     parser.add_argument('-t', '--title', default='', help="Title of the plot.")
-    parser.add_argument('--dpi', default=200, type=int,
+    parser.add_argument('--figsize', default=[14, 8], type=int, nargs=2,
                         help="Set plot quality in Dots Per Inch (DPI). Larger\
                               DPI will result in larger file size.")
     parser.add_argument('-a', '--annotate_points', default=False,
@@ -187,7 +187,7 @@ def main():
 
     axis_str = "PC{} - Percent variation explained {:.2f}%"
     # initialize plot
-    fig = plt.figure(figsize=(14,8))
+    fig = plt.figure(figsize=args.figsize)
     if args.dimensions == 3:
         ax = fig.add_subplot(111, projection='3d')
         ax.view_init(elev=23., azim=-134.5)
@@ -237,8 +237,8 @@ def main():
     # save or display result
     if args.out_fp:
         fig.savefig(args.out_fp, facecolor='white',
-                    edgecolor='none', dpi=args.dpi,
-                    bbox_inches='tight', pad_inches=0.2)
+                    edgecolor='none', bbox_inches='tight', 
+                    pad_inches=0.2)
     else:
         plt.show()
 
