@@ -184,8 +184,7 @@ def main():
     fig = plt.figure(figsize=args.figsize)
     if args.dimensions == 3:
         ax = fig.add_subplot(111, projection='3d')
-        ax.view_init(elev=23., azim=-134.5)
-        ax.set_zlabel(axis_str.format(3, pc3v))
+        ax.view_init(elev=args.z_angles[1], azim=args.z_angles[0])
         if args.z_limits:
             ax.set_zlim(args.z_limits)
     else:
