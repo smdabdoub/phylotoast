@@ -79,21 +79,15 @@ def handle_program_options():
                         choices=[2, 3],
                         help="Choose whether to plot 2D or 3D.")
     parser.add_argument('-c', '--colors', default=None,
-                        help="A file containing user defined matplotlib colors in \
-                              hex values, each on separate line. The \
-                              desciption of named colors in matplotlib can be \
-                              found here: \
-                              http://stackoverflow.com/questions/22408237/\
-                              named-colors-in-matplotlib.\
-                              By default, the color scheme has been chosen \
-                              from brewer2mpl library, which can be \
-                              found here:\
-                              http://nbviewer.ipython.org/github/jiffyclub/\
-                              brewer2mpl/blob/master/demo/brewer2mpl_maps.ipynb\
-                              If user color list is not sufficient, program \
-                              will use Qualitative Set1 color scheme from \
-                              brewer2mpl library to accommodate additional \
-                              colors for all categories.")
+                        help="A file containing group colors (hex values).\
+                        Each color should appear on a separate line, in the\
+                        order in which the groups appear in the mapping file.\
+                        If no file is specified, group colors will be assigned\
+                        using the Brewer color set (Qualitative Set1 color\
+                        scheme from brewer2mpl library). This color set will\
+                        also be used if the user-specified list of colors is\
+                        insufficient to cover all groups found in the mapping\
+                        file.")
     parser.add_argument('-s', '--point_size', default=100, type=int,
                         help="Specify the size of the circles representing each\
                         of the samples in the plot")
