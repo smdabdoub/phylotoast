@@ -5,53 +5,53 @@ from collections import (OrderedDict,defaultdict)
 import json
 import math
 # 3rd party
-from fuzz import FuzzySet, FuzzyElement
+#from fuzz import FuzzySet, FuzzyElement
 import numpy as np
 # local
 import util
 import biom_calc as bc
 
 
-def fuzzy_lookup(orig, keys):
-    """
-    Return the intersection of a fuzzy set and a collection of keys
-    (presumably a subset).
+# def fuzzy_lookup(orig, keys):
+#     """
+#     Return the intersection of a fuzzy set and a collection of keys
+#     (presumably a subset).
 
-    :type orig: set
-    :param orig: FuzzySet of SampleID with OTUID and relative abundances.
+#     :type orig: set
+#     :param orig: FuzzySet of SampleID with OTUID and relative abundances.
 
-    :type keys: list
-    :param keys: Genus-species taxonomic identifier.
+#     :type keys: list
+#     :param keys: Genus-species taxonomic identifier.
 
-    :rtype: set
-    :return: Returns a new FuzzySet of genus-species identifier and relative
-             abundance for the given list of keys.
-    """
-    fset = FuzzySet()
-    for k in keys:
-        if k in orig:
-            fset.add(orig[k])
-    return fset
+#     :rtype: set
+#     :return: Returns a new FuzzySet of genus-species identifier and relative
+#              abundance for the given list of keys.
+#     """
+#     fset = FuzzySet()
+#     for k in keys:
+#         if k in orig:
+#             fset.add(orig[k])
+#     return fset
 
 
-def sdi(fset):
-    """
-    Calculate the Shannon Diversity Index.
-    H = -sum(p*ln(p))
-    where p is the relative abundance of a single OTU in the set.
-    Note that the Equitability Index ( $E_H = H / H_{max}$ ) could be easily
-    calculated from the returned array by:
-    >>>diversities = sdi(fset)
-    >>>equitabilities = diversities/max(diversities)
+# def sdi(fset):
+#     """
+#     Calculate the Shannon Diversity Index.
+#     H = -sum(p*ln(p))
+#     where p is the relative abundance of a single OTU in the set.
+#     Note that the Equitability Index ( $E_H = H / H_{max}$ ) could be easily
+#     calculated from the returned array by:
+#     >>>diversities = sdi(fset)
+#     >>>equitabilities = diversities/max(diversities)
 
-    :type fset: FuzzySet
-    :param fset: The set of OTUs and their relative abundance values
+#     :type fset: FuzzySet
+#     :param fset: The set of OTUs and their relative abundance values
 
-    :rtype: float
-    :return: The Shannon Diversity Index.
-    """
-    p = [e.mu for e in fset]
-    return -1*sum([entry*math.log(entry) for entry in p])
+#     :rtype: float
+#     :return: The Shannon Diversity Index.
+#     """
+#     p = [e.mu for e in fset]
+#     return -1*sum([entry*math.log(entry) for entry in p])
 
 
 def otu_name_biom(biom_row):
@@ -114,46 +114,46 @@ def load_core_file(core_fp):
                 for line in in_f.readlines()[1:]}
 
 
-def assign_otu_membership(biom):
-    """
-    Determines the number of OTUs associated with samples using
-    fuzzy sets with membership amount determined by relative abundance.
+# def assign_otu_membership(biom):
+#     """
+#     Determines the number of OTUs associated with samples using
+#     fuzzy sets with membership amount determined by relative abundance.
 
-    :type biom: str
-    :param biom: BIOM format file converted to Python object using JSON
-                 decoder.
+#     :type biom: str
+#     :param biom: BIOM format file converted to Python object using JSON
+#                  decoder.
 
-    :rtype: dict
-    :return: Returns a dictionary of FuzzySet of SampleID's with OTUID and
-             relative abundance as its elements.
-    """
-    samples = defaultdict(FuzzySet)
-    otu_map = {row['id']: row['metadata']['taxonomy']
-               for row in biom['rows']}
-    rel_abd = bc.relative_abundance(biom, [col['id']
-                                    for col in biom['columns']])
-    for sid in rel_abd:
-        samples[sid].update([FuzzyElement(otu_name(otu_map[oid]), ra)
-                            for oid, ra in rel_abd[sid].items()])
+#     :rtype: dict
+#     :return: Returns a dictionary of FuzzySet of SampleID's with OTUID and
+#              relative abundance as its elements.
+#     """
+#     samples = defaultdict(FuzzySet)
+#     otu_map = {row['id']: row['metadata']['taxonomy']
+#                for row in biom['rows']}
+#     rel_abd = bc.relative_abundance(biom, [col['id']
+#                                     for col in biom['columns']])
+#     for sid in rel_abd:
+#         samples[sid].update([FuzzyElement(otu_name(otu_map[oid]), ra)
+#                             for oid, ra in rel_abd[sid].items()])
 
-    return samples
+#     return samples
 
 
-def print_membership(entry):
-    """
-    Given an entry from a Sample dictionary (see assign_otu_membership) of
-    fuzzy otu membership, pretty-print the members as percentages.
+# def print_membership(entry):
+#     """
+#     Given an entry from a Sample dictionary (see assign_otu_membership) of
+#     fuzzy otu membership, pretty-print the members as percentages.
 
-    :type entry: list
-    :param entry: SampleID's from the output dict of assign_otu_membership().
+#     :type entry: list
+#     :param entry: SampleID's from the output dict of assign_otu_membership().
 
-    :rtype: str
-    :return: Returns OTU name and percentage relative abundance as membership
-             for the given list of SampleID's.
-    """
-    data = [str(e).split(' \\ ') for e in entry]
-    data = [(name, float(mu)) for name, mu in data]
-    data = ['{0}: {1:4.2%}'.format(name, mu)
-            for name, mu in sorted(data, key=lambda x:x[1])]
-    for e in data:
-        print e
+#     :rtype: str
+#     :return: Returns OTU name and percentage relative abundance as membership
+#              for the given list of SampleID's.
+#     """
+#     data = [str(e).split(' \\ ') for e in entry]
+#     data = [(name, float(mu)) for name, mu in data]
+#     data = ['{0}: {1:4.2%}'.format(name, mu)
+#             for name, mu in sorted(data, key=lambda x:x[1])]
+#     for e in data:
+#         print e
