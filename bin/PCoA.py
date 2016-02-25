@@ -17,9 +17,10 @@ if len(errors) != 0:
         print 'Import Error. Please install missing module:', item
     sys.exit()
 from brewer2mpl import qualitative
+import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
 from pylab import *
-from phylotoast import util
+from phylotoast import util, graph_util as gu
 
 def parse_colors(file, categories=None):
     """
@@ -121,6 +122,8 @@ def handle_program_options():
     parser.add_argument('--annotate_points', action='store_true',
                         help="If specified, each graphed point will be\
                               labeled with its sample ID.")
+    parser.add_argument('--ggplot2_style', action='store_true',
+                        help="Apply ggplot2 styling to the figure.")
     parser.add_argument('-o', '--out_fp', default=None,
                         help="The path and file name to save the plot under.\
                               If specified, the figure will be saved directly\
@@ -242,6 +245,9 @@ def main():
     
     if args.title:
         title(args.title)
+
+    if args.ggplot2_style and not args.dimensions == 3:
+        gu.ggplot2_style(ax)
 
     # save or display result
     if args.out_fp:
