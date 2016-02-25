@@ -25,6 +25,7 @@ setup(
   author='Shareef M. Dabdoub',
   author_email='dabdoub.2@osu.edu',
   packages=['phylotoast', 'phylotoast.test'],
+  include_package_data=True,
   url='https://github.com/smdabdoub/phylotoast',
   #install_requires=requires,
   scripts=scripts,
