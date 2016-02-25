@@ -1,15 +1,15 @@
 from __future__ import division
 # python libs
 import ast
-from collections import (OrderedDict,defaultdict)
-import json
-import math
+#from collections import defaultdict
+#import json
+#import math
 # 3rd party
 #from fuzz import FuzzySet, FuzzyElement
-import numpy as np
+#import numpy as np
 # local
-import util
-import biom_calc as bc
+#import util
+#import biom_calc as bc
 
 
 # def fuzzy_lookup(orig, keys):
