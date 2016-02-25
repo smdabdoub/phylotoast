@@ -1,10 +1,30 @@
 #!/usr/bin/env python
 import argparse
 import sys
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+
+errors = []
+try:
+  import matplotlib.pyplot as plt
+except ImportError as ie:
+    errors.append('matplotlib')
+try:
+  import numpy as np
+except ImportError as ie:
+    errors.append('numpy')
+try:
+  import pandas as pd
+except ImportError as ie:
+    errors.append('pandas')
+try:
+  from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+except ImportError as ie:
+    errors.append('scikit-learn')
+
+if len(errors) != 0:
+    for item in errors:
+        print 'Import Error. Please install missing module:', item
+    sys.exit()
+
 from phylotoast import util
 
 
