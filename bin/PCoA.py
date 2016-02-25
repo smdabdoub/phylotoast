@@ -111,6 +111,11 @@ def handle_program_options():
     parser.add_argument('--figsize', default=[14, 8], type=int, nargs=2,
                         help="Set plot quality in Dots Per Inch (DPI). Larger\
                               DPI will result in larger file size.")
+    parser.add_argument('--font_size', default=12, type=int,
+                        help="Sets the font size for text elements in the plot.")
+    parser.add_argument('--label_padding', default=15, type=int,
+                        help="Sets the spacing in points between the each axis\
+                              and its label.")
     parser.add_argument('--annotate_points', action='store_true',
                         help="If specified, each graphed point will be\
                               labeled with its sample ID.")
@@ -185,6 +190,7 @@ def main():
     if args.dimensions == 3:
         ax = fig.add_subplot(111, projection='3d')
         ax.view_init(elev=args.z_angles[1], azim=args.z_angles[0])
+        ax.set_zlabel(axis_str.format(3, pc3v), labelpad=args.label_padding)
         if args.z_limits:
             ax.set_zlim(args.z_limits)
     else:
@@ -218,12 +224,20 @@ def main():
     if args.y_limits:
         ax.set_ylim(args.y_limits)
 
-    ax.set_xlabel(axis_str.format(1, float(pc1v)))
-    ax.set_ylabel(axis_str.format(2, float(pc2v)))
+    ax.set_xlabel(axis_str.format(1, float(pc1v)), labelpad=args.label_padding)
+    ax.set_ylabel(axis_str.format(2, float(pc2v)), labelpad=args.label_padding)
 
     ax.legend([Rectangle((0, 0), 1, 1, fc=colors[i])
               for i in range(len(categories))], categories.keys(), loc='best')
 
+    # Set the font characteristics
+    font = {'family' : 'normal',
+        'weight' : 'bold',
+        'size'   : args.font_size}
+
+    mpl.rc('font', **font)
+
+    
     if args.title:
         title(args.title)
 
