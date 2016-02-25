@@ -110,44 +110,44 @@ class otu_calc_Test(unittest.TestCase):
         self.biom = json.loads(self.biom_text)
         self.row = self.biom['rows']
 
-    def test_fuzzy_lookup(self):
-        """
-        Testing fuzzy_lookup() function of otu_calc.py.
+    # def test_fuzzy_lookup(self):
+    #     """
+    #     Testing fuzzy_lookup() function of otu_calc.py.
 
-        :return: Returns OK if the test goals were achieved, otherwise
-                raises error.
-        """
-        self.result1 = oc.assign_otu_membership(self.biom)['Sample2']
-        self.result = oc.fuzzy_lookup(self.result1, ['Escherichia_spp.'])
+    #     :return: Returns OK if the test goals were achieved, otherwise
+    #             raises error.
+    #     """
+    #     self.result1 = oc.assign_otu_membership(self.biom)['Sample2']
+    #     self.result = oc.fuzzy_lookup(self.result1, ['Escherichia_spp.'])
 
-        # Obtaining manual result to be compared against.
-        hand_calc = 'Escherichia_spp.'
+    #     # Obtaining manual result to be compared against.
+    #     hand_calc = 'Escherichia_spp.'
 
-        # Testing the validity of fuzzy_lookup() function.
-        self.assertIn(
-            hand_calc, str(self.result1),
-            msg='Error! Output is not a subset of input.'
-        )
+    #     # Testing the validity of fuzzy_lookup() function.
+    #     self.assertIn(
+    #         hand_calc, str(self.result1),
+    #         msg='Error! Output is not a subset of input.'
+    #     )
 
-    def test_sdi(self):
-        """
-        Testing sdi() function of otu_calc.py.
+    # def test_sdi(self):
+    #     """
+    #     Testing sdi() function of otu_calc.py.
 
-        :return: Returns OK if the test goals were achieved, otherwise
-                 raises error.
-        """
-        self.result1 = oc.assign_otu_membership(self.biom)
-        fset = self.result1['Sample4']
-        self.result = oc.sdi(fset)
+    #     :return: Returns OK if the test goals were achieved, otherwise
+    #              raises error.
+    #     """
+    #     self.result1 = oc.assign_otu_membership(self.biom)
+    #     fset = self.result1['Sample4']
+    #     self.result = oc.sdi(fset)
 
-        # Manual calculation of SDI
-        hand_calc = 0.636513937
+    #     # Manual calculation of SDI
+    #     hand_calc = 0.636513937
 
-        # Testing the validity of sdi() function
-        self.assertAlmostEqual(
-            self.result, hand_calc, places=6,
-            msg='Error! SDI was calculated inacccurately.'
-        )
+    #     # Testing the validity of sdi() function
+    #     self.assertAlmostEqual(
+    #         self.result, hand_calc, places=6,
+    #         msg='Error! SDI was calculated inacccurately.'
+    #     )
 
     def test_otu_name_biom(self):
         """
@@ -208,69 +208,69 @@ class otu_calc_Test(unittest.TestCase):
         # Deleting temporary file.
         os.unlink(temp_file1.name)
 
-    def test_assign_otu_membership(self):
-        """
-        Testing assign_otu_membership() function of otu_calc.py.
+    # def test_assign_otu_membership(self):
+    #     """
+    #     Testing assign_otu_membership() function of otu_calc.py.
 
-        :return: Returns OK if the test goals were achieved, otherwise
-                 raises error.
-        """
-        self.result = oc.assign_otu_membership(self.biom)
+    #     :return: Returns OK if the test goals were achieved, otherwise
+    #              raises error.
+    #     """
+    #     self.result = oc.assign_otu_membership(self.biom)
 
-        # Obtaining the values to be tested
-        result1 = bc.relative_abundance(self.biom, ['Sample1'])
-        hand_calc = result1.values()[0].values()
-        func_calc = [0.714286, 0.285714]
+    #     # Obtaining the values to be tested
+    #     result1 = bc.relative_abundance(self.biom, ['Sample1'])
+    #     hand_calc = result1.values()[0].values()
+    #     func_calc = [0.714286, 0.285714]
 
-        # Testing the validity of assign_otu_membership() function
-        for hand, func in zip(hand_calc, func_calc):
-            self.assertAlmostEqual(
-                hand, func, places=5,
-                msg='Error! OTU membership calculations are inaccurate!'
-            )
+    #     # Testing the validity of assign_otu_membership() function
+    #     for hand, func in zip(hand_calc, func_calc):
+    #         self.assertAlmostEqual(
+    #             hand, func, places=5,
+    #             msg='Error! OTU membership calculations are inaccurate!'
+    #         )
 
-    def test_print_membership(self):
-        """
-        Testing print_membership() function of otu_calc.py. Output of this
-        function is written to a temporary file. The contents of the temporary
-        file are accessed and used to compare with expected output.
+    # def test_print_membership(self):
+    #     """
+    #     Testing print_membership() function of otu_calc.py. Output of this
+    #     function is written to a temporary file. The contents of the temporary
+    #     file are accessed and used to compare with expected output.
 
-        :return: Returns OK if the test goals were achieved, otherwise
-                 raises error.
-        """
-        self.result1 = oc.assign_otu_membership(self.biom)
+    #     :return: Returns OK if the test goals were achieved, otherwise
+    #              raises error.
+    #     """
+    #     self.result1 = oc.assign_otu_membership(self.biom)
 
-        # Writing the output of print_membership() to temporary file.
-        saveout = sys.stdout
-        temp_file2 = tempfile.NamedTemporaryFile(delete=False)
-        with open(temp_file2.name, 'w') as f:
-            sys.stdout = f
-            self.result = oc.print_membership(self.result1['Sample1'])
-        sys.stdout = saveout
+    #     # Writing the output of print_membership() to temporary file.
+    #     saveout = sys.stdout
+    #     temp_file2 = tempfile.NamedTemporaryFile(delete=False)
+    #     with open(temp_file2.name, 'w') as f:
+    #         sys.stdout = f
+    #         self.result = oc.print_membership(self.result1['Sample1'])
+    #     sys.stdout = saveout
 
-        # Obtaining the function output from output.txt file.
-        func_calc = []
-        with open(temp_file2.name, 'r') as out:
-            while True:
-                statement = out.readline()
-                func_calc.append(statement)
-                if not statement:
-                    break
+    #     # Obtaining the function output from output.txt file.
+    #     func_calc = []
+    #     with open(temp_file2.name, 'r') as out:
+    #         while True:
+    #             statement = out.readline()
+    #             func_calc.append(statement)
+    #             if not statement:
+    #                 break
 
-        # Writing manual outputs to compare
-        hand_calc = [
-            'Halanaerobium_Halanaerobiumsaccharolyticum: 28.57%\n',
-            'Dolichospermum_spp.: 71.43%\n'
-            ]
+    #     # Writing manual outputs to compare
+    #     hand_calc = [
+    #         'Halanaerobium_Halanaerobiumsaccharolyticum: 28.57%\n',
+    #         'Dolichospermum_spp.: 71.43%\n'
+    #         ]
 
-        # Testing the validity of print_membership() function
-        self.assertListEqual(
-            func_calc[0:2], hand_calc,
-            msg='Error! Output does not print out the right information correctly.'
-        )
+    #     # Testing the validity of print_membership() function
+    #     self.assertListEqual(
+    #         func_calc[0:2], hand_calc,
+    #         msg='Error! Output does not print out the right information correctly.'
+    #     )
 
-        # Deleting temporary file.
-        os .unlink(temp_file2.name)
+    #     # Deleting temporary file.
+    #     os .unlink(temp_file2.name)
 
     def tearDown(self):
         """
