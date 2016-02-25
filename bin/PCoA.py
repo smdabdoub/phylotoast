@@ -107,6 +107,8 @@ def handle_program_options():
                         help="Specify limits for the z-axis instead of\
                         automatic setting based on the data range. Should\
                         take the form: --z_limits -0.5 0.5")
+    parser.add_argument('--z_angles', type=float, nargs=2, default=[-134.5, 23.],
+                        help="Specify the azimuth and elevation angles for a 3D plot.")
     parser.add_argument('-t', '--title', default='', help="Title of the plot.")
     parser.add_argument('--figsize', default=[14, 8], type=int, nargs=2,
                         help="Set plot quality in Dots Per Inch (DPI). Larger\
