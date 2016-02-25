@@ -16,7 +16,7 @@ scripts = ['bin/PCoA_bubble.py', 'bin/biom_relative_abundance.py', 'bin/filter_r
            'bin/iTol.py', 'bin/multi_qsub.py', 'bin/pick_otus_condense.py',
            'bin/transpose_biom.py', 'bin/barcode_filter.py', 'bin/merge_otu_results.py',
            'bin/otu_condense.py', 'bin/primer_average.py', 'bin/sanger_qiimify.py',
-           'bin/restrict_repset.py', 'bin/LDA.py']
+           'bin/restrict_repset.py', 'bin/LDA.py', 'bin/PCoA.py', 'bin/diversity.py']
 
 setup(
   name='phylotoast',
