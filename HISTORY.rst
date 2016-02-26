@@ -3,6 +3,65 @@
 Release History
 ---------------
 
+1.3.0 (2016-02-26)
+++++++++++++++++++
+
+**Addition and Improvements**
+
+- New analysis/visualization programs:
+
+  - LDA.py (Uses Linear Discriminant Analysis to visualize group-wise compositional differences)
+  - diversity.py (Visualize alpha diversity as KDE-smoothed histograms)
+- New API module
+
+  - graph_util (Adds convenience methods for data visualization/graphing)
+
+- biom_calc module:
+
+  - Switched to using the official biom-format python library for parsing and handline BIOM files
+  - Added arcsine square root transformation to the API and added as an option to several scripts:
+
+    - iTol.py
+    - LDA.py
+
+
+- PCoA.py
+
+  - Support for the new UniFrac format in QIIME 1.9
+  - Adds the following command-line options:
+
+    - Set font size
+    - Set distance between axes and their labels
+    - Set the azimuth and elevation for 3D plots
+    - Set the graph styling to look like ggplot2 defaults
+    - Add Sample ID annotations to graphed points
+    - Replaces the --dpi option with --fig_size to set the figure size directly
+
+- LDA.py: Added the option to save the LDA-transformed data out as a csv file.
+- diversity.py
+
+  - Added group coloring by specify a column in the mapping file
+  - Support for multiple diversity metrics
+  - Significance testing is now performed to compare alpha diversity between groups
+    - Wilcoxon Signed Rank Test for two-group comparison
+    - Kruskal-Wallis H-test for comparing three or more groups
+
+- biom_relative_abundance.py: Support for BIOM-format input.
+- biom_calc.py: Updated raw_abundance() function to handle BIOM format version 2.x input files.
+- iTol.py: Updated BIOM file handling for iTol script (v2.x files).
+
+- PhyloToAST documentation moved from separate repository into the 'docs' folder in the main code repository
+- Overhauled the main page for the project documentation
+- Added step-by-step instructions to the documentation for many of the executable scripts
+
+
+**Bug Fixes**
+
+- Prevents duplicate entries from being passed on into the output from restrict_repset.py.
+- Fixes the --save_calculations option in diversity.py. Now prints out all metrics in a single column with the second column being group membership.
+- Adds pad_taxonomy method (otu_condense.py) to ensure all taxonomy strings have all levels down to species.
+- Cleans up error message for line parsing in prune_taxonomy. Makes file error message more readable.
+
 1.2.0 (2015-01-29)
 ++++++++++++++++++
 
