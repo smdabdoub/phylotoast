@@ -1,19 +1,19 @@
 PhyloToAST
 ===========
-.. image:: https://pypip.in/version/phylotoast/badge.svg
-    :target: https://pypi.python.org/pypi/phylotoast/
+.. image:: https://img.shields.io/pypi/v/phylotoast.svg?style=plastic   
+    :target: https://pypi.python.org/pypi/phylotoast
     :alt: Latest Version
-.. image:: https://pypip.in/d/phylotoast/badge.svg
-    :target: https://crate.io/packages/phylotoast/
-.. image:: https://pypip.in/license/phylotoast/badge.svg
-    :target: https://pypi.python.org/pypi/phylotoast/
+.. image:: https://img.shields.io/pypi/l/phylotoast.svg?style=plastic   
+    :target: https://pypi.python.org/pypi/phylotoast
     :alt: License
-.. image:: https://pypip.in/format/phylotoast/badge.svg
-    :target: https://pypi.python.org/pypi/phylotoast/
+.. image:: https://img.shields.io/pypi/format/phylotoast.svg?style=plastic   
+    :target: https://pypi.python.org/pypi/phylotoast
     :alt: Download format
-.. image:: https://travis-ci.org/smdabdoub/phylotoast.svg?branch=master
+.. image:: https://img.shields.io/travis/smdabdoub/phylotoast.svg?style=plastic
     :target: https://travis-ci.org/smdabdoub/phylotoast
-    :alt: Travis CI
+    :alt: Travis CI build status
+.. image:: https://img.shields.io/badge/install%20with-bioconda-4682b4.svg?style=plastic
+   :target: https://bioconda.github.io/recipes/phylotoast/README.html
 
 .. image:: images/readmepic.png
    :align: center
