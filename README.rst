@@ -50,10 +50,26 @@ Full documentation for the scripts and code is available at the
 Requirements
 ------------
 
-`matplotlib`_ for PCoA plots. `Biopython`_ for some sequence and fastq
-processing, although its use is being phased out. `fuzzpy`_ for the
-otu\_calc module. Note that these are not listed as dependencies in the install
-script because they are not required for all functionality. Install as needed.
+The list of required modules will vary depending on which executable scripts and/or
+parts of the API you may use. For this reason there are no required dependencies
+that will be automatically installed along with PhyloToAST. Each executable script will
+check that the required libraries are installed and will print a message if any are not
+found. 
+
+If you would like to install everything up front, the following is a complete list of libraries
+that are used in PhyloToAST:
+
+- numpy
+- scipy
+- matplotlib >= 1.5.0
+- biopython >= 1.60 
+- scikit-bio
+- scikit-learn
+- pandas
+- statsmodels
+- brewer2mpl
+- biom-format >= 2.1.5
+- h5py (for parsing BIOM v2.x format files)
 
 Source
 ------
