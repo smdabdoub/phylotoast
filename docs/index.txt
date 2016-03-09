@@ -13,9 +13,16 @@ by adding or modifying several steps (above in red) including support for PBS-ba
    :width: 60%
    :align: center
 
-Download and install PhyloToAST_ package.
+Installation
+==================
 
-.. _PhyloToAST: https://pypi.python.org/pypi/qiime-tools/1.1.2
+PhyloToAST_ is avaiable on the Python Package Index (PyPI), and can be easily installed with pip:
+
+.. code-block:: bash
+
+        $ pip install phylotoast
+
+.. _PhyloToAST: https://pypi.python.org/pypi/phylotoast
    
 PhyloToAST Scripts
 ==================
