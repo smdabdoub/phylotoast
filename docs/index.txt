@@ -24,7 +24,7 @@ PhyloToAST_ is avaiable on the Python Package Index (PyPI), and can be easily in
 
 .. _PhyloToAST: https://pypi.python.org/pypi/phylotoast
    
-PhyloToAST Scripts
+Using PhyloToAST
 ==================
 .. toctree::
    :maxdepth: 1
