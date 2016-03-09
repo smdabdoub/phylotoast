@@ -3,14 +3,14 @@ Welcome to PhyloToAST documentation!
 
 The PhyloToAST project is a collection of python scripts that modifies the original QIIME [1]_ pipeline:
 
-.. figure:: figures/qiime-pipeline.png
-   :scale: 45 %
+.. image:: figures/phylotoast-pipeline.png
+   :width: 60 %
    :align: center
 
-by adding or modifying several steps (as seen below) including support for PBS-based cluster-computing, multiple primer support [2]_, enhanced support for species-specific analysis, and additional visualization tools.
+by adding or modifying several steps (above in red) including support for PBS-based cluster-computing, multiple primer support [2]_, enhanced support for species-specific analysis, and additional visualization tools.
 
-.. figure:: figures/phylotoast-pipeline.png
-   :scale: 45 %
+.. image:: ../images/readmepic.png
+   :width: 60%
    :align: center
 
 Download and install PhyloToAST_ package.
