@@ -6,8 +6,8 @@ PhyloToAST scripts used for visualizing data.
 .. toctree::
    :maxdepth: 1
 
+   diversity
    iTol
    LDA
    PCoA
    PCoA_bubble
-   diversity
