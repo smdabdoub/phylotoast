@@ -1,6 +1,6 @@
-Available Scripts
+Complete Script List
 ========================
-Various PhyloToAST scripts.
+All available PhyloToAST scripts.
 
 .. toctree::
    :maxdepth: 1
@@ -9,16 +9,18 @@ Various PhyloToAST scripts.
    barcode_filter
    biom_relative_abundance
    condense_workflow
+   diversity
    filter_keep_otus_by_sample.txt
    filter_rep_set
+   merge_otu_results
    multi_parallel_pick_otus
+   multi_qsub
    otu_condense
    otu_to_tax_name
    pick_otus_condense
-   multi_qsub
-   merge_otu_results
    primer_average
    prune_otus
+   restrict_repset
    split_sequence_data
    transpose_biom
 
