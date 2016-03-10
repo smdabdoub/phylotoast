@@ -1,0 +1,32 @@
+======================
+restrict_repset.py
+======================
+
+Take a subset BIOM table (e.g. from a core calculation) and a representative
+set (repset) FASTA file and create a new repset restricted to the OTUs in the BIOM table.
+
+    .. code-block:: bash
+    
+        usage: restrict_repset.py [-h] -i BIOM_FP -r REPSET_FP [-o REPSET_OUT_FP]
+
+Required arguments
+^^^^^^^^^^^^^^^^^^
+
+.. cmdoption:: -i BIOM_FP, --biom_fp BIOM_FP
+
+    Path to a biom-format file with OTU-Sample abundance data.
+    
+.. cmdoption:: -r REPSET_FP, --repset_fp REPSET_FP
+
+    Path to a FASTA-format file containing the representative set of OTUs.
+
+Optional arguments
+^^^^^^^^^^^^^^^^^^
+
+.. cmdoption:: -o REPSET_OUT_FP, --repset_out_fp REPSET_OUT_FP
+
+    Path to the new restricted repset file.
+
+.. cmdoption:: -h, --help
+    
+    Show the help message and exit

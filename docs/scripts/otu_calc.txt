@@ -2,46 +2,6 @@
 otu_calc module
 ===============
 
-assign_otu_membership
----------------------
-Determines the number of OTUs associated with samples using fuzzy sets with membership amount determined by relative abundance.
-
-.. code-block:: bash
-
-	usage: phylotoast.otu_calc.assign_otu_membership(biom)
-
-.. cmdoption:: biomf:
-
-	BIOM format file.
-
-.. cmdoption:: return:
-
-	Returns a dictionary of FuzzySet of SampleID's with OTUID and relative abundance as its elements.
-
------------------------------
-
-fuzzy_lookup
-------------
-Return the intersection of a fuzzy set and a collection of keys (presumably a subset).
-
-.. code-block:: bash
-
-	usage: phylotoast.otu_calc.fuzzy_lookup(orig, keys)
-
-.. cmdoption:: orig:
-
-	FuzzySet of SampleID with OTUID and relative abundances.
-
-.. cmdoption:: keys:
-
-	Genus-species taxonomic identifier.
-
-.. cmdoption:: return:
-
-	Returns a new FuzzySet of genus-species identifier and relative abundance for the given list of keys.
-
------------------------------
-
 load_core_file
 --------------
 For core OTU data file, returns Genus-species identifier for each data entry.
@@ -94,52 +54,3 @@ Determine a simple Genus-species identifier for an OTU, if possible. If OTU is n
 
 	Returns genus-species identifier based on identified taxonomical level.
 
------------------------------
-
-print_membership
-----------------
-Given an entry from a Sample dictionary (see assign_otu_membership) of fuzzy otu membership, pretty-print the members as percentages.
-
-.. code-block:: bash
-
-	usage: phylotoast.otu_calc.print_membership(entry)
-
-.. cmdoption:: entry:
-
-	SampleID's from the output dict of assign_otu_membership().
-
-.. cmdoption:: return:
-
-	Returns OTU name and percentage relative abundance as membership for the given list of SampleID's.
-
------------------------------
-
-sdi
----
-Calculate the Shannon Diversity Index.
-
-.. math:: H = -sum(p*ln(p))
-
-where p is the relative abundance of a single OTU in the set.
-
-.. code-block:: bash
-
-	usage: phylotoast.otu_calc.sdi(fset)
-
-.. cmdoption:: fset:
-
-	The set of OTUs and their relative abundance values.
-
-.. cmdoption:: return:
-
-	The Shannon Diversity Index.
-
-.. cmdoption:: Note
-
-	Equitability Index :math:`(E_H = H / H_{max})` could be easily calculated from the returned array by:
-
-.. math::
-
-	diversities = sdi(fset)
-
-	equitabilities = diversities/max(diversities)

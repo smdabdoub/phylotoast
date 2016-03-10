@@ -3,30 +3,60 @@ Welcome to PhyloToAST documentation!
 
 The PhyloToAST project is a collection of python scripts that modifies the original QIIME [1]_ pipeline:
 
-.. figure:: figures/qiime-pipeline.png
-   :scale: 45 %
+.. image:: figures/phylotoast-pipeline.png
+   :width: 60 %
    :align: center
 
-by adding or modifying several steps (as seen below) including support for PBS-based cluster-computing, multiple primer support [2]_, enhanced support for species-specific analysis, and additional visualization tools.
+by adding or modifying several steps (above in red) including support for PBS-based cluster-computing, multiple primer support [2]_, enhanced support for species-specific analysis, and additional visualization tools.
 
-.. figure:: figures/phylotoast-pipeline.png
-   :scale: 45 %
+.. image:: ../images/readmepic.png
+   :width: 60%
    :align: center
 
-Download and install PhyloToAST_ package.
+Installation
+==================
 
-.. _PhyloToAST: https://pypi.python.org/pypi/qiime-tools/1.1.2
+PhyloToAST_ is avaiable on the Python Package Index (PyPI), and can be easily installed with pip:
+
+.. code-block:: bash
+
+        $ pip install phylotoast
+
+.. _PhyloToAST: https://pypi.python.org/pypi/phylotoast
    
-PhyloToAST Scripts
+Using PhyloToAST
 ==================
 .. toctree::
    :maxdepth: 1
 
    scripts/api.txt
-   scripts/other.txt
+   scripts/data_handling.txt
    scripts/visualization.txt
+   scripts/available_scripts.txt
 
-Citations:
+
+Citing PhyloToAST
+==================
+
+Dabdoub, S.M. et al., *PhyloToAST: Bioinformatics tools for
+species-level analysis and visualization of complex microbial communities*.
+2016. (Manuscript in revision).
+
+
+Publications using PhyloToAST
+=============================
+Tsigarida and Dabdoub et al., *The Influence of Smoking on the Peri-Implant
+Microbiome*. Journal of Dental Research, 2015; `doi: 10.1177/0022034515590581`_
+
+Mason et al., *The subgingival microbiome of clinically healthy current
+and never smokers*. The ISME Journal, 2014; `doi:10.1038/ismej.2014.114`_
+
+Dabdoub et al., *Patient-specific Analysis of Periodontal and Peri-implant Microbiomes*.
+Journal of Dental Research, 2013; `doi: 10.1177/0022034513504950`_
+
+
+References
+==========
 
 .. [1] **QIIME allows analysis of high-throughput community sequencing data**. J Gregory Caporaso, Justin Kuczynski, Jesse Stombaugh, Kyle Bittinger, Frederic D Bushman, Elizabeth K Costello, Noah Fierer, Antonio Gonzalez Pena, Julia K Goodrich, Jeffrey I Gordon, Gavin A Huttley, Scott T Kelley, Dan Knights, Jeremy E Koenig, Ruth E Ley, Catherine A Lozupone, Daniel McDonald, Brian D Muegge, Meg Pirrung, Jens Reeder, Joel R Sevinsky, Peter J Turnbaugh, William A Walters, Jeremy Widmann, Tanya Yatsunenko, Jesse Zaneveld and Rob Knight; Nature Methods, 2010; doi: `10.1038/nmeth.f.303 <http://dx.doi.org/10.1038/nmeth.f.303>`_
 
