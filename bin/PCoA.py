@@ -6,19 +6,18 @@ import sys
 errors=[]
 try:
     from brewer2mpl import qualitative
-except ImportError as ie:
-    errors.append('brewer2mpl')
+except ImportError as ie1:
+    errors.append(ie1)
 try:
+    import matplotlib as mpl
     from mpl_toolkits.mplot3d import Axes3D
-except ImportError as ie:
-    errors.append('matplotlib')
+except ImportError as ie2:
+    errors.append(ie2)
 if len(errors) != 0:
     for item in errors:
-        print 'Import Error. Please install missing module:', item
+        print 'Import Error:', item
     sys.exit()
-from brewer2mpl import qualitative
-import matplotlib as mpl
-from mpl_toolkits.mplot3d import Axes3D
+
 from pylab import *
 from phylotoast import util, graph_util as gu
 
@@ -169,7 +168,7 @@ def main():
 
     parsed_unifrac = util.parse_unifrac(args.coord_fp)
 
-    pco = [dim - 1 for dim in args.pc_order] 
+    pco = [dim - 1 for dim in args.pc_order]
     if args.dimensions == 3:
       pco.append(2)
 
@@ -206,7 +205,7 @@ def main():
         if args.dimensions == 3:
             ax.scatter(xs=[e[1] for e in categories[cat]['pc1']],
                        ys=[e[1] for e in categories[cat]['pc2']],
-                       zs=[e[1] for e in categories[cat]['pc3']], 
+                       zs=[e[1] for e in categories[cat]['pc3']],
                        zdir='z',
                        c=colors[i],
                        s=args.point_size)
@@ -242,7 +241,7 @@ def main():
 
     mpl.rc('font', **font)
 
-    
+
     if args.title:
         title(args.title)
 
@@ -252,7 +251,7 @@ def main():
     # save or display result
     if args.out_fp:
         fig.savefig(args.out_fp, facecolor='white',
-                    edgecolor='none', bbox_inches='tight', 
+                    edgecolor='none', bbox_inches='tight',
                     pad_inches=0.2)
     else:
         plt.show()
