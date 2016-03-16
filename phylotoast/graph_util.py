@@ -5,12 +5,12 @@ import sys
 importerrors = []
 try:
     import statsmodels.nonparametric.kde as kde
-except ImportError as ie1:
-    importerrors.append(ie1)
+except ImportError as ie:
+    importerrors.append(ie)
 try:
     import matplotlib as mpl
-except ImportError as ie2:
-    importerrors.append(ie2)
+except ImportError as ie:
+    importerrors.append(ie)
 
 if len(importerrors) != 0:
     for item in importerrors:
