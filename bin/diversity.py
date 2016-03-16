@@ -15,27 +15,27 @@ import os.path as osp
 importerrors = []
 try:
     import biom
-except ImportError as ie:
-    importerrors.append('biom-format')
+except ImportError as ie1:
+    importerrors.append(ie1)
 try:
     import scipy.stats as stats
-except ImportError as ie:
-    importerrors.append('scipy')
+except ImportError as ie2:
+    importerrors.append(ie2)
 try:
     from skbio.diversity import alpha, beta
-except ImportError as ie:
-    importerrors.append('scikit-bio')
+except ImportError as ie3:
+    importerrors.append(ie3)
 try:
     import matplotlib
-except ImportError as ie:
-    importerrors.append('matplotlib')
+except ImportError as ie4:
+    importerrors.append(ie4)
 try:
     from brewer2mpl import qualitative
-except ImportError as ie:
-    importerrors.append('brewer2mpl')
+except ImportError as ie5:
+    importerrors.append(ie5)
 if len(importerrors) != 0:
     for item in importerrors:
-        print 'Import Error. Please install missing module:', item
+        print 'Import Error:', item
     sys.exit()
 
 
@@ -52,7 +52,7 @@ def color_mapping(sample_map, header, group_column, color_column=None):
     """
     group_colors = {}
     group_gather = putil.gather_categories(sample_map, header, [group_column])
-    
+
     if color_column is not None:
         color_gather = putil.gather_categories(sample_map, header, [color_column])
         # match sample IDs between color_gather and group_gather
@@ -84,7 +84,7 @@ def calc_diversity(method, parsed_mapf, biom, cats, cats_index):
             counts[parsed_mapf[sid][cats_index]].append(sample_counts)
 
     div_calc = {cat: [method(count) for count in counts] for cat, counts in counts.items()}
-   
+
     return div_calc, sample_ids
 
 
@@ -131,7 +131,7 @@ def write_diversity_metrics(data, sample_ids, fp=None):
     """
     if fp is None:
         fp = "./diversity_data.txt"
-    
+
     with open(fp, 'w') as outf:
         out = csv.writer(outf, delimiter='\t')
         out.writerow(['calculation', 'group'])
@@ -204,7 +204,7 @@ def main():
     biom_tbl = biom.load_table(args.biom_fp)
     if args.category not in header:
         sys.exit('Category \'{}\' not found'.format(args.category))
-    
+
     cat_idx = header.index(args.category)
     cat_vals = {entry[cat_idx] for entry in sample_map.values()}
 
@@ -218,7 +218,7 @@ def main():
             sys.exit("ERROR: Diversity metric not found: " + method)
         metric = eval('alpha.'+method)
         div_calc, sample_ids = calc_diversity(metric, sample_map, biom_tbl, cat_vals, cat_idx)
-        
+
         plot_group_diversity(div_calc, colors, plot_title, x_label,
                              args.out_dir, args.image_type)
 

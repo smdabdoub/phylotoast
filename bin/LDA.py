@@ -5,24 +5,24 @@ import sys
 errors = []
 try:
   import matplotlib.pyplot as plt
-except ImportError as ie:
-    errors.append('matplotlib')
+except ImportError as ie1:
+    errors.append(ie1)
 try:
   import numpy as np
-except ImportError as ie:
-    errors.append('numpy')
+except ImportError as ie2:
+    errors.append(ie2)
 try:
   import pandas as pd
-except ImportError as ie:
-    errors.append('pandas')
+except ImportError as ie3:
+    errors.append(ie3)
 try:
   from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
-except ImportError as ie:
-    errors.append('scikit-learn')
+except ImportError as ie4:
+    errors.append(ie4)
 
 if len(errors) != 0:
     for item in errors:
-        print 'Import Error. Please install missing module:', item
+        print 'Import Error:', item
     sys.exit()
 
 from phylotoast import util
