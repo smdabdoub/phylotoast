@@ -6,13 +6,13 @@ import sys
 errors=[]
 try:
     from brewer2mpl import qualitative
-except ImportError as ie1:
-    errors.append(ie1)
+except ImportError as ie:
+    errors.append(ie)
 try:
     import matplotlib as mpl
     from mpl_toolkits.mplot3d import Axes3D
-except ImportError as ie2:
-    errors.append(ie2)
+except ImportError as ie:
+    errors.append(ie)
 if len(errors) != 0:
     for item in errors:
         print 'Import Error:', item
