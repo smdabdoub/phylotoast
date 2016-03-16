@@ -5,17 +5,16 @@ import sys
 importerrors = []
 try:
     import statsmodels.nonparametric.kde as kde
-except ImportError:
-    importerrors.append('statsmodels')
-
+except ImportError as ie1:
+    importerrors.append(ie1)
 try:
     import matplotlib as mpl
-except ImportError as ie:
-    errors.append('matplotlib')
+except ImportError as ie2:
+    importerrors.append(ie2)
 
 if len(importerrors) != 0:
     for item in importerrors:
-        print 'Import Error. Please install missing module:', item
+        print 'Import Error:', item
     sys.exit()
 
 from matplotlib.ticker import FuncFormatter, MaxNLocator, MultipleLocator
@@ -51,10 +50,10 @@ def plot_kde(data, ax, title=None, color='r', fill_bt=True):
         t = ax.set_title(title)
         t.set_y(1.05)
 
-def ggplot2_style(ax): 
+def ggplot2_style(ax):
     """
     Styles an axes to appear like ggplot2
-    Must be called after all plot and axis manipulation operations have been 
+    Must be called after all plot and axis manipulation operations have been
     carried out (needs to know final tick spacing)
     """
     #set the style of the major and minor grid lines, filled blocks
@@ -62,33 +61,33 @@ def ggplot2_style(ax):
     ax.grid(True, 'minor', color='0.92', linestyle='-', linewidth=0.7)
     ax.patch.set_facecolor('0.85')
     ax.set_axisbelow(True)
-    
+
     #set minor tick spacing to 1/2 of the major ticks
     ax.xaxis.set_minor_locator(MultipleLocator( (plt.xticks()[0][1]-plt.xticks()[0][0]) / 2.0 ))
     ax.yaxis.set_minor_locator(MultipleLocator( (plt.yticks()[0][1]-plt.yticks()[0][0]) / 2.0 ))
-    
+
     #remove axis border
     for child in ax.get_children():
         if isinstance(child, mpl.spines.Spine):
             child.set_alpha(0)
-       
+
     #restyle the tick lines
     for line in ax.get_xticklines() + ax.get_yticklines():
         line.set_markersize(5)
         line.set_color("gray")
         line.set_markeredgewidth(1.4)
-    
-    #remove the minor tick lines    
+
+    #remove the minor tick lines
     for line in ax.xaxis.get_ticklines(minor=True) + ax.yaxis.get_ticklines(minor=True):
         line.set_markersize(0)
-    
+
     #only show bottom left ticks, pointing out of axis
     mpl.rcParams['xtick.direction'] = 'out'
     mpl.rcParams['ytick.direction'] = 'out'
     ax.xaxis.set_ticks_position('bottom')
     ax.yaxis.set_ticks_position('left')
-    
-    
+
+
     if ax.legend_ <> None:
         lg = ax.legend_
         lg.get_frame().set_linewidth(0)
