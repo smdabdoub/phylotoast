@@ -5,20 +5,20 @@ import sys
 errors = []
 try:
   import matplotlib.pyplot as plt
-except ImportError as ie1:
-    errors.append(ie1)
+except ImportError as ie:
+    errors.append(ie)
 try:
   import numpy as np
-except ImportError as ie2:
-    errors.append(ie2)
+except ImportError as ie:
+    errors.append(ie)
 try:
   import pandas as pd
-except ImportError as ie3:
-    errors.append(ie3)
+except ImportError as ie:
+    errors.append(ie)
 try:
   from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
-except ImportError as ie4:
-    errors.append(ie4)
+except ImportError as ie:
+    errors.append(ie)
 
 if len(errors) != 0:
     for item in errors:
