@@ -263,7 +263,7 @@ def gather_categories(imap, header, categories=None):
                 if all([row[c] == conditions[c] for c in conditions])}
         return {"default": DataCategory(sids, {})}
 
-    table = {}
+    table = OrderedDict()
     for sid, row in imap.iteritems():
         if all([row[c] == conditions[c] for c in conditions]):
             key = "_".join([row[cid] for cid in cat_ids])
@@ -271,7 +271,7 @@ def gather_categories(imap, header, categories=None):
                 table[key] = DataCategory(set(), {})
             table[key].sids.add(sid)
 
-    return OrderedDict(sorted(table.items(), key=lambda t: t[0]))
+    return table
 
 
 def parse_unifrac(unifracFN):
