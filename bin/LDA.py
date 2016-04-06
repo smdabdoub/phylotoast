@@ -1,32 +1,29 @@
 #!/usr/bin/env python
 import argparse
 import sys
-
+from phylotoast import util
 errors = []
 try:
-  import matplotlib.pyplot as plt
-  import matplotlib as mpl
+    import matplotlib.pyplot as plt
+    import matplotlib as mpl
 except ImportError as ie:
     errors.append(ie)
 try:
-  import numpy as np
+    import numpy as np
 except ImportError as ie:
     errors.append(ie)
 try:
-  import pandas as pd
+    import pandas as pd
 except ImportError as ie:
     errors.append(ie)
 try:
-  from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+    from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 except ImportError as ie:
     errors.append(ie)
-
 if len(errors) != 0:
     for item in errors:
         print "Import Error:", item
     sys.exit()
-
-from phylotoast import util
 
 
 def merge_dicts(*dict_args):
@@ -54,8 +51,7 @@ def plot_LDA(X_lda, y_lda, class_colors, out_fp="", dpi=300, title=None):
         group_lda[target_name].append(cat_y)
         plt.scatter(x=cat_x, y=cat_y, label=target_name,
                     color=class_colors[target_name],
-                    alpha=0.85, s=250,
-                    edgecolors="k")
+                    alpha=0.85, s=250, edgecolors="k")
     font = {"size": 16}
     mpl.rc("font", **font)
     if X_lda.shape[1] == 1:
