@@ -30,7 +30,7 @@ try:
 except ImportError as ie:
     importerrors.append(ie)
 try:
-    from brewer2mpl import qualitative
+    from palettable.colorbrewer.qualitative import Set3_12
 except ImportError as ie:
     importerrors.append(ie)
 if len(importerrors) != 0:
@@ -47,7 +47,7 @@ from phylotoast import graph_util as gu, util as putil
 def color_mapping(sample_map, header, group_column, color_column=None):
     """
     Determine color-category mapping. If color_column was specified, then
-    map the category names to color values. Otherwise, use the brewer colors
+    map the category names to color values. Otherwise, use the palettable colors
     to automatically generate a set of colors for the group values.
     """
     group_colors = {}
@@ -63,8 +63,7 @@ def color_mapping(sample_map, header, group_column, color_column=None):
                 if group_gather[group].sids.intersection(color_gather[color].sids):
                     group_colors[group] = color
     else:
-        bmap = qualitative.Paired[12]
-        bcolors = itertools.cycle(bmap.hex_colors)
+        bcolors = itertools.cycle(Set3_12.hex_colors)
         for group in group_gather:
             group_colors[group] = bcolors.next()
 

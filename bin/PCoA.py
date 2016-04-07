@@ -5,9 +5,9 @@ import itertools
 import sys
 errors=[]
 try:
-    from brewer2mpl import qualitative
+    from palettable.colorbrewer.qualitative import Set3_12
 except ImportError as ie:
-    errors.append(ie)
+    errors.append("No module named palettable")
 try:
     import matplotlib as mpl
     from mpl_toolkits.mplot3d import Axes3D
@@ -45,8 +45,7 @@ def parse_colors(file, categories=None):
                 colors.append(line)
 
     diff = len(categories) - len(colors)
-    bmap = qualitative.Paired[12]
-    brewer_colors = itertools.cycle(bmap.hex_colors)
+    brewer_colors = itertools.cycle(Set3_12.hex_colors)
     colors.extend([brewer_colors.next() for _ in range(diff)])
 
     return colors
@@ -159,8 +158,7 @@ def main():
     categories = OrderedDict([(condition, {'pc1': [], 'pc2': [], 'pc3': []})
                   for condition in data_gather.keys()])
 
-    bmap = qualitative.Paired[12]
-    bcolors = itertools.cycle(bmap.hex_colors)
+    bcolors = itertools.cycle(Set3_12.hex_colors)
     if not args.colors:
         colors = [bcolors.next() for _ in categories]
     else:
