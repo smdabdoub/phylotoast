@@ -3,7 +3,7 @@
 Calculate and plot for two sample categories: Shannon diversity,
 Chao1 diversity, and a Jaccard similiarity distance matrix heatmap
 """
-# this is only to suppress the pre 1.5.0 matplotlib numpy-related warning - DELETE
+
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -32,7 +32,7 @@ except ImportError as ie:
 try:
     from palettable.colorbrewer.qualitative import Set3_12
 except ImportError as ie:
-    importerrors.append(ie)
+    importerrors.append("No module named palettable")
 if len(importerrors) != 0:
     for item in importerrors:
         print "Import Error:", item
