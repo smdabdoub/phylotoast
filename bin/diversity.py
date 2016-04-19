@@ -1,17 +1,13 @@
 #!/usr/bin/env python
 """
-Calculate and plot for two sample categories: Shannon diversity,
+Calculate and plot for two or more sample categories: Shannon diversity,
 Chao1 diversity, and a Jaccard similiarity distance matrix heatmap
 """
-
-import warnings
-warnings.filterwarnings("ignore")
-
 import sys
 import argparse
 import csv
-import itertools
 import os.path as osp
+from phylotoast import graph_util as gu, util as putil
 importerrors = []
 try:
     import biom
@@ -26,48 +22,15 @@ try:
 except ImportError as ie:
     importerrors.append(ie)
 try:
-    import matplotlib
+    # matplotlib.use("Agg")  # for use on headless server
+    from matplotlib import pyplot as plt, gridspec
 except ImportError as ie:
     importerrors.append(ie)
-try:
-    from palettable.colorbrewer.qualitative import Set3_12
-except ImportError as ie:
-    importerrors.append("No module named palettable")
 if len(importerrors) != 0:
     for item in importerrors:
         print "Import Error:", item
     sys.exit()
 
-
-#matplotlib.use("Agg")  # for use on headless server
-from matplotlib import pyplot as plt, gridspec
-from phylotoast import graph_util as gu, util as putil
-
-
-def color_mapping(sample_map, header, group_column, color_column=None):
-    """
-    Determine color-category mapping. If color_column was specified, then
-    map the category names to color values. Otherwise, use the palettable colors
-    to automatically generate a set of colors for the group values.
-    """
-    group_colors = {}
-    group_gather = putil.gather_categories(sample_map, header, [group_column])
-
-    if color_column is not None:
-        color_gather = putil.gather_categories(sample_map, header, [color_column])
-        # match sample IDs between color_gather and group_gather
-        for group in group_gather:
-            for color in color_gather:
-                # allow incomplete assignment of colors, if group sids overlap at
-                # all with the color sids, consider it a match
-                if group_gather[group].sids.intersection(color_gather[color].sids):
-                    group_colors[group] = color
-    else:
-        bcolors = itertools.cycle(Set3_12.hex_colors)
-        for group in group_gather:
-            group_colors[group] = bcolors.next()
-
-    return group_colors
 
 def gather_samples(biomT):
     return {sid: biomT.data(sid).astype(int) for sid in biomT.ids()}
@@ -209,7 +172,7 @@ def main():
 
     plot_title = args.plot_title
 
-    colors = color_mapping(sample_map, header, args.category, args.color_by)
+    colors = putil.color_mapping(sample_map, header, args.category, args.color_by)
 
     # Perform diversity calculations and density plotting
     for method, x_label in zip(args.diversity, args.x_label):
