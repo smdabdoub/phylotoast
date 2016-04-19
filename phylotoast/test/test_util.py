@@ -807,7 +807,6 @@ eigvals	3.38347924126	1.59161563383	1.4202121789	1.13114441112	0.775091898608	0.
                              "accurately. Please check category and color "
                              "columns.")
         colormap2 = ut.color_mapping(mfdata, header, "Treatment")
-        print "\n", colormap2, "\n"
         self.assertDictEqual({"Control": "#8DD3C7", "Fast": "#FFFFB3"},
                              colormap2, msg="With no color column given, the "
                              "color-group mapping not computed accurately.")
