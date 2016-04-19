@@ -3,8 +3,14 @@ Created on Feb 2, 2013
 
 :author: Shareef Dabdoub
 """
-from collections import namedtuple, OrderedDict
 import os
+import sys
+import itertools
+from collections import namedtuple, OrderedDict
+try:
+    from palettable.colorbrewer.qualitative import Set3_12
+except ImportError as ie:
+    sys.exit("No module named palettable")
 
 
 FASTARecord = namedtuple("FASTA_Record", "id descr data")
