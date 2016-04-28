@@ -3,8 +3,14 @@ Created on Feb 2, 2013
 
 :author: Shareef Dabdoub
 """
-from collections import namedtuple, OrderedDict
 import os
+import sys
+import itertools
+from collections import namedtuple, OrderedDict
+try:
+    from palettable.colorbrewer.qualitative import Set3_12
+except ImportError as ie:
+    sys.exit("No module named palettable")
 
 
 FASTARecord = namedtuple("FASTA_Record", "id descr data")
@@ -80,7 +86,7 @@ def parse_map_file(mapFNH):
     :param mapFNH: Either the full path to the map file or an open file
                     handle
 
-    :rtype: tuple
+    :rtype: tuple, dict
     :return: A tuple of header line for mapping file and a map associating
              each line of the mapping file with the appropriate sample ID
              (each value of the map also contains the sample ID). An
@@ -343,3 +349,45 @@ def parse_unifrac_v1_9(unifrac, file_data):
         line = line.split("\t")
         unifrac["pcd"][line[0]] = [float(e) for e in line[1:]]
     return unifrac
+
+def color_mapping(sample_map, header, group_column, color_column=None):
+    """
+    Determine color-category mapping. If color_column was specified, then
+    map the category names to color values. Otherwise, use the palettable colors
+    to automatically generate a set of colors for the group values.
+
+    :type sample_map: dict
+    :param unifracFN: Map associating each line of the mapping file with the 
+                      appropriate sample ID (each value of the map also 
+                      contains the sample ID)
+
+    :type header: tuple
+    :param A tuple of header line for mapping file
+
+    :type group_column: str
+    :param group_column: String denoting the column name for sample groups.
+
+    :type color_column: str
+    :param color_column: String denoting the column name for sample colors.
+
+    :type return: dict
+    :param return: {SampleID: Color}
+    """
+    group_colors = OrderedDict()
+    group_gather = gather_categories(sample_map, header, [group_column])
+
+    if color_column is not None:
+        color_gather = gather_categories(sample_map, header, [color_column])
+        # match sample IDs between color_gather and group_gather
+        for group in group_gather:
+            for color in color_gather:
+                # allow incomplete assignment of colors, if group sids overlap at
+                # all with the color sids, consider it a match
+                if group_gather[group].sids.intersection(color_gather[color].sids):
+                    group_colors[group] = color
+    else:
+        bcolors = itertools.cycle(Set3_12.hex_colors)
+        for group in group_gather:
+            group_colors[group] = bcolors.next()
+
+    return group_colors

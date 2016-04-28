@@ -9,7 +9,7 @@ import unittest
 import os
 import tempfile
 from math import fsum
-from phylotoast import util as qtu
+from phylotoast import util as ut
 
 
 class util_Test(unittest.TestCase):
@@ -227,6 +227,17 @@ PIDF184	TAGCGACG	AGRGTTTGATCMTGGCTCAG,GCAACGAGCGCAACCC	periimplantitis	smoker	DI
 PIDTA184	TAGGAACT	AGRGTTTGATCMTGGCTCAG,GCAACGAGCGCAACCC	periimplantitis	smoker	DT	DT/DI	tooth	PIDTA184
 """
 
+        self.map_file = """#SampleID	BarcodeSequence	LinkerPrimerSequence	Treatment	Color	DOB	Description
+PC.354	AGCACGAGCCTA	YATGCTGCCTCCCGTAGGAGT	Control	#008000	20061218	Control_mouse__I.D._354
+PC.355	AACTCGTCGATG	YATGCTGCCTCCCGTAGGAGT	Control	#008000	20061218	Control_mouse__I.D._355
+PC.356	ACAGACCACTCA	YATGCTGCCTCCCGTAGGAGT	Control	#008000	20061126	Control_mouse__I.D._356
+PC.481	ACCAGCGACTAG	YATGCTGCCTCCCGTAGGAGT	Control	#008000	20070314	Control_mouse__I.D._481
+PC.593	AGCAGCACTTGT	YATGCTGCCTCCCGTAGGAGT	Control	#008000	20071210	Control_mouse__I.D._593
+PC.607	AACTGTGCGTAC	YATGCTGCCTCCCGTAGGAGT	Fast	#0000CC	20071112	Fasting_mouse__I.D._607
+PC.634	ACAGAGTCGGCT	YATGCTGCCTCCCGTAGGAGT	Fast	#0000CC	20080116	Fasting_mouse__I.D._634
+PC.635	ACCGCAGAGTCA	YATGCTGCCTCCCGTAGGAGT	Fast	#0000CC	20080116	Fasting_mouse__I.D._635
+PC.636	ACGGTGAGTGTC	YATGCTGCCTCCCGTAGGAGT	Fast	#0000CC	20080116	Fasting_mouse__I.D._636"""
+
         self.tax1 = """228054	k__Bacteria; p__Cyanobacteria; c__Synechococcophycideae; o__Synechococcales; f__Synechococcaceae; g__Synechococcus; s__
 228057	k__Bacteria; p__Proteobacteria; c__Alphaproteobacteria; o__Rickettsiales; f__Pelagibacteraceae; g__; s__
 73627	k__Bacteria; p__Actinobacteria; c__Actinobacteria; o__Actinomycetales; f__Mycobacteriaceae; g__Mycobacterium; s__
@@ -443,17 +454,17 @@ eigvals	3.38347924126	1.59161563383	1.4202121789	1.13114441112	0.775091898608	0.
         with tempfile.TemporaryFile() as temp_file1:
             temp_file1.write(self.fastadata1)
             temp_file1.seek(0)
-            storeFASTA_result1 = qtu.storeFASTA(temp_file1)
+            storeFASTA_result1 = ut.storeFASTA(temp_file1)
 
         with tempfile.TemporaryFile() as temp_file2:
             temp_file2.write(self.fastadata2)
             temp_file2.seek(0)
-            storeFASTA_result2 = qtu.storeFASTA(temp_file2)
+            storeFASTA_result2 = ut.storeFASTA(temp_file2)
 
         with tempfile.TemporaryFile() as temp_file3:
             temp_file3.write(self.fastadata3)
             temp_file3.seek(0)
-            storeFASTA_result3 = qtu.storeFASTA(temp_file3)
+            storeFASTA_result3 = ut.storeFASTA(temp_file3)
 
         # Obtaining data sets to compare and verify.
         hand_calc1 = ["PIDF154_1", "PIDF154_1 HU82XDC01DBOHO orig_bc=ACAGGTCG new_bc=ACAGGTCG bc_diffs=0", "AGTGAACGCTGGCGGCGTGCCTAATACATGCAAGTCGAACGGAGATTAAGTAGCTTGCTATTTAATCTTAGTGGCGCACGGGTGAGTAATATATAGCTAATCTGCCCTACACTAGAGGACAACAGTTGGAAACGACTGCTAATACTCTATACTCCTTCTTTACATAAGTTAAGTCGGGAAAGTTTTTCGGTGTAGGATGAGGCTATATCGTATCAGCTAGTGGTAGGTAACGGCCTACCAAGGCTATGACGCGTAACTGGTCTGAGAGGATGATCAGTCACACTGGAACTGAGACACGGTCCAGACTCCTACGGGAGGCAGCAGTAGGGGAATATTGCTCAAATGGGGGGAAAACCCTGAAAGCAGCAACGCCGCGTGGAGGATGACACTTTTCGGA"]
@@ -482,17 +493,17 @@ eigvals	3.38347924126	1.59161563383	1.4202121789	1.13114441112	0.775091898608	0.
         with tempfile.TemporaryFile() as temp_file4:
             temp_file4.write(self.fastadata1)
             temp_file4.seek(0)
-            parseFASTA_result1 = qtu.parseFASTA(temp_file4)
+            parseFASTA_result1 = ut.parseFASTA(temp_file4)
 
         with tempfile.TemporaryFile() as temp_file5:
             temp_file5.write(self.fastadata2)
             temp_file5.seek(0)
-            parseFASTA_result2 = qtu.parseFASTA(temp_file5)
+            parseFASTA_result2 = ut.parseFASTA(temp_file5)
 
         with tempfile.TemporaryFile() as temp_file6:
             temp_file6.write(self.fastadata3)
             temp_file6.seek(0)
-            parseFASTA_result3 = qtu.parseFASTA(temp_file6)
+            parseFASTA_result3 = ut.parseFASTA(temp_file6)
 
         # Obtaining data sets to compare and verify.
         hand_calc2 = ["PIDF154_1", "HU82XDC01DBOHO orig_bc=ACAGGTCG new_bc=ACAGGTCG bc_diffs=0", "AGTGAACGCTGGCGGCGTGCCTAATACATGCAAGTCGAACGGAGATTAAGTAGCTTGCTATTTAATCTTAGTGGCGCACGGGTGAGTAATATATAGCTAATCTGCCCTACACTAGAGGACAACAGTTGGAAACGACTGCTAATACTCTATACTCCTTCTTTACATAAGTTAAGTCGGGAAAGTTTTTCGGTGTAGGATGAGGCTATATCGTATCAGCTAGTGGTAGGTAACGGCCTACCAAGGCTATGACGCGTAACTGGTCTGAGAGGATGATCAGTCACACTGGAACTGAGACACGGTCCAGACTCCTACGGGAGGCAGCAGTAGGGGAATATTGCTCAAATGGGGGGAAAACCCTGAAAGCAGCAACGCCGCGTGGAGGATGACACTTTTCGGA"]
@@ -521,7 +532,7 @@ eigvals	3.38347924126	1.59161563383	1.4202121789	1.13114441112	0.775091898608	0.
         with tempfile.TemporaryFile() as temp_file7:
             temp_file7.write(self.implantdata)
             temp_file7.seek(0)
-            result = qtu.parse_map_file(temp_file7)
+            result = ut.parse_map_file(temp_file7)
 
         # Obtaining lists to compare results
         func_calc = result[1].values()[0]
@@ -549,9 +560,9 @@ eigvals	3.38347924126	1.59161563383	1.4202121789	1.13114441112	0.775091898608	0.
         with tempfile.TemporaryFile() as temp_file8:
             temp_file8.write(self.implantdata)
             temp_file8.seek(0)
-            result1 = qtu.parse_map_file(temp_file8)
+            result1 = ut.parse_map_file(temp_file8)
         mapfile = tempfile.NamedTemporaryFile(delete=False)
-        qtu.write_map_file(mapfile.name, result1[1].values(), result1[0])
+        ut.write_map_file(mapfile.name, result1[1].values(), result1[0])
 
         # Obtaining original file to compare with results.
         temp_file9 = tempfile.NamedTemporaryFile(delete=False)
@@ -586,12 +597,12 @@ eigvals	3.38347924126	1.59161563383	1.4202121789	1.13114441112	0.775091898608	0.
         with tempfile.TemporaryFile() as temp_file10:
             temp_file10.write(self.tax1)
             temp_file10.seek(0)
-            result1 = qtu.parse_taxonomy_table(temp_file10)
+            result1 = ut.parse_taxonomy_table(temp_file10)
 
         with tempfile.TemporaryFile() as temp_file11:
             temp_file11.write(self.tax2)
             temp_file11.seek(0)
-            result2 = qtu.parse_taxonomy_table(temp_file11)
+            result2 = ut.parse_taxonomy_table(temp_file11)
 
         # Testing the validity of the function.
         func_calc1 = result1.items()[6]
@@ -624,47 +635,47 @@ eigvals	3.38347924126	1.59161563383	1.4202121789	1.13114441112	0.775091898608	0.
         for lvl in ["k", "p", "c", "o", "f", "g", "s"]:
             if lvl == "k":
                 self.assertEquals(
-                    qtu.split_phylogeny(p1, "k"), "k__Bacteria",
+                    ut.split_phylogeny(p1, "k"), "k__Bacteria",
                     msg="Error. Identification failed at level 'k'."
                     )
 
             if lvl == "p":
                 self.assertEquals(
-                    qtu.split_phylogeny(p1, "p"), "k__Bacteria; p__Firmicutes",
+                    ut.split_phylogeny(p1, "p"), "k__Bacteria; p__Firmicutes",
                     msg="Error. Identification failed at level 'p'."
                     )
 
             if lvl == "c":
                 self.assertEquals(
-                    qtu.split_phylogeny(p1, "c"),
+                    ut.split_phylogeny(p1, "c"),
                     "k__Bacteria; p__Firmicutes; c__Clostridia",
                     msg="Error. Identification failed at level 'c'."
                     )
 
             if lvl == "o":
                 self.assertEquals(
-                    qtu.split_phylogeny(p1, "o"),
+                    ut.split_phylogeny(p1, "o"),
                     "k__Bacteria; p__Firmicutes; c__Clostridia; o__Clostridiales",
                     msg="Error. Identification failed at level 'o'."
                     )
 
             if lvl == "f":
                 self.assertEquals(
-                    qtu.split_phylogeny(p1, "f"),
+                    ut.split_phylogeny(p1, "f"),
                     "k__Bacteria; p__Firmicutes; c__Clostridia; o__Clostridiales; f__Veillonellaceae",
                     msg="Error. Identification failed at level 'f'."
                     )
 
             if lvl == "g":
                 self.assertEquals(
-                    qtu.split_phylogeny(p1, "g"),
+                    ut.split_phylogeny(p1, "g"),
                     "k__Bacteria; p__Firmicutes; c__Clostridia; o__Clostridiales; f__Veillonellaceae; g__Veillonella",
                     msg="Error. Identification failed at level 'g'."
                     )
 
             if lvl == "s":
                 self.assertEquals(
-                    qtu.split_phylogeny(p1, "s"),
+                    ut.split_phylogeny(p1, "s"),
                     "k__Bacteria; p__Firmicutes; c__Clostridia; o__Clostridiales; f__Veillonellaceae; g__Veillonella; s__denticariosi",
                     msg="Error. Identification failed at level 's'."
                     )
@@ -700,10 +711,10 @@ eigvals	3.38347924126	1.59161563383	1.4202121789	1.13114441112	0.775091898608	0.
             temp_file12.write(self.implantdata)
             temp_file12.seek(0)
             map_header = temp_file12.readline()[1:].strip().split("\t")
-            map_data = qtu.parse_map_file(temp_file12)
+            map_data = ut.parse_map_file(temp_file12)
 
-        result = qtu.gather_categories(map_data[1], map_header)
-        result1 = qtu.gather_categories(
+        result = ut.gather_categories(map_data[1], map_header)
+        result1 = ut.gather_categories(
             map_data[1], map_header, ["SmokingStatus", "DiseaseState"]
             )
         sum = fsum([
@@ -743,7 +754,7 @@ eigvals	3.38347924126	1.59161563383	1.4202121789	1.13114441112	0.775091898608	0.
         temp_file13 = tempfile.NamedTemporaryFile(delete=False)
         temp_file13.write(self.unifracdata)
         temp_file13.seek(0)
-        result = qtu.parse_unifrac(temp_file13.name)
+        result = ut.parse_unifrac(temp_file13.name)
 
         # Obtaining lists to compare.
         func_pcd = result.items()[2][1].items()[79][1]
@@ -765,17 +776,40 @@ eigvals	3.38347924126	1.59161563383	1.4202121789	1.13114441112	0.775091898608	0.
             )
         self.assertListEqual(
             func_eigenvals, hand_eigenvals,
-            msg="Eigenvalues not parsed accurately with their corresponding "\
+            msg="Eigenvalues not parsed accurately with their corresponding "
                 "key."
             )
         self.assertListEqual(
             func_var, hand_var,
-            msg="Variance values not parsed accurately to their corresponding"\
+            msg="Variance values not parsed accurately to their corresponding"
                 " key."
             )
 
         # Deleting temporary file.
         os.unlink(temp_file13.name)
+
+    def test_color_mapping(self):
+        """
+        Testing the color-group mapping for obtaining colors for visualizations
+        from mapping file.
+
+        :return:Returns OK if test goals were achieved, otherwise raises
+                 error.
+        """
+        with tempfile.TemporaryFile() as temp_file14:
+            temp_file14.write(self.map_file)
+            temp_file14.seek(0)
+            header, mfdata = ut.parse_map_file(temp_file14)
+
+        colormap1 = ut.color_mapping(mfdata, header, "Treatment", "Color")
+        self.assertDictEqual({"Control": "#008000", "Fast": "#0000CC"},
+                             colormap1, msg="Color-group mapping not computed "
+                             "accurately. Please check category and color "
+                             "columns.")
+        colormap2 = ut.color_mapping(mfdata, header, "Treatment")
+        self.assertDictEqual({"Control": "#8DD3C7", "Fast": "#FFFFB3"},
+                             colormap2, msg="With no color column given, the "
+                             "color-group mapping not computed accurately.")
 
     def tearDown(self):
         """
