@@ -7,7 +7,7 @@ Here are a few guidelines to get you started:
 
 - Try to limit each pull request to one change only.
 - Make sure your changes pass our CI.
-- If your change is noteworthy, add an entry to the changelog_.
+- If your change is noteworthy, add an entry to the history_.
   Use present tense, semantic newlines, and add link to your pull request.
 - No contribution is too small
 - *Always* add tests and docs for your code.
