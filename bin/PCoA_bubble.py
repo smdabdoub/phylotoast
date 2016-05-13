@@ -67,8 +67,8 @@ def plot_PCoA(cat_data, otu_name, unifrac, names, colors, xr, yr, outDir,
 
     ax.legend(legend, names, loc="best")
     plt.title(" ".join(otu_name.split("_")), style="italic")
-    plt.ylabel("PC2 - Percent variation explained {:.2f}%".format(float(unifrac["varexp"][2])))
-    plt.xlabel("PC1 - Percent variation explained {:.2f}%".format(float(unifrac["varexp"][1])))
+    plt.ylabel("PC2 - Percent variation explained {:.2f}%".format(float(unifrac["varexp"][1])))
+    plt.xlabel("PC1 - Percent variation explained {:.2f}%".format(float(unifrac["varexp"][0])))
     plt.xlim(round(xr[0]*1.5, 1), round(xr[1]*1.5, 1))
     plt.ylim(round(yr[0]*1.5, 1), round(yr[1]*1.5, 1))
     if plot_style:
