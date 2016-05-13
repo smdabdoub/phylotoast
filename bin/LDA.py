@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-import argparse
 import sys
-from phylotoast import util
+import argparse
+from warnings import catch_warnings as cw
+from phylotoast import util, biom_calc as bc, otu_calc as oc
 errors = []
 try:
     import matplotlib.pyplot as plt
@@ -17,6 +18,10 @@ try:
 except ImportError as ie:
     errors.append(ie)
 try:
+    import biom
+except ImportError as ie:
+    errors.append(ie)
+try:
     from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 except ImportError as ie:
     errors.append(ie)
@@ -26,19 +31,28 @@ if len(errors) != 0:
     sys.exit()
 
 
-def merge_dicts(*dict_args):
+def get_relative_abundance(biomfile):
     """
-    Given any number of dicts, shallow copy and merge into a new dict,
-    precedence goes to key value pairs in latter dicts.
+    Return relative abundance from a OTU table. OTUIDs are converted to their
+    genus-species identifier.
     """
-    result = {}
-    for dictionary in dict_args:
-        result.update(dictionary)
-    return result
+    biomf = biom.load_table(biomfile)
+    norm_biomf = biomf.norm(inplace=False)
+    rel_abd = {}
+    for sid in norm_biomf.ids():
+        rel_abd[sid] = {}
+        for otuid in norm_biomf.ids("observation"):
+            otuname = oc.otu_name(norm_biomf.metadata(otuid, axis="observation")["taxonomy"])
+            abd = norm_biomf.get_value_by_ids(otuid, sid)
+            rel_abd[sid][otuname] = abd
+    ast_rel_abd = bc.arcsine_sqrt_transform(rel_abd)
+    return ast_rel_abd
 
 
-def plot_LDA(X_lda, y_lda, class_colors, exp_var,
-             out_fp="", dpi=300, title=None):
+def plot_LDA(X_lda, y_lda, class_colors, exp_var, out_fp=""):
+    """
+    Plot transformed LDA data.
+    """
     cats = class_colors.keys()
     group_lda = {c: [] for c in cats}
     fig = plt.figure(figsize=(15, 10))
@@ -53,7 +67,7 @@ def plot_LDA(X_lda, y_lda, class_colors, exp_var,
         plt.scatter(x=cat_x, y=cat_y, label=target_name,
                     color=class_colors[target_name],
                     alpha=0.85, s=250, edgecolors="k")
-    mpl.rc("font", family="Arial") # define font for figure text
+    mpl.rc("font", family="Arial")  # define font for figure text
     mpl.rc('xtick', labelsize=12)  # increase X axis ticksize
     mpl.rc('ytick', labelsize=12)  # increase Y axis ticksize
     if X_lda.shape[1] == 1:
@@ -62,20 +76,22 @@ def plot_LDA(X_lda, y_lda, class_colors, exp_var,
     plt.ylabel("LD2 (Percent Explained Variance: {:.3f}%)".format(exp_var[1]*100), fontsize=16)
     leg = plt.legend(loc="best", frameon=True, framealpha=1, fontsize=16)
     leg.get_frame().set_edgecolor('k')
-    if title:
-        plt.title(title)
 
     # save or display result
     if out_fp:
-        plt.savefig(out_fp, facecolor="white", edgecolor="none", dpi=dpi,
+        plt.savefig(out_fp, facecolor="white", edgecolor="none", dpi=300,
                     bbox_inches="tight", pad_inches=0.1)
     else:
         plt.show()
 
 
 def run_LDA(df):
+    """
+    Run LinearDiscriminantAnalysis on input dataframe (df) and return
+    transformed data, scalings and
+    """
     # Prep variables for sklearn LDA
-    X = df[range(2, df.shape[1])].values     # input data matrix
+    X = df[range(1, df.shape[1])].values     # input data matrix
     y = df["Condition"].values               # data categories list
 
     # Calculate LDA
@@ -91,29 +107,36 @@ def handle_program_options():
                                      sample-grouped OTU data. It is necessary\
                                      to remove the header cell '#OTU ID'\
                                      before running this program.")
-    parser.add_argument("-i", "--biom_tsv", required=True,
-                        help="Sample-OTU abundance table in TSV format with the\
-                        arcsin sqrt transform already applied. [REQUIRED]")
+    parser.add_argument("-i", "--input_data_type", required=True,
+                        choices=["biom", "unifrac_dm"],
+                        default="unifrac_dm",
+                        help="Specify if the input file is biom file format OTU \
+                              table or unifrac distance matrix. If biom file is \
+                              provided, the arc-sine transformed relative abundances \
+                              eill be used as input whereas, if unifrac distance matrix.\
+                              is given, unifrac distances will be used as input to LDA.\
+                              [REQUIRED]")
+    parser.add_argument("-d", "--input_data", required=True,
+                        help="Input biom file format or unifrac distance matrix \
+                              (output of beta_diversity.py from QIIME). [REQUIRED]")
     parser.add_argument("-m", "--map_fp", required=True,
                         help="Metadata mapping file. [REQUIRED]")
-    parser.add_argument("-g", "--group_by", required=True, nargs="+",
-                        help="Any mapping categories, such as treatment type, \
-                              that will be used to group the data in the \
-                              output iTol table. For example, one category \
-                              with three types will result in three data \
-                              columns in the final output. Two categories with\
-                              three types each will result in six data \
-                              columns. Default is no categories and all the \
-                              data will be treated as a single group.")
+    parser.add_argument("-g", "--group_by", required=True,
+                        help="A column name in the mapping file containing\
+                              categorical values that will be used to identify \
+                              groups. Each sample ID must have a group entry. \
+                              Default is no categories and all the data will be \
+                              treated as a single group.")
     parser.add_argument("-c", "--color_by", required=True,
                         help="A column name in the mapping file containing\
                               hexadecimal (#FF0000) color values that will\
                               be used to color the groups. Each sample ID must\
                               have a color entry.")
-    parser.add_argument("--dpi", default=300, type=int,
-                        help="Set plot quality in Dots Per Inch (DPI). Larger\
-                              DPI will result in larger file size. Default value\
-                              is 300.")
+    parser.add_argument("--bubble", action="store_true",
+                        help="If set, provide a file with 1 OTU name per line \
+                              for bubble plotting. OTU name must be condensed to \
+                              genus-species identifier. Default parameter value \
+                              will not plot bubble plots.")
     parser.add_argument("--save_lda_input",
                         help="Save a CSV-format file of the transposed LDA-input\
                               table to the file specifed by this option.")
@@ -124,43 +147,63 @@ def handle_program_options():
                               If specified, the figure will be saved directly\
                               instead of opening a window in which the plot \
                               can be viewed before saving")
-
     return parser.parse_args()
 
 
 def main():
     args = handle_program_options()
 
-    map_header, imap = util.parse_map_file(args.map_fp)
+    try:
+        with open(args.map_fp):
+            pass
+    except IOError as ioe:
+        err_msg = "\nError in metadata mapping filepath (-m): {}\n"
+        sys.exit(err_msg.format(ioe))
 
-    df = pd.read_csv(args.biom_tsv, sep="\t", index_col=0).T
-    # exclude Sample IDs not in the mapping file
-    df = df.loc[imap.keys()]
+    if args.bubble:
+        try:
+            with open(args.bubble) as hojiehr:
+                bubble_otus = [line.strip() for line in hojiehr.readlines()]
+        except IOError as ioe:
+            err_msg = "\nError in OTU name list file (--bubble): {}\n"
+            sys.exit(err_msg.format(ioe))
 
-    cat_gather = util.gather_categories(imap, map_header, args.group_by)
-    if len(cat_gather) < 2:
-        sys.stderr.write("ERROR: Only one category value found. Linear \
-        Discriminant Analysis requires at least two categories to compare.")
-        return
+    # Parse and read mapping file
+    header, imap = util.parse_map_file(args.map_fp)
+    class_colors = util.color_mapping(imap, header, args.group_by, args.color_by)
 
-    color_gather = util.gather_categories(imap, map_header, [args.color_by])
-
-    class_map = merge_dicts(*[{sid: cat for sid in cat_gather[cat].sids}
-                              for cat in cat_gather])
-    class_colors = merge_dicts(*[{class_map[sid]: color
-                                  for sid in color_gather[color].sids}
-                                 for color in color_gather])
-
-    df.insert(0, "Condition", [class_map[entry] for entry in df.index])
-
-    if args.save_lda_input:
-        df.to_csv(args.save_lda_input)
-
-    X_lda, y_lda, exp_var = run_LDA(df)
-
-    plot_LDA(X_lda, y_lda, class_colors, exp_var, out_fp=args.out_fp,
-             dpi=args.dpi, title=args.plot_title)
+    if args.input_data_type == "unifrac_dm":
+        try:
+            with open(args.input_data):
+                pass
+        except IOError as ioe:
+            err_msg = "\nError with unifrac distance matrix file (-d): {}\n"
+            sys.exit(err_msg.format(ioe))
+        uf_data = pd.read_csv(args.input_data, sep="\t", index_col=0)
+        uf_data.insert(0, "Condition", [imap[sid][header.index(args.group_by)]
+                                        for sid in uf_data.index])
+        if args.save_lda_input:
+            uf_data.to_csv(args.save_lda_input, sep="\t")
+        # Run LDA
+        X_lda, y_lda, exp_var = run_LDA(uf_data)
+        # Plot LDA Bubble
+        plot_LDA(X_lda, y_lda, class_colors, exp_var, out_fp=args.out_fp)
+    else:
+        try:
+            rel_abd = get_relative_abundance(args.input_data)  # load biom file
+        except ValueError as ve:
+            err_msg = "\nError with biom format file (-d): {}\n"
+            sys.exit(err_msg.format(ve))
+        df_rel_abd = pd.DataFrame(rel_abd).T
+        df_rel_abd.insert(0, "Condition", [imap[sid][header.index(args.group_by)]
+                                           for sid in df_rel_abd.index])
+        if args.save_lda_input:
+            df_rel_abd.to_csv(args.save_lda_input, sep="\t")
+        # Run LDA
+        X_lda, y_lda, exp_var = run_LDA(df_rel_abd)
+        # Plot LDA
+        plot_LDA(X_lda, y_lda, class_colors, exp_var, out_fp=args.out_fp)
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
