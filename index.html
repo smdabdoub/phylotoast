@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>PhyloToAST by smdabdoub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">PhyloToAST</h1>
+      <h2 class="project-tagline">Tools for phylogenetic data analysis including visualization and cluster-computing support.</h2>
+      <a href="https://github.com/smdabdoub/phylotoast" class="btn">View on GitHub</a>
+      <a href="https://github.com/smdabdoub/phylotoast/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/smdabdoub/phylotoast/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="phylotoast" class="anchor" href="#phylotoast" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>PhyloToAST</h1>
+
+<p>.. image:: <a href="https://img.shields.io/pypi/v/phylotoast.svg?style=plastic">https://img.shields.io/pypi/v/phylotoast.svg?style=plastic</a><br>
+    :target: <a href="https://pypi.python.org/pypi/phylotoast">https://pypi.python.org/pypi/phylotoast</a>
+    :alt: Latest Version
+.. image:: <a href="https://img.shields.io/pypi/l/phylotoast.svg?style=plastic">https://img.shields.io/pypi/l/phylotoast.svg?style=plastic</a><br>
+    :target: <a href="https://pypi.python.org/pypi/phylotoast">https://pypi.python.org/pypi/phylotoast</a>
+    :alt: License
+.. image:: <a href="https://img.shields.io/pypi/format/phylotoast.svg?style=plastic">https://img.shields.io/pypi/format/phylotoast.svg?style=plastic</a><br>
+    :target: <a href="https://pypi.python.org/pypi/phylotoast">https://pypi.python.org/pypi/phylotoast</a>
+    :alt: Download format
+.. image:: <a href="https://img.shields.io/travis/smdabdoub/phylotoast.svg?style=plastic">https://img.shields.io/travis/smdabdoub/phylotoast.svg?style=plastic</a>
+    :target: <a href="https://travis-ci.org/smdabdoub/phylotoast">https://travis-ci.org/smdabdoub/phylotoast</a>
+    :alt: Travis CI build status
+.. image:: <a href="https://img.shields.io/badge/install%20with-bioconda-4682b4.svg?style=plastic">https://img.shields.io/badge/install%20with-bioconda-4682b4.svg?style=plastic</a>
+   :target: <a href="https://bioconda.github.io/recipes/phylotoast/README.html">https://bioconda.github.io/recipes/phylotoast/README.html</a></p>
+
+<p>.. image:: images/readmepic.png
+   :align: center
+   :scale: 50%</p>
+
+<p>The PhyloToAST project is a collection of python code and scripts that
+modify the QIIME [1] pipeline by adding/changing several
+steps including: support for cluster-computing, multiple primer support
+(eliminate primer bias) [2], enhanced support for species-specific
+analysis, and additional visualization tools.</p>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>To install PhyloToAST from PyPI:</p>
+
+<p>.. code-block:: bash</p>
+
+<pre><code>$ pip install phylotoast
+</code></pre>
+
+<p>From source:</p>
+
+<p>.. code-block:: bash</p>
+
+<pre><code>$ python setup.py install
+</code></pre>
+
+<h2>
+<a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Documentation</h2>
+
+<p>Full documentation for the scripts and code is available at the
+<code>PhyloToAST documentation site</code>_</p>
+
+<h2>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h2>
+
+<p>The list of required modules will vary depending on which executable scripts and/or
+parts of the API you may use. For this reason there are no required dependencies
+that will be automatically installed along with PhyloToAST. Each executable script will
+check that the required libraries are installed and will print a message if any are not
+found. </p>
+
+<p>If you would like to install everything up front, the following is a complete list of libraries
+that are used in PhyloToAST:</p>
+
+<ul>
+<li>numpy</li>
+<li>scipy</li>
+<li>matplotlib &gt;= 1.5.0</li>
+<li>biopython &gt;= 1.60 </li>
+<li>scikit-bio</li>
+<li>scikit-learn</li>
+<li>pandas</li>
+<li>statsmodels</li>
+<li>brewer2mpl</li>
+<li>biom-format &gt;= 2.1.5</li>
+<li>h5py (for parsing BIOM v2.x format files)</li>
+</ul>
+
+<h2>
+<a id="source" class="anchor" href="#source" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Source</h2>
+
+<p>The <code>PhyloToAST source</code>_ is hosted on github.</p>
+
+<h2>
+<a id="citing" class="anchor" href="#citing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Citing</h2>
+
+<p>Dabdoub, S.M. et al., <em>PhyloToAST: Bioinformatics tools for
+species-level analysis and visualization of complex microbial communities</em>.
+2016. (Manuscript in revision).</p>
+
+<h2>
+<a id="publications-using-phylotoast" class="anchor" href="#publications-using-phylotoast" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Publications using PhyloToAST</h2>
+
+<p>Tsigarida and Dabdoub et al., <em>The Influence of Smoking on the Peri-Implant
+Microbiome</em>. Journal of Dental Research, 2015; <code>doi: 10.1177/0022034515590581</code>_</p>
+
+<p>Mason et al., <em>The subgingival microbiome of clinically healthy current
+and never smokers</em>. The ISME Journal, 2014; <code>doi:10.1038/ismej.2014.114</code>_</p>
+
+<p>Dabdoub et al., <em>Patient-specific Analysis of Periodontal and Peri-implant Microbiomes</em>.
+Journal of Dental Research, 2013; <code>doi: 10.1177/0022034513504950</code>_</p>
+
+<h2>
+<a id="references" class="anchor" href="#references" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>References</h2>
+
+<p>[1] J Gregory Caporaso, et al., <em>QIIME allows analysis of
+high-throughput community sequencing data</em>. Nature Methods, 2010;
+<code>doi:10.1038/nmeth.f.303</code>_</p>
+
+<p>[2] Kumar PS, et al., <em>Target Region Selection Is a Critical Determinant
+of Community Fingerprints Generated by 16S Pyrosequencing</em>. PLoS ONE
+(2011) 6(6): e20956. <code>doi:10.1371/journal.pone.0020956</code>_</p>
+
+<p>.. _PhyloToAST documentation site: <a href="http://phylotoast.readthedocs.org">http://phylotoast.readthedocs.org</a>
+.. _matplotlib: <a href="http://matplotlib.org">http://matplotlib.org</a>
+.. _Biopython: <a href="http://biopython.org">http://biopython.org</a>
+.. _fuzzpy: <a href="http://mavrinac.com/index.cgi?page=fuzzpy">http://mavrinac.com/index.cgi?page=fuzzpy</a>
+.. _PhyloToAST source: <a href="http://github.com/smdabdoub/phylotoast">http://github.com/smdabdoub/phylotoast</a>
+.. _<code>doi: 10.1177/0022034515590581</code>: <a href="http://dx.doi.org/10.1177/0022034515590581">http://dx.doi.org/10.1177/0022034515590581</a>
+.. _<code>doi:10.1038/ismej.2014.114</code>: <a href="http://dx.doi.org/10.1038/ismej.2014.114">http://dx.doi.org/10.1038/ismej.2014.114</a>
+.. _<code>doi: 10.1177/0022034513504950</code>: <a href="http://dx.doi.org/10.1177/0022034513504950">http://dx.doi.org/10.1177/0022034513504950</a>
+.. _<code>doi:10.1038/nmeth.f.303</code>: <a href="http://dx.doi.org/10.1038/nmeth.f.303">http://dx.doi.org/10.1038/nmeth.f.303</a>
+.. _<code>doi:10.1371/journal.pone.0020956</code>: <a href="http://dx.doi.org/10.1371/journal.pone.0020956">http://dx.doi.org/10.1371/journal.pone.0020956</a></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/smdabdoub/phylotoast">PhyloToAST</a> is maintained by <a href="https://github.com/smdabdoub">smdabdoub</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
