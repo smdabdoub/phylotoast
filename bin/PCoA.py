@@ -77,8 +77,8 @@ def handle_program_options():
                         help="Specify the azimuth and elevation angles for a 3D plot.")
     parser.add_argument("-t", "--title", default="", help="Title of the plot.")
     parser.add_argument("--figsize", default=[14, 8], type=int, nargs=2,
-                        help="Set plot quality in Dots Per Inch (DPI). Larger\
-                              DPI will result in larger file size.")
+                        help="Specify the 'width height' in inches for PCoA plots."
+                             "By default, figure size is 14x8 inches")
     parser.add_argument("--font_size", default=12, type=int,
                         help="Sets the font size for text elements in the plot.")
     parser.add_argument("--label_padding", default=15, type=int,
