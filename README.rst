@@ -80,8 +80,7 @@ Citing
 ------
 
 Dabdoub, S.M. et al., *PhyloToAST: Bioinformatics tools for
-species-level analysis and visualization of complex microbial communities*.
-2016. (Manuscript in revision).
+species-level analysis and visualization of complex microbial communities*. Scientific Reports, 2016 (Accepted).
 
 Publications using PhyloToAST
 ------------------------------
