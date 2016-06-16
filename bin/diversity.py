@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 """
-Calculate and plot for two or more sample categories: Shannon diversity,
-Chao1 diversity, and a Jaccard similiarity distance matrix heatmap
+Calculate and plot alpha diversity for two or more sample categories.
 """
 import sys
 import argparse
@@ -18,7 +17,7 @@ try:
 except ImportError as ie:
     importerrors.append(ie)
 try:
-    from skbio.diversity import alpha, beta
+    from skbio.diversity import alpha
 except ImportError as ie:
     importerrors.append(ie)
 try:
@@ -28,7 +27,7 @@ except ImportError as ie:
     importerrors.append(ie)
 if len(importerrors) != 0:
     for item in importerrors:
-        print "Import Error:", item
+        print "Import Error. Please install missing module:", item
     sys.exit()
 
 
@@ -50,21 +49,22 @@ def calc_diversity(method, parsed_mapf, biom, cats, cats_index):
     return div_calc, sample_ids
 
 
-def print_WilcoxonSRT(x, y=None):
+def print_MannWhitneyU(x, y=None):
     """
-    Compute the Wilcoxon Signed Rank Test
+    Compute the Mann-Whitney U test for unequal group sample sizes.
     """
-    T,p = stats.wilcoxon(x, y)
-    print "Wilcoxon Signed Rank Test:"
-    print "p-value: {}".format(p)
+    T, p = stats.mannwhitneyu(x, y)
+    print "\nMann-Whitney U test statistic:", T
+    print "Two-tailed p-value: {}".format(2 * p)
 
 
 def print_KruskalWallisH(div_calc):
     """
-    Compute the Kruskal-Wallis H-test for independent samples
+    Compute the Kruskal-Wallis H-test for independent samples. A typical rule is that
+    each group must have at least 5 measurements.
     """
     h, p = stats.kruskal(*div_calc)
-    print "Kruskal-Wallis H-test for {} groups:".format(str(len(div_calc)))
+    print "\nKruskal-Wallis H-test statistic for {} groups: {}".format(str(len(div_calc)), h)
     print "p-value: {}".format(p)
 
 
@@ -84,7 +84,8 @@ def plot_group_diversity(diversities, grp_colors, title, diversity_type, out_dir
                   grp_colors.keys(), loc="best")
 
     fig_div.savefig(osp.join(out_dir, diversity_type+"."+plot_ext), facecolor="white",
-                    edgecolor="none", bbox_inches="tight", pad_inches=0.5)
+                    edgecolor="none", bbox_inches="tight", pad_inches=0.2)
+
 
 def write_diversity_metrics(data, sample_ids, fp=None):
     """
@@ -140,8 +141,11 @@ def handle_program_options():
     parser.add_argument("--image_type", default="png",
                         help="The type of image to save: PNG, SVG, PDF, EPS, etc...")
     parser.add_argument("--save_calculations",
-                        help="A text file containing the calculated metrics will be stored\
-                        to the file system. Default: 'diversity_data.txt'")
+                        help="Path and name of text file to store the calculated "
+                        "diversity metrics.")
+    parser.add_argument("--show_significance", action="store_false", help="Display "
+                        "significance testing results. The results will be shown by "
+                        "default.")
     return parser.parse_args()
 
 
@@ -179,22 +183,25 @@ def main():
         if method not in alpha.__all__:
             sys.exit("ERROR: Diversity metric not found: " + method)
         metric = eval("alpha."+method)
-        div_calc, sample_ids = calc_diversity(metric, sample_map, biom_tbl, cat_vals, cat_idx)
+        div_calc, sample_ids = calc_diversity(metric, sample_map, biom_tbl,
+                                              cat_vals, cat_idx)
 
         plot_group_diversity(div_calc, colors, plot_title, x_label,
                              args.out_dir, args.image_type)
 
-        print "Diversity significance testing: {}".format(x_label)
         # calculate and print significance testing results
-        if len(cat_vals) == 2:
-            print_WilcoxonSRT(*div_calc.values())
-        elif len(cat_vals) > 2:
-            print_KruskalWallisH(div_calc.values())
-        print
+        if args.show_significance:
+            print "Diversity significance testing: {}".format(x_label)
+            if len(cat_vals) == 2:
+                print_MannWhitneyU(*div_calc.values())
+            elif len(cat_vals) > 2:
+                print_KruskalWallisH(div_calc.values())
+            print
+        else:
+            continue
 
         if args.save_calculations:
-            prefix = "_".join(x_label.split())
-            write_diversity_metrics(div_calc, sample_ids, osp.join(args.out_dir, args.save_calculations))
+            write_diversity_metrics(div_calc, sample_ids, args.save_calculations)
 
 
 if __name__ == "__main__":
