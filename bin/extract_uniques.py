@@ -122,14 +122,21 @@ def handle_program_options():
 def main():
     args = handle_program_options()
 
-    # Load biom format file
-    biomf = biom.load_table(args.input_biom_fp)
+    try:
+        # Load biom format file
+        biomf = biom.load_table(args.input_biom_fp)
+    except TypeError as te:
+        sys.exit("The data in the path does not appear to be a BIOM format table. "
+                 "Error: {}.".format(te))
 
     # Determine OTUIDs present in each sample
     sample_otus = assign_otu_membership(biomf)
 
-    # Parse mapping file
-    header, imap = util.parse_map_file(args.mapping_file)
+    try:
+        # Parse mapping file
+        header, imap = util.parse_map_file(args.mapping_file)
+    except ValueError as ve:
+        sys.exit("Error: {}.".format(ve))
 
     # Get relevant category information
     group_data = util.gather_categories(imap, header, [args.category_column])
