@@ -49,24 +49,13 @@ def calc_diversity(method, parsed_mapf, biom, cats, cats_index):
     return div_calc, sample_ids
 
 
-def print_WilcoxonSRT(x, y=None):
-    """
-    Compute the Wilcoxon Signed Rank Test. A typical rule is to require that n > 20 in
-    each group.
-    """
-    T, p = stats.wilcoxon(x, y)
-    print "\nWilcoxon Signed Rank Test statistic:", T
-    print "Two-sided p-value: {}".format(p)
-
-
 def print_MannWhitneyU(x, y=None):
     """
     Compute the Mann-Whitney U test for unequal group sample sizes.
     """
     T, p = stats.mannwhitneyu(x, y)
     print "\nMann-Whitney U test statistic:", T
-    print "One-sided p-value: {}".format(p)
-    print "Two-sided p-value: {}".format(2 * p)
+    print "Two-tailed p-value: {}".format(2 * p)
 
 
 def print_KruskalWallisH(div_calc):
@@ -95,7 +84,7 @@ def plot_group_diversity(diversities, grp_colors, title, diversity_type, out_dir
                   grp_colors.keys(), loc="best")
 
     fig_div.savefig(osp.join(out_dir, diversity_type+"."+plot_ext), facecolor="white",
-                    edgecolor="none", bbox_inches="tight", pad_inches=0.5)
+                    edgecolor="none", bbox_inches="tight", pad_inches=0.2)
 
 
 def write_diversity_metrics(data, sample_ids, fp=None):
@@ -204,11 +193,7 @@ def main():
         if args.show_significance:
             print "Diversity significance testing: {}".format(x_label)
             if len(cat_vals) == 2:
-                try:
-                    print_WilcoxonSRT(*div_calc.values())
-                except ValueError:
-                    print "Unequal sample sizes found between groups."
-                    print_MannWhitneyU(*div_calc.values())
+                print_MannWhitneyU(*div_calc.values())
             elif len(cat_vals) > 2:
                 print_KruskalWallisH(div_calc.values())
             print
