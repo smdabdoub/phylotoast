@@ -79,8 +79,8 @@ The `PhyloToAST source`_ is hosted on github.
 Citing
 ------
 
-Dabdoub, S.M. et al., *PhyloToAST: Bioinformatics tools for
-species-level analysis and visualization of complex microbial communities*. Scientific Reports, 2016 (Accepted).
+Dabdoub, S. M. *et al.* PhyloToAST: Bioinformatics tools for species-level analysis and
+visualization of complex microbial datasets. *Sci. Rep.* **6**, 29123; doi: 10.1038/srep29123 (2016).
 
 Publications using PhyloToAST
 ------------------------------
