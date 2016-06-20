@@ -83,18 +83,16 @@ def otu_name(tax):
              level.
     """
     extract_name = lambda lvl: '_'.join(lvl.split('_')[2:])
-    for i, lvl in enumerate(tax):
-        lvl = lvl.strip()
-        if i < len(tax) - 1 and len(tax[i + 1].strip()) == 3:
-            if tax[i].strip()[0] == 'g':
-                return extract_name(lvl) + '_spp.'
-            else:
-                return 'Unclassified_' + extract_name(lvl)
-        elif i == len(tax) - 1:
-            name = extract_name(lvl)
-            if lvl[0] == 's':
-                name = extract_name(tax[i-1]) + '_' + name
-            return name
+    spname = "spp."
+    for lvl in tax[::-1]:
+        if len(lvl) <= 3:
+            continue
+        if lvl.startswith("s"):
+            spname = extract_name(lvl)
+        elif lvl.startswith("g"):
+            return "{}_{}".format(extract_name(lvl), spname)
+        else:
+            return "Unclassified_{}".format(extract_name(lvl))
 
 
 def load_core_file(core_fp):
