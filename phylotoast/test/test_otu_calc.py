@@ -151,7 +151,7 @@ class otu_calc_Test(unittest.TestCase):
 
     def test_otu_name_biom(self):
         """
-        Testing otu_name_biom() function of otu_calc.py.
+        Testing the otu_name_biom() function of otu_calc.py.
 
         :return: Returns OK if the test goals were achieved, otherwise
                  raises error.
@@ -167,28 +167,42 @@ class otu_calc_Test(unittest.TestCase):
 
     def test_otu_name(self):
         """
-        Testing otu_name() function of otu_calc.py.
+        Testing the otu_name() function of otu_calc.py.
 
         :return: Returns OK if the test goals were achieved, otherwise
                  raises error.
         """
-        self.tax = [
-            "k__Archaea", "p__Euryarchaeota", "c__Methanomicrobia",
+        self.tax = {
+            "Unclassified_Methanosarcinales":
+            ["k__Archaea", "p__Euryarchaeota", "c__Methanomicrobia",
             "o__Methanosarcinales", "f__",
-            "g__", "s__"
-            ]
-        self.result = oc.otu_name(self.tax)
-        hand_calc = 'Unclassified_Methanosarcinales'
+            "g__", "s__concilii"
+            ],
+            "Campylobacter_gracilis":
+            ["k__Bacteria", "p__Proteobacteria", "c__Epsilonproteobacteria", 
+             "o__Campylobacterales", "f__Campylobacteraceae", "g__Campylobacter", 
+             "s__gracilis"],
+            "Escherichia_spp.":
+            ["k__Bacteria", "p__Proteobacteria", "c__Gammaproteobacteria", 
+             "o__Enterobacteriales", "f__Enterobacteriaceae", "g__Escherichia", 
+             "s__"]
+        }
 
-        # Testing the validity of the otu_name() function
-        self.assertEqual(
-            self.result, hand_calc,
-            msg='Error! The output is not as expected.'
+        for expected, test in self.tax.items():
+            self.result = oc.otu_name(test)
+
+            # Testing the validity of the otu_name() function
+            self.assertEqual(
+                self.result, expected,
+                msg='Error! Expected result: {}. otu_name() result: {}'.format(
+                                                         expected, self.result)
             )
+
+        
 
     def test_load_core_file(self):
         """
-        Testing load_core_file() function of otu_calc.py
+        Testing the load_core_file() function of otu_calc.py
 
         :return: Returns OK if the test goals were achieved, otherwise
                  raises error.
