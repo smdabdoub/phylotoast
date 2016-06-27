@@ -3,9 +3,10 @@
 Calculate and plot alpha diversity for two or more sample categories.
 """
 import sys
-import argparse
 import csv
+import argparse
 import os.path as osp
+from collections import defaultdict
 from phylotoast import graph_util as gu, util as putil
 importerrors = []
 try:
@@ -21,7 +22,6 @@ try:
 except ImportError as ie:
     importerrors.append(ie)
 try:
-    # matplotlib.use("Agg")  # for use on headless server
     from matplotlib import pyplot as plt, gridspec
 except ImportError as ie:
     importerrors.append(ie)
@@ -42,17 +42,24 @@ def calc_diversity(method, parsed_mapf, biom, cats, cats_index):
     for sid, sample_counts in gather_samples(biom).items():
         sample_ids.append(sid)
         if sid in parsed_mapf:
-            counts[parsed_mapf[sid][cats_index]].append(sample_counts)
+            counts[parsed_mapf[sid][cats_index]].append((sid, sample_counts))
 
-    div_calc = {cat: [method(count) for count in counts] for cat, counts in counts.items()}
+    div_calc = {cat: {count[0]: method(count[1]) for count in counts}
+                for cat, counts in counts.items()}
 
     return div_calc, sample_ids
 
 
-def print_MannWhitneyU(x, y=None):
+def print_MannWhitneyU(div_calc):
     """
     Compute the Mann-Whitney U test for unequal group sample sizes.
     """
+    try:
+        x = div_calc.values()[0].values()
+        y = div_calc.values()[1].values()
+    except:
+        return "Error setting up input arrays for Mann-Whitney U Test. Skipping "\
+               "significance testing."
     T, p = stats.mannwhitneyu(x, y)
     print "\nMann-Whitney U test statistic:", T
     print "Two-tailed p-value: {}".format(2 * p)
@@ -63,7 +70,16 @@ def print_KruskalWallisH(div_calc):
     Compute the Kruskal-Wallis H-test for independent samples. A typical rule is that
     each group must have at least 5 measurements.
     """
-    h, p = stats.kruskal(*div_calc)
+    calc = defaultdict(list)
+    try:
+        for k1, v1 in div_calc.iteritems():
+            for k2, v2 in v1.iteritems():
+                calc[k1].append(v2)
+        print calc
+    except:
+        return "Error setting up input arrays for Kruskal-Wallis H-Test. Skipping "\
+               "significance testing."
+    h, p = stats.kruskal(*calc.values())
     print "\nKruskal-Wallis H-test statistic for {} groups: {}".format(str(len(div_calc)), h)
     print "p-value: {}".format(p)
 
@@ -76,9 +92,9 @@ def plot_group_diversity(diversities, grp_colors, title, diversity_type, out_dir
     ax_div = fig_div.add_subplot(grid[0, 0])
 
     for i, grp in enumerate(diversities):
-        gu.plot_kde(diversities[grp], ax_div, title, grp_colors[grp])
+        gu.plot_kde(diversities[grp].values(), ax_div, title, grp_colors[grp])
 
-    ax_div.set_xlabel(diversity_type)
+    ax_div.set_xlabel(diversity_type.title())
     ax_div.set_ylabel("Density")
     ax_div.legend([plt.Rectangle((0, 0), 1, 1, fc=color) for color in grp_colors.values()],
                   grp_colors.keys(), loc="best")
@@ -97,10 +113,10 @@ def write_diversity_metrics(data, sample_ids, fp=None):
 
     with open(fp, "w") as outf:
         out = csv.writer(outf, delimiter="\t")
-        out.writerow(["calculation", "group"])
-        for group in data:
-            for entry in data[group]:
-                out.writerow([entry, group])
+        out.writerow(["SampleID", "Group", "Calculation"])
+        for group, d in data.iteritems():
+            for sid, value in d.iteritems():
+                out.writerow([sid, group, value])
 
 
 def handle_program_options():
@@ -132,14 +148,10 @@ def handle_program_options():
                         help="A descriptive title that will appear at the top \
                         of the output plot. Surround with quotes if there are\
                         spaces in the title.")
-    parser.add_argument("--x_label", default="diversity", nargs="+",
-                        help="The name of the diversity metric to be displayed on the\
-                        plot as the X-axis label. If multiple metrics are specified,\
-                        then multiple entries for the X-axis label should be given.")
     parser.add_argument("-o", "--out_dir", default=".",
                         help="The directory plots will be saved to.")
     parser.add_argument("--image_type", default="png",
-                        help="The type of image to save: PNG, SVG, PDF, EPS, etc...")
+                        help="The type of image to save: png, svg, pdf, eps, etc...")
     parser.add_argument("--save_calculations",
                         help="Path and name of text file to store the calculated "
                         "diversity metrics.")
@@ -179,23 +191,23 @@ def main():
     colors = putil.color_mapping(sample_map, header, args.category, args.color_by)
 
     # Perform diversity calculations and density plotting
-    for method, x_label in zip(args.diversity, args.x_label):
+    for method in args.diversity:
         if method not in alpha.__all__:
             sys.exit("ERROR: Diversity metric not found: " + method)
         metric = eval("alpha."+method)
         div_calc, sample_ids = calc_diversity(metric, sample_map, biom_tbl,
                                               cat_vals, cat_idx)
 
-        plot_group_diversity(div_calc, colors, plot_title, x_label,
+        plot_group_diversity(div_calc, colors, plot_title, method,
                              args.out_dir, args.image_type)
 
         # calculate and print significance testing results
         if args.show_significance:
-            print "Diversity significance testing: {}".format(x_label)
+            print "Diversity significance testing: {}".format(method.title())
             if len(cat_vals) == 2:
-                print_MannWhitneyU(*div_calc.values())
+                print_MannWhitneyU(div_calc)
             elif len(cat_vals) > 2:
-                print_KruskalWallisH(div_calc.values())
+                print_KruskalWallisH(div_calc)
             print
         else:
             continue
