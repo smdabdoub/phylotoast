@@ -1,0 +1,54 @@
+network_plots_gephi.py
+======================
+
+Create network plots based on correlation matrix.
+
+.. code-block:: bash
+
+    usage: network_plots_gephi.py [-h] [-go GEXF_OUT] [-fp FIL_PCT] [-w STATS_OUT_FNH] biom_file mapping_file condition_column in_corr_mat cat_name
+
+Required Arguments
+-------------------
+
+.. cmdoption:: biom_file
+
+    The biom-format file.
+
+.. cmdoption:: mapping_file
+
+    Mapping file for reading sampleIDs and their groups.
+
+.. cmdoption:: condition_column
+
+    Column name in mapping file denoting the categories.
+
+.. cmdoption:: in_corr_mat
+
+    Correlation matrix file. The format for the tab-separated file should be: Category -> Variable -> by Variable -> Correlation
+
+.. cmdoption:: cat_name
+
+    Category to be plotted.
+
+Optional Arguments
+------------------
+
+.. cmdoption:: -go GEXF_OUT, --gexf_out GEXF_OUT
+
+    The directory to output the PCoA plots to.
+
+.. cmdoption:: --scaling_factor SCALING_FACTOR
+
+    Graph information written to this Graph Exchange XML Format file. This file can be input to Gephi.
+
+.. cmdoption:: -fp FIL_PCT, --fil_pct FIL_PCT
+
+    Specify the minimum value of correlation strength to display. By default, all correlations greater than or equal to 0.75 will be shown.
+
+.. cmdoption:: -w STATS_OUT_FNH, --stats_out_fnh STATS_OUT_FNH
+
+    Write out graph statistics - degree and betweenness centrality calculations for each node.
+
+.. cmdoption:: -h, --help
+
+    Show this help message and exit
