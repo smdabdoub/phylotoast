@@ -1,10 +1,7 @@
 PCoA_bubble.py
 ===============
 
-Create a series of Principle Coordinate plots for each OTU in an input list
-where the plot points are varied in size by the relative abundance of the OTU
-(relative to either Sample or the total contribution of the OTU to the data
-set.
+Create a series of Principle Coordinate plots for each OTU in an input list where the plot points are varied in size by the relative abundance of the OTU (relative to either Sample or the total contribution of the OTU to the data set.
 
 .. code-block:: bash
 
@@ -17,28 +14,25 @@ Required Arguments
 
     The biom-format file with OTU-Sample abundance data.
 
-.. cmdoption:: -u UNIFRAC, --unifrac UNIFRAC
-
-    Principle coordinates analysis file. Eg. unweighted_unifrac_pc.txt
-
-.. cmdoption:: -d NAMES_COLORS_IDS_FN, --names_colors_ids_fn NAMES_COLORS_IDS_FN
-
-    The name of an input data file containing three items:
-    Line 1: a tab-separated list of display names for the different types in
-    the specified mapping category (--mapping_category), Line 2: a matching
-    tab-separated list of hexadecimal colors for each of the category types,
-    Lines 3-end: a tab-separated pair specifying OTU ID and OTU Name. Each
-    entry will get a separate PCoA plot under a file with the name of the OTU.
-
 .. cmdoption:: -m MAPPING, --mapping MAPPING
 
     The mapping file specifying group information for each sample.
 
-.. cmdoption:: -c MAP_CATEGORY, --map_category MAP_CATEGORY
+.. cmdoption:: -u UNIFRAC, --unifrac UNIFRAC
 
-    Any mapping category, such as treatment type, that will be used to group
-    the data in the output plots. For example, one category with three types
-    will result in three different point sets in the final output.
+    Principle coordinates analysis file. Eg. unweighted_unifrac_pc.txt
+
+.. cmdoption:: -b GROUP_BY, --group_by GROUP_BY
+
+    Column name in mapping file specifying group information.
+
+.. cmdoption::  -c COLORS, --colors COLORS
+
+    A column name in the mapping file containing hexadecimal (#FF0000) color values that will be used to color the groups. Each sample ID must have a color entry.
+
+.. cmdoption:: -d NAMES_COLORS_IDS_FN, --names_colors_ids_fn NAMES_COLORS_IDS_FN
+
+    File containing one OTU name per line for plotting.
 
 Optional Arguments
 ------------------
@@ -47,14 +41,21 @@ Optional Arguments
 
     The directory to output the PCoA plots to.
 
-.. cmdoption:: --scaling_factor SCALING_FACTOR
+.. cmdoption:: -s SAVE_AS, --save_as SAVE_AS
 
-    Species relative abundance is multiplied by this factor in order to make
-    appropriate visible bubbles in the output plots. Default is 10000.
+    The type of image file for PCoA plots. By default, files will be saved in SVG format.
+
+.. cmdoption::  --scale_by SCALE_BY
+
+    Species relative abundance is multiplied by this factor in order to make appropriate visible bubbles in the output plots. Default is 10000.
+
+.. cmdoption:: --ggplot2_style
+
+    Apply ggplot2 styling to the figure.
 
 .. cmdoption:: -v, --verbose
 
-    Displays species name as each is being plotted and stored to disk.
+    Displays species name as each is being plotted and saved.
 
 .. cmdoption:: -h, --help
 

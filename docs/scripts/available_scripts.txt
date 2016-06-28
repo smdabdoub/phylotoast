@@ -10,18 +10,22 @@ All available PhyloToAST scripts.
    biom_relative_abundance
    condense_workflow
    diversity
-   filter_keep_otus_by_sample.txt
+   extract_uniques
+   filter_keep_otus_by_sample
    filter_rep_set
+   iTol
+   LDA
    merge_otu_results
    multi_parallel_pick_otus
    multi_qsub
    otu_condense
    otu_to_tax_name
+   PCoA
+   PCoA_bubble
    pick_otus_condense
    primer_average
    prune_otus
    restrict_repset
    split_sequence_data
    transpose_biom
-
 
