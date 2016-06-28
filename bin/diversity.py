@@ -6,6 +6,7 @@ import sys
 import csv
 import argparse
 import os.path as osp
+from itertools import izip_longest
 from collections import defaultdict
 from phylotoast import graph_util as gu, util as putil
 importerrors = []
@@ -139,6 +140,10 @@ def handle_program_options():
                              The full list of metrics is available at:\
                              http://scikit-bio.org/docs/latest/generated/skbio.diversity.alpha.html.\
                              Beta diversity metrics will be supported in the future.")
+    parser.add_argument("--x_label", default=[None], nargs="+",
+                        help="The name of the diversity metric to be displayed on the\
+                        plot as the X-axis label. If multiple metrics are specified,\
+                        then multiple entries for the X-axis label should be given.")
     parser.add_argument("--color_by",
                         help="A column name in the mapping file containing\
                               hexadecimal (#FF0000) color values that will\
@@ -168,11 +173,14 @@ def handle_program_options():
 def main():
     args = handle_program_options()
 
+    metrics = [m for m in alpha.__all__ if "_ci" not in m]
+    try:
+        metrics.remove("faith_pd")
+    except ValueError:
+        pass
     if args.show_available_metrics:
         print "\nAvailable alpha diversity metrics:"
-        return "\n".join(alpha.__all__)
-    else:
-        return "ERROR! Cannot print out alpha diversity metrics list."
+        return "\n".join(metrics)
 
     try:
         with open(args.map_file):
@@ -201,19 +209,23 @@ def main():
     colors = putil.color_mapping(sample_map, header, args.category, args.color_by)
 
     # Perform diversity calculations and density plotting
-    for method in args.diversity:
+    for method, x_label in izip_longest(args.diversity, args.x_label):
+        if x_label is None:
+            x_label = method.title()
         if method not in alpha.__all__:
-            sys.exit("ERROR: Diversity metric not found: " + method)
+            sys.exit("ERROR: Diversity metric not found: {}.".format(method))
+        elif method in alpha.__all__ and method not in metrics:
+            sys.exit("Currently, PhyloToAST does not support {} metric.".format(method))
         metric = eval("alpha."+method)
         div_calc, sample_ids = calc_diversity(metric, sample_map, biom_tbl,
                                               cat_vals, cat_idx)
 
-        plot_group_diversity(div_calc, colors, plot_title, method,
-                             args.out_dir, args.image_type)
+        plot_group_diversity(div_calc, colors, plot_title, x_label, args.out_dir,
+                             args.image_type)
 
         # calculate and print significance testing results
         if args.show_significance:
-            print "Diversity significance testing: {}".format(method.title())
+            print "Diversity significance testing: {}".format(x_label)
             if len(cat_vals) == 2:
                 print_MannWhitneyU(div_calc)
             elif len(cat_vals) > 2:
