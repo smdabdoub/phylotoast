@@ -147,7 +147,7 @@ def handle_program_options():
                         "be added in front of output filenames.")
     parser.add_argument("-r", "--reverse",
                         help="Get shared OTUIDs among all unique combinations of groups "
-                             "and write out the results to path provded to this option.")
+                             "and write out the results to path provided to this option.")
     return parser.parse_args()
 
 
