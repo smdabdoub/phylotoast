@@ -1,31 +1,31 @@
 ============
 diversity.py
 ============
-Calculate and plot for two sample categories: Shannon diversity, Chao1 diversity, and a Jaccard similiarity distance matrix heatmap.
+Calculate the alpha diversity of a set of samples using one or more metrics and output a kernal density estimator-smoothed histogram of the results.
 
 .. code-block:: bash
 
-    usage: usage: diversity.py [-h][-c {shannon,chao1,jaccard} [{shannon,chao1,jaccard} ...]] [-p IMAGE_TYPE] map_file biom_file category plot_title out_dir
+    usage: diversity.py [-h] [-d DIVERSITY [DIVERSITY ...]] [--plot_title PLOT_TITLE] [--image_type IMAGE_TYPE] [--save_calculations SAVE_CALCULATIONS] [--show_significance] [--show_available_metrics] -m MAP_FILE -i BIOM_FP -c CATEGORY --color_by COLOR_BY -o OUT_DIR
 
 Required arguments
 -------------------
-.. cmdoption:: map_file
+.. cmdoption:: -m MAP_FILE, --map_file MAP_FILE
 
     QIIME mapping file.
 
-.. cmdoption:: biom_file
+.. cmdoption:: -i BIOM_FP, --biom_fp BIOM_FP
 
     BIOM table file name
 
-.. cmdoption:: category
+.. cmdoption:: -c CATEGORY, --category CATEGORY
 
     Specific category from the mapping file.
 
-.. cmdoption:: plot_title
+.. cmdoption:: --color_by COLOR_BY
 
-    The name of a PDF file the pathway map will be written to.
+    A column name in the mapping file containing hexadecimal (#FF0000) color values that will be used to color the groups. Each sample ID must have a color entry.
 
-.. cmdoption:: out_dir
+.. cmdoption:: -o OUT_DIR, --out_dir OUT_DIR
 
     The directory all plots will be saved to.
 
@@ -35,10 +35,26 @@ Optional arguments
 
     show this help message and exit
 
-.. cmdoption:: -c {shannon,chao1,jaccard} [{shannon,chao1,jaccard} ...]
+.. cmdoption:: -d DIVERSITY [DIVERSITY ...], --diversity DIVERSITY [DIVERSITY ...]
 
-    Choose the type of calculation needed. Default value is "None", which will output all 3 types of calculations.
+    The alpha diversity metric. Default value is 'shannon', which will calculate the Shannon entropy. Multiple metrics can be specified (space separated). The full list of metrics is available at: http://scikit-bio.org/docs/latest/generated/skbio.diversity.alpha.html.
+
+.. cmdoption:: --plot_title PLOT_TITLE
+
+    The name of a PDF file the pathway map will be written to.
 
 .. cmdoption:: -p IMAGE_TYPE, --image_type IMAGE_TYPE
 
     The type of image to save: PNG, SVG, etc.
+
+.. cmdoption:: --save_calculations SAVE_CALCULATIONS
+
+    Path and name of text file to store the calculated diversity metrics.
+
+.. cmdoption:: --show_significance
+
+    Display significance testing results. The results will be shown by default.
+
+.. cmdoption:: --show_available_metrics
+
+    Supply this parameter to see which alpha diversity metrics are available for usage. No calculations will be performed if this parameter is provided.
