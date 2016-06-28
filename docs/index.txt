@@ -23,7 +23,7 @@ PhyloToAST_ is avaiable on the Python Package Index (PyPI), and can be easily in
         $ pip install phylotoast
 
 .. _PhyloToAST: https://pypi.python.org/pypi/phylotoast
-   
+
 Using PhyloToAST
 ==================
 .. toctree::
@@ -38,21 +38,19 @@ Using PhyloToAST
 Citing PhyloToAST
 ==================
 
-Dabdoub, S.M. et al., *PhyloToAST: Bioinformatics tools for
-species-level analysis and visualization of complex microbial communities*.
-2016. (Manuscript in revision).
+Dabdoub, S. M. et al. PhyloToAST: Bioinformatics tools for species-level analysis and visualization of complex microbial datasets. Sci. Rep. 6, 29123, 2016; doi: `10.1038/srep29123 <http://dx.doi.org/10.1038/srep29123>`_
 
 
 Publications using PhyloToAST
 =============================
 Tsigarida and Dabdoub et al., *The Influence of Smoking on the Peri-Implant
-Microbiome*. Journal of Dental Research, 2015; `doi: 10.1177/0022034515590581`_
+Microbiome*. Journal of Dental Research, 2015; doi: `10.1177/0022034515590581 <http://jdr.sagepub.com/content/94/9/1202.full>`_
 
 Mason et al., *The subgingival microbiome of clinically healthy current
-and never smokers*. The ISME Journal, 2014; `doi:10.1038/ismej.2014.114`_
+and never smokers*. The ISME Journal, 2014; doi: `10.1038/ismej.2014.114 <http://www.nature.com/ismej/journal/v9/n1/full/ismej2014114a.html>`_
 
 Dabdoub et al., *Patient-specific Analysis of Periodontal and Peri-implant Microbiomes*.
-Journal of Dental Research, 2013; `doi: 10.1177/0022034513504950`_
+Journal of Dental Research, 2013; doi: `10.1177/0022034513504950 <http://jdr.sagepub.com/content/92/12_suppl/168S.full>`_
 
 
 References

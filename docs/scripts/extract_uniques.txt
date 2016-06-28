@@ -1,0 +1,38 @@
+extract_uniques.py
+==================
+
+Parse a BIOM format file and obtain a list of unique OTUIDs found in each category in mapping file.
+
+    .. code-block:: bash
+
+        usage: extract_uniques.py [-h] [-p PREFIX] input_biom_fp output_dir mapping_file category_column
+
+Required arguments
+^^^^^^^^^^^^^^^^^^
+
+.. cmdoption:: input_biom_fp
+
+    BIOM format file path.
+
+.. cmdoption:: output_dir
+
+    Path to save category unique OTUIDs.
+
+.. cmdoption:: mapping_file
+
+    Mapping file with category information.
+
+.. cmdoption:: category_column
+
+    Column in mapping file specifying the category/condition of all samples.
+
+Optional arguments
+^^^^^^^^^^^^^^^^^^
+
+.. cmdoption:: -p PREFIX, --prefix PREFIX
+
+    Provide specific text to prepend the output file names. By default, the 'unique' will be added in front of output filenames.
+
+.. cmdoption:: -h, --help
+
+    Show the help message and exit
