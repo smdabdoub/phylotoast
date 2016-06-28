@@ -158,11 +158,21 @@ def handle_program_options():
     parser.add_argument("--show_significance", action="store_false", help="Display "
                         "significance testing results. The results will be shown by "
                         "default.")
+    parser.add_argument("--show_available_metrics", action="store_true",
+                        help="Supply this parameter to see which alpha diversity metrics "
+                             " are available for usage. No calculations will be performed"
+                             " if this parameter is provided.")
     return parser.parse_args()
 
 
 def main():
     args = handle_program_options()
+
+    if args.show_available_metrics:
+        print "\nAvailable alpha diversity metrics:"
+        return "\n".join(alpha.__all__)
+    else:
+        return "ERROR! Cannot print out alpha diversity metrics list."
 
     try:
         with open(args.map_file):
@@ -217,4 +227,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
