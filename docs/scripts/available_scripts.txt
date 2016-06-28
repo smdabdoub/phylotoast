@@ -10,7 +10,7 @@ All available PhyloToAST scripts.
    biom_relative_abundance
    condense_workflow
    diversity
-   extract_uniques
+   extract_shared_or_unique_otuids
    filter_keep_otus_by_sample
    filter_rep_set
    iTol
