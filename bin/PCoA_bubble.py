@@ -94,23 +94,26 @@ def handle_program_options():
     parser.add_argument("-m", "--mapping", required=True,
                         help="The mapping file specifying group information \
                               for each sample.")
-    parser.add_argument("-u", "--unifrac", required=True,
-                        help="Principal coordinates analysis file. \
-                              Eg. unweighted_unifrac_pc.txt")
+    parser.add_argument("-pc", "--pcoa_fp", required=True,
+                        help="Principal Coordinates Analysis file. \
+                              Eg. unweighted_unifrac_pc.txt, or any other\
+                              output from principal_coordinates.py.")
     parser.add_argument("-b", "--group_by", required=True,
-                        help="Column name in mapping file specifying group information.")
+                        help="Column name in mapping file specifying group\
+                              information.")
     parser.add_argument("-c", "--colors", default=None,
                         help="A column name in the mapping file containing\
                               hexadecimal (#FF0000) color values that will\
                               be used to color the groups. Each sample ID must\
                               have a color entry.")
-    parser.add_argument("-d", "--names_colors_ids_fn", required=True,
-                        help="File containing one OTU name per line for plotting.")
+    parser.add_argument("-ids", "--otu_ids_fp", required=True,
+                        help="Path to a file containing one OTU ID per line.\
+                              One plot will be created for each OTU.")
     parser.add_argument("-o", "--output_dir", default=".",
                         help="The directory to output the PCoA plots to.")
     parser.add_argument("-s", "--save_as", default="svg",
-                        help="The type of image file for PCoA plots. By default\
-                              , files will be saved in SVG format.")
+                        help="The type of image file for PCoA plots. By\
+                              default, files will be saved in SVG format.")
     parser.add_argument("--scale_by", default=10000, type=float,
                         help="Species relative abundance is multiplied by this \
                               factor in order to make appropriate visible \
@@ -134,7 +137,7 @@ def main():
         sys.exit("\nError with BIOM format file:{}\n".format(ioe))
 
     try:
-        with open(args.unifrac):
+        with open(args.pcoa_fp):
             pass
     except IOError as ioe:
         sys.exit("\nError with principal coordinates file:{}\n".format(ioe))
@@ -164,11 +167,11 @@ def main():
     biomtbl = biom.load_table(args.otu_table)
 
     # Read unifrac principal coordinates file
-    unifrac = util.parse_unifrac(args.unifrac)
+    unifrac = util.parse_unifrac(args.pcoa_fp)
 
     # Read otu data file
     otus = set()
-    with open(args.names_colors_ids_fn, "rU") as nciF:
+    with open(args.otu_ids_fp, "rU") as nciF:
         for line in nciF.readlines():
             line = line.strip()
             otus.add(line)
