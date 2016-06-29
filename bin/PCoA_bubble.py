@@ -17,20 +17,18 @@ except ImportError as ie:
 from phylotoast import util, graph_util as gu, biom_calc as bc, otu_calc as oc
 
 
-def get_relative_abundance(biomfile):
+def get_relative_abundance(biomtbl):
     """
     Return relative abundance from a OTU table. OTUIDs are converted to their
     genus-species identifier.
     """
-    biomf = biom.load_table(biomfile)
-    norm_biomf = biomf.norm(inplace=False)
+    norm_biom = biomtbl.norm(inplace=False)
     rel_abd = {}
-    for sid in norm_biomf.ids():
+    for sid in norm_biom.ids():
         rel_abd[sid] = {}
-        for otuid in norm_biomf.ids("observation"):
-            otuname = oc.otu_name(norm_biomf.metadata(otuid, axis="observation")["taxonomy"])
-            abd = norm_biomf.get_value_by_ids(otuid, sid)
-            rel_abd[sid][otuname] = abd
+        for otuid in norm_biom.ids("observation"):
+            abd = norm_biom.get_value_by_ids(otuid, sid)
+            rel_abd[sid][otuid] = abd
     return rel_abd
 
 def calculate_xy_range(data):
@@ -162,6 +160,9 @@ def main():
                        "directory ({}) with message: {}")
                 sys.exit(msg.format(args.output_dir, oe.strerror))
 
+    # load the BIOM table
+    biomtbl = biom.load_table(args.otu_table)
+
     # Read unifrac principal coordinates file
     unifrac = util.parse_unifrac(args.unifrac)
 
@@ -181,17 +182,18 @@ def main():
         sys.exit(msg.format(args.group_by))
     category_ids = util.gather_categories(imap, header, [args.group_by])
     color_map = util.color_mapping(imap, header, args.group_by, args.colors)
-    rel_abd = get_relative_abundance(args.otu_table)
+    rel_abd = get_relative_abundance(biomtbl)
 
     # plot samples based on relative abundance of some OTU ID
-    for otuname in otus:
+    for otuid in otus:
+        otuname = oc.otu_name(biomtbl.metadata(otuid, axis="observation")["taxonomy"])
         cat_data = {cat: {"pc1": [], "pc2": [], "size": []}
                     for cat in category_ids}
 
         for sid in unifrac["pcd"]:
             category = cat_data[imap[sid][category_idx]]
             try:
-                size = rel_abd[sid][otuname] * args.scale_by
+                size = rel_abd[sid][otuid] * args.scale_by
             except KeyError as ke:
                 print "{} not found in {} sample.".format(ke, sid)
                 continue
