@@ -6,10 +6,15 @@ Date: 06/09/2016
 import sys
 import argparse
 import os.path as osp
+from itertools import combinations
 from collections import defaultdict
 from phylotoast import biom_calc as bc, util
 try:
     import biom
+except ImportError as ie:
+    sys.exit("Please install missing module: {}.".format(ie))
+try:
+    import pandas as pd
 except ImportError as ie:
     sys.exit("Please install missing module: {}.".format(ie))
 
@@ -79,6 +84,29 @@ def unique_otuids(groups):
     return uniques
 
 
+def shared_otuids(groups):
+    """
+    Get shared OTUIDs between all unique combinations of groups.
+
+    :type groups: Dict
+    :param groups: {Category name: OTUIDs in category}
+
+    :return type: dict
+    :return: Dict keyed on group combination and their shared OTUIDs as values.
+    """
+    number_of_categories = len(groups)
+    shared = defaultdict()
+    for i in range(2, number_of_categories+1):
+        for j in combinations(sorted(groups), i):
+            combo_name = " & ".join(list(j))
+            # initialize combo values with set elements
+            shared[combo_name] = groups[j[0]].results["otuids"]
+            # iterate through all groups and keep updating combo OTUIDs with intersection_update
+            for grp in j[1:]:
+                shared[combo_name].intersection_update(groups[grp].results["otuids"])
+    return shared
+
+
 def write_uniques(path, prefix, uniques):
     """
     Given a path, the method writes out one file for each group name in the
@@ -109,13 +137,17 @@ def handle_program_options():
                                      "list of unique OTUIDs found in each category in "
                                      "mapping file.")
     parser.add_argument("input_biom_fp", help="BIOM format file path.")
-    parser.add_argument("output_dir", help="Path to save category unique OTUIDs.")
+    parser.add_argument("-o", "--output_dir", default="./",
+                        help="Path to save category unique OTUIDs.")
     parser.add_argument("mapping_file", help="Mapping file with category information.")
     parser.add_argument("category_column", help="Column in mapping file specifying the "
                         "category/condition of all samples.")
     parser.add_argument("-p", "--prefix", default="unique", help="Provide specific text "
                         "to prepend the output file names. By default, the 'unique' will "
                         "be added in front of output filenames.")
+    parser.add_argument("-r", "--reverse",
+                        help="Get shared OTUIDs among all unique combinations of groups "
+                             "and write out the results to path provided to this option.")
     return parser.parse_args()
 
 
@@ -150,11 +182,18 @@ def main():
         group = sample_group(sid, group_data)
         group_data[group].results["otuids"].update(sample_otus[sid])
 
-    # Create input for unique_otus
-    group_otuids = {group: group_data[group].results["otuids"] for group in group_data}
-
-    # Write out unique OTUIDs to file
-    write_uniques(args.output_dir, args.prefix, unique_otuids(group_otuids))
+    if args.reverse:
+        # Get shared OTUIDs
+        shared = shared_otuids(group_data)
+        # Write out shared OTUIDs results
+        shared_df = pd.DataFrame.from_dict(shared, orient="index").T
+        shared_df.to_csv(args.reverse, sep="\t", index=False)
+    else:
+        # Create input for unique_otus
+        group_otuids = {group: group_data[group].results["otuids"]
+                        for group in group_data}
+        # Write out unique OTUIDs to file
+        write_uniques(args.output_dir, args.prefix, unique_otuids(group_otuids))
 
 if __name__ == "__main__":
     sys.exit(main())

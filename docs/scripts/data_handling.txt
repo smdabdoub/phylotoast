@@ -9,7 +9,7 @@ PhyloToAST scripts for data analysis and manipulation.
    barcode_filter
    biom_relative_abundance
    condense_workflow
-   extract_uniques
+   extract_shared_or_unique_otuids
    filter_rep_set
    merge_otu_results
    multi_parallel_pick_otus
