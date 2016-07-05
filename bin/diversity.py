@@ -76,7 +76,6 @@ def print_KruskalWallisH(div_calc):
         for k1, v1 in div_calc.iteritems():
             for k2, v2 in v1.iteritems():
                 calc[k1].append(v2)
-        print calc
     except:
         return "Error setting up input arrays for Kruskal-Wallis H-Test. Skipping "\
                "significance testing."
