@@ -18,15 +18,15 @@ except ImportError as ie:
     importerrors.append(ie)
 try:
     import networkx as nx
-except ImportError:
+except ImportError as ie:
     importerrors.append(ie)
 try:
     from phylotoast import biom_calc as bc, otu_calc as oc
-except ImportError:
+except ImportError as ie:
     importerrors.append(ie)
 if len(importerrors) > 0:
     for err in importerrors:
-        print "Import Error: {}".format(err)
+        print("Import Error: {}".format(err))
     sys.exit()
 
 
@@ -126,11 +126,16 @@ def main():
                       (row["Correlation"])*-1)], color="#FF0000")  # Red
 
     # add node attributes to graph node object
-    for otu, attr in G.node.iteritems():
+    for otu, attr in G.node.items():
         total_abd = 0
         for sid in cat_sids[args.cat_name]:
             total_abd += relative_abundance[sid][otu]
-        mean_otu_cat_abd = total_abd/len(cat_sids[args.cat_name])
+        try:
+            mean_otu_cat_abd = total_abd/len(cat_sids[args.cat_name])
+        except ZeroDivisionError as zde:
+            sys.exit("\nPlease check to see if category name in mapping file and that is"
+                     " supplied in `--cat_name` parameter match up.\nError: {}\n".
+                     format(zde))
         G.node[otu]["node_size"] = mean_otu_cat_abd
 
     # convert node labels to integers
