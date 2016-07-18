@@ -76,7 +76,6 @@ def print_KruskalWallisH(div_calc):
         for k1, v1 in div_calc.iteritems():
             for k2, v2 in v1.iteritems():
                 calc[k1].append(v2)
-        print calc
     except:
         return "Error setting up input arrays for Kruskal-Wallis H-Test. Skipping "\
                "significance testing."
@@ -183,24 +182,19 @@ def main():
         return "\n".join(metrics)
 
     try:
-        with open(args.map_file):
-            pass
-    except IOError as ioe:
-            err_msg = "\nError opening QIIME mapping file: {}\n"
+        header, sample_map = putil.parse_map_file(args.map_file)
+    except Exception as ioe:
+            err_msg = "\nError while processing the mapping file: {}\n"
             sys.exit(err_msg.format(ioe))
 
     try:
-        with open(args.biom_fp):
-            pass
-    except IOError as ioe:
-            err_msg = "\nError opening BIOM table file: {}\n"
-            sys.exit(err_msg.format(ioe))
+        biom_tbl = biom.load_table(args.biom_fp)
+    except Exception as ioe:
+        err_msg = "\nError loading BIOM table file: {}\n"
+        sys.exit(err_msg.format(ioe))
 
-    header, sample_map = putil.parse_map_file(args.map_file)
-    biom_tbl = biom.load_table(args.biom_fp)
     if args.category not in header:
         sys.exit("Category '{}' not found".format(args.category))
-
     cat_idx = header.index(args.category)
     cat_vals = {entry[cat_idx] for entry in sample_map.values()}
 
@@ -220,6 +214,9 @@ def main():
         div_calc, sample_ids = calc_diversity(metric, sample_map, biom_tbl,
                                               cat_vals, cat_idx)
 
+        if args.save_calculations:
+            write_diversity_metrics(div_calc, sample_ids, args.save_calculations)
+
         plot_group_diversity(div_calc, colors, plot_title, x_label, args.out_dir,
                              args.image_type)
 
@@ -233,9 +230,6 @@ def main():
             print
         else:
             continue
-
-        if args.save_calculations:
-            write_diversity_metrics(div_calc, sample_ids, args.save_calculations)
 
 
 if __name__ == "__main__":
