@@ -15,6 +15,7 @@ All available PhyloToAST scripts.
    filter_rep_set
    iTol
    LDA
+   LDA_bubble
    merge_otu_results
    multi_parallel_pick_otus
    multi_qsub

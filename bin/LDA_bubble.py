@@ -80,7 +80,7 @@ def handle_program_options():
                         help="Path to a file containing one OTU ID per line. One plot \
                               will be created for each OTU. [REQUIRED]")
     parser.add_argument("-dm", "--dist_matrix_file",
-                        help="Input unifrac distance matrix file.")
+                        help="Input distance matrix file.")
     parser.add_argument("--save_lda_input",
                         help="Save a CSV-format file of the transposed LDA-input table \
                               to the file specifed by this option.")
