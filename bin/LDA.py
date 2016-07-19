@@ -121,10 +121,10 @@ def run_LDA(df):
 
 
 def handle_program_options():
-    parser = argparse.ArgumentParser(description="Create an LDA plot from\
-                                     sample-grouped OTU data. It is necessary\
-                                     to remove the header cell '#OTU ID'\
-                                     before running this program.")
+    parser = argparse.ArgumentParser(description="This script calculates and returns LDA "
+                                                 "plots based on normalized relative "
+                                                 "abundances or distance matrices "
+                                                 "(for e.g. unifrac distance matrix).")
     parser.add_argument("-i", "--otu_table", required=True,
                         help="Input biom file format OTU table. [REQUIRED]")
     parser.add_argument("-m", "--map_fp", required=True,
@@ -141,7 +141,7 @@ def handle_program_options():
                               be used to color the groups. Each sample ID must\
                               have a color entry. [REQUIRED]")
     parser.add_argument("-dm", "--dist_matrix_file",
-                        help="Input unifrac distance matrix file.")
+                        help="Input distance matrix file.")
     parser.add_argument("--save_lda_input",
                         help="Save a CSV-format file of the transposed LDA-input\
                               table to the file specifed by this option.")
