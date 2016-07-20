@@ -4,6 +4,7 @@
 # Sequence-related
 *.fasta
 *.biom
+!test.biom
 
 # Spinx
 _build
