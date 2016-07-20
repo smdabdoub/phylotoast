@@ -47,7 +47,7 @@ Optional Arguments
 
 .. cmdoption::  --scale_by SCALE_BY
 
-    Species relative abundance is multiplied by this factor in order to make appropriate visible bubbles in the output plots. Default is 10000.
+    Species relative abundance is multiplied by this factor in order to make appropriate visible bubbles in the output plots. Default is 1000.
 
 .. cmdoption:: --ggplot2_style
 

@@ -102,7 +102,7 @@ def handle_program_options():
     parser.add_argument("--scale_by", default=1000, type=float,
                         help="Species relative abundance is multiplied by this \
                               factor in order to make appropriate visible \
-                              bubbles in the output plots. Default is 10000.")
+                              bubbles in the output plots. Default is 1000.")
     parser.add_argument("--ggplot2_style", action="store_true",
                         help="Apply ggplot2 styling to the figure.")
     parser.add_argument("-v", "--verbose", action="store_true",
