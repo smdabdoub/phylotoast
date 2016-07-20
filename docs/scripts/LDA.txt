@@ -2,33 +2,22 @@
 LDA.py
 ========
 
-Create an LDA plot from sample-grouped OTU data. It is necessary to remove the header cell '#OTU ID' before running this program.
+This script calculates and returns LDA plots based on normalized relative abundances or distance matrices (for e.g. unifrac distance matrix).
 
 .. code-block:: bash
 
-        usage: LDA.py [-h] -i {biom,unifrac_dm} -bf BIOM_FILE -m MAP_FP [-uf UNIFRAC_FILE] -g GROUP_BY -c COLOR_BY [--bubble BUBBLE] [--save_lda_input SAVE_LDA_INPUT] [--plot_title PLOT_TITLE] [-o OUT_FP] [-od OUTPUT_DIR] [--scale_by SCALE_BY] [-s SAVE_AS] [--ggplot2_style]
+        usage: LDA.py [-h] -i OTU_TABLE -m MAP_FP -g GROUP_BY -c COLOR_BY [-dm DIST_MATRIX_FILE] [--save_lda_input SAVE_LDA_INPUT] [--plot_title PLOT_TITLE] [-o OUT_FP] [-d {2,3}] [--z_angles Z_ANGLES Z_ANGLES] [--figsize FIGSIZE FIGSIZE] [--font_size FONT_SIZE] [--label_padding LABEL_PADDING] [--ggplot2_style]
 
 Required arguments
 ^^^^^^^^^^^^^^^^^^^^
 
-.. cmdoption:: -i {biom,unifrac_dm}, --input_data_type {biom,unifrac_dm}
+.. cmdoption:: -i OTU_TABLE, --otu_table OTU_TABLE
 
-    Specify if the input file is biom file format OTU table or unifrac distance matrix. If biom file is provided, the arc-sine transformed relative abundances will be used as input whereas, if unifrac distance matrix. is given, unifrac distances will be used as input to LDA.
-
-.. cmdoption:: -bf BIOM_FILE, --biom_file BIOM_FILE
-
-    Input biom file format.
+    Input biom file format OTU table.
 
 .. cmdoption:: -m MAP_FP, --map_fp MAP_FP
 
     Metadata mapping file.
-
-Optional arguments
-^^^^^^^^^^^^^^^^^^
-
-..cmdoption:: -uf UNIFRAC_FILE, --unifrac_file UNIFRAC_FILE
-
-    Input unifrac distance matrix file. This is the output from QIIME's beta_diversity.py script.
 
 .. cmdoption:: -g GROUP_BY [GROUP_BY ...], --group_by GROUP_BY [GROUP_BY ...]
 
@@ -38,9 +27,12 @@ Optional arguments
 
     A column name in the mapping file containing hexadecimal (#FF0000) color values that will be used to color the groups. Each sample ID must have a color entry.
 
-.. cmdoption:: --bubble BUBBLE
+Optional arguments
+^^^^^^^^^^^^^^^^^^
 
-    If set, provide a file with 1 OTU name per line for bubble plotting. OTU name must be condensed to genus-species identifier. Default parameter value will not plot bubble plots.
+.. cmdoption:: -dm DIST_MATRIX_FILE, --dist_matrix_file DIST_MATRIX_FILE
+
+    Input distance matrix file.
 
 .. cmdoption:: --save_lda_input SAVE_LDA_INPUT
 
@@ -54,13 +46,25 @@ Optional arguments
 
     The path and file name to save the plot under. If specified, the figure will be saved directly instead of opening a window in which the plot can be viewed before saving.
 
-.. cmdoption:: --scale_by SCALE_BY
+.. cmdoption:: -d {2,3}, --dimensions {2,3}
 
-    Species relative abundance is multiplied by this factor in order to make appropriate visible bubbles in the output plots. Default is 1000.
+    Choose whether to plot 2D or 3D.
 
-.. cmdoption:: -s SAVE_AS, --save_as SAVE_AS
+.. cmdoption:: --z_angles Z_ANGLES Z_ANGLES
 
-    The type of image file for LDA plots. By default, files will be saved in SVG format.
+    Specify the azimuth and elevation angles for a 3D plot.
+
+.. cmdoption:: --figsize FIGSIZE FIGSIZE
+
+    Specify the 'width height' in inches for LDA plots. By default, figure size is 14x8 inches.
+
+.. cmdoption:: --font_size FONT_SIZE
+
+    Sets the font size for text elements in the plot.
+
+.. cmdoption:: --label_padding LABEL_PADDING
+
+    Sets the spacing in points between the each axis and its label.
 
 .. cmdoption:: --ggplot2_style
 

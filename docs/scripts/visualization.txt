@@ -9,5 +9,6 @@ PhyloToAST scripts used for visualizing data.
    diversity
    iTol
    LDA
+   LDA_bubble
    PCoA
    PCoA_bubble
