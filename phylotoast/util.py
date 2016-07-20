@@ -4,9 +4,11 @@ Created on Feb 2, 2013
 :author: Shareef Dabdoub
 """
 from collections import namedtuple, OrderedDict
+import errno
 import itertools
 import os
 import sys
+from textwrap import dedent as twdd
 try:
     from palettable.colorbrewer.qualitative import Set3_12
 except ImportError as ie:
@@ -188,7 +190,8 @@ def split_phylogeny(p, level="s"):
 def ensure_dir(d):
     """
     Check to make sure the supplied directory path does not exist, if so,
-    create it.
+    create it. The method catches OSError exceptions and returns a descriptive
+    message instead of re-raising the error.
 
     :type d: str
     :param d: It is the full path to a directory.
@@ -197,7 +200,21 @@ def ensure_dir(d):
              doesn't exist already.
     """
     if not os.path.exists(d):
-        os.makedirs(d)
+        try:
+            os.makedirs(d)
+        except OSError as oe:
+            # should not happen with os.makedirs
+            # ENOENT: No such file or directory
+            if os.errno == errno.ENOENT:
+                msg = twdd("""One or more directories in the path ({}) 
+                              do not exist. If you are specifying a new
+                              directory for output, please ensure all other
+                              directories in the path currently exist.""")
+                return msg.format(d)
+            else:
+                msg = twdd("""An error occurred trying to create the output
+                              directory ({}) with message: {}""")
+                return msg.format(d, oe.strerror)
 
 
 def file_handle(fnh, mode="rU"):
