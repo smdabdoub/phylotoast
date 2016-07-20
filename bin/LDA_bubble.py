@@ -39,7 +39,7 @@ if len(errors) != 0:
 def run_LDA(df):
     """
     Run LinearDiscriminantAnalysis on input dataframe (df) and return
-    transformed data, scalings and
+    transformed data, scalings and explained variance by discriminants.
     """
     # Prep variables for sklearn LDA
     X = df[range(1, df.shape[1])].values     # input data matrix
