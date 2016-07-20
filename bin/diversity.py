@@ -159,9 +159,8 @@ def handle_program_options():
     parser.add_argument("--save_calculations",
                         help="Path and name of text file to store the calculated "
                         "diversity metrics.")
-    parser.add_argument("--show_significance", action="store_false", help="Display "
-                        "significance testing results. The results will be shown by "
-                        "default.")
+    parser.add_argument("--suppress_stats", action="store_true", help="Do not display "
+                        "significance testing results which are shown by default.")
     parser.add_argument("--show_available_metrics", action="store_true",
                         help="Supply this parameter to see which alpha diversity metrics "
                              " are available for usage. No calculations will be performed"
@@ -221,7 +220,7 @@ def main():
                              args.image_type)
 
         # calculate and print significance testing results
-        if args.show_significance:
+        if not args.suppress_stats:
             print "Diversity significance testing: {}".format(x_label)
             if len(cat_vals) == 2:
                 print_MannWhitneyU(div_calc)
