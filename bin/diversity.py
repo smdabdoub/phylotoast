@@ -152,7 +152,7 @@ def handle_program_options():
                         help="A descriptive title that will appear at the top \
                         of the output plot. Surround with quotes if there are\
                         spaces in the title.")
-    parser.add_argument("-o", "--out_dir", default=".",
+    parser.add_argument("-o", "--output_dir", default=".",
                         help="The directory plots will be saved to.")
     parser.add_argument("--image_type", default="png",
                         help="The type of image to save: png, svg, pdf, eps, etc...")
@@ -216,7 +216,7 @@ def main():
         if args.save_calculations:
             write_diversity_metrics(div_calc, sample_ids, args.save_calculations)
 
-        plot_group_diversity(div_calc, colors, plot_title, x_label, args.out_dir,
+        plot_group_diversity(div_calc, colors, plot_title, x_label, args.output_dir,
                              args.image_type)
 
         # calculate and print significance testing results
