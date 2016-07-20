@@ -193,12 +193,14 @@ def main():
             err_msg = "\nError while processing the mapping file: {}\n"
             sys.exit(err_msg.format(ioe))
 
+    # parse BIOM table
     try:
         biom_tbl = biom.load_table(args.biom_fp)
     except Exception as ioe:
         err_msg = "\nError loading BIOM table file: {}\n"
         sys.exit(err_msg.format(ioe))
 
+    # group samples by category
     if args.category not in header:
         sys.exit("Category '{}' not found".format(args.category))
     cat_idx = header.index(args.category)
