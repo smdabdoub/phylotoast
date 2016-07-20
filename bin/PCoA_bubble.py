@@ -133,20 +133,8 @@ def main():
     except IOError as ioe:
         sys.exit("\nError with mapping file:{}\n".format(ioe))
 
-    if not os.path.exists(args.output_dir):
-        try:
-            os.mkdir(args.output_dir)
-        except OSError as oe:
-            if os.errno == 2:
-                msg = ("One or more directories in the path provided for " +
-                       "--output-dir ({}) do not exist. If you are specifying " +
-                       "a new directory for output, please ensure all other " +
-                       "directories in the path currently exist.")
-                sys.exit(msg.format(args.output_dir))
-            else:
-                msg = ("An error occurred trying to create the output " +
-                       "directory ({}) with message: {}")
-                sys.exit(msg.format(args.output_dir, oe.strerror))
+    # check that the output dir exists, create it if not
+    util.ensure_dir(args.output_dir)
 
     # load the BIOM table
     biomtbl = biom.load_table(args.otu_table)
