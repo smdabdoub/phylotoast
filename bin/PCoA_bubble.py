@@ -17,20 +17,6 @@ except ImportError as ie:
 from phylotoast import util, graph_util as gu, biom_calc as bc, otu_calc as oc
 
 
-def get_relative_abundance(biomtbl):
-    """
-    Return relative abundance from a OTU table. OTUIDs are converted to their
-    genus-species identifier.
-    """
-    norm_biom = biomtbl.norm(inplace=False)
-    rel_abd = {}
-    for sid in norm_biom.ids():
-        rel_abd[sid] = {}
-        for otuid in norm_biom.ids("observation"):
-            abd = norm_biom.get_value_by_ids(otuid, sid)
-            rel_abd[sid][otuid] = abd
-    return rel_abd
-
 def calculate_xy_range(data):
     xr = [float("inf"), float("-inf")]
     yr = [float("inf"), float("-inf")]
@@ -53,20 +39,19 @@ def plot_PCoA(cat_data, otu_name, unifrac, names, colors, xr, yr, outDir,
     Plot PCoA principal coordinates scaled by the relative abundances of
     otu_name.
     """
-    fig = plt.figure()
+    fig = plt.figure(figsize=(14, 8))
     ax = fig.add_subplot(111)
-    legend = []
 
     for i, cat in enumerate(cat_data):
-        plt.scatter(cat_data[cat]["pc1"], cat_data[cat]["pc2"],
-                    cat_data[cat]["size"], color=colors[cat],
-                    alpha=0.85, marker="o", edgecolor="black")
-        legend.append(plt.Rectangle((0, 0), 1, 1, fc=colors[cat]))
-
-    ax.legend(legend, names, loc="best")
+        plt.scatter(cat_data[cat]["pc1"], cat_data[cat]["pc2"], cat_data[cat]["size"],
+                    color=colors[cat], alpha=0.85, marker="o", edgecolor="black",
+                    label=cat)
+    lgnd = plt.legend(loc="best", scatterpoints=3, fontsize=13)
+    for i in range(len(colors.keys())):
+        lgnd.legendHandles[i]._sizes = [80]  # Change the legend marker size manually
     plt.title(" ".join(otu_name.split("_")), style="italic")
-    plt.ylabel("PC2 - Percent variation explained {:.2f}%".format(float(unifrac["varexp"][1])))
-    plt.xlabel("PC1 - Percent variation explained {:.2f}%".format(float(unifrac["varexp"][0])))
+    plt.ylabel("PC2 (Percent Explained Variance {:.3f}%)".format(float(unifrac["varexp"][1])))
+    plt.xlabel("PC1 (Percent Explained Variance {:.3f}%)".format(float(unifrac["varexp"][0])))
     plt.xlim(round(xr[0]*1.5, 1), round(xr[1]*1.5, 1))
     plt.ylim(round(yr[0]*1.5, 1), round(yr[1]*1.5, 1))
     if plot_style:
@@ -114,7 +99,7 @@ def handle_program_options():
     parser.add_argument("-s", "--save_as", default="svg",
                         help="The type of image file for PCoA plots. By\
                               default, files will be saved in SVG format.")
-    parser.add_argument("--scale_by", default=10000, type=float,
+    parser.add_argument("--scale_by", default=1000, type=float,
                         help="Species relative abundance is multiplied by this \
                               factor in order to make appropriate visible \
                               bubbles in the output plots. Default is 10000.")
@@ -185,7 +170,8 @@ def main():
         sys.exit(msg.format(args.group_by))
     category_ids = util.gather_categories(imap, header, [args.group_by])
     color_map = util.color_mapping(imap, header, args.group_by, args.colors)
-    rel_abd = get_relative_abundance(biomtbl)
+    rel_abd = bc.relative_abundance(biomtbl)
+    rel_abd = bc.arcsine_sqrt_transform(rel_abd)
 
     # plot samples based on relative abundance of some OTU ID
     for otuid in otus:
@@ -198,14 +184,14 @@ def main():
             try:
                 size = rel_abd[sid][otuid] * args.scale_by
             except KeyError as ke:
-                print "{} not found in {} sample.".format(ke, sid)
+                print("{} not found in {} sample.".format(ke, sid))
                 continue
             category["pc1"].append(float(unifrac["pcd"][sid][0]))
             category["pc2"].append(float(unifrac["pcd"][sid][1]))
             category["size"].append(size)
 
         if args.verbose:
-            print "Saving chart for {}".format(" ".join(otuname.split("_")))
+            print("Saving chart for {}".format(" ".join(otuname.split("_"))))
         xr, yr = calculate_xy_range(cat_data)
         plot_PCoA(cat_data, otuname, unifrac, color_map.keys(),
                   color_map, xr, yr, args.output_dir,
