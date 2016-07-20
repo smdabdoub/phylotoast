@@ -180,6 +180,13 @@ def main():
         print "\nAvailable alpha diversity metrics:"
         return "\n".join(metrics)
 
+    # check that the output dir exists, create it if not
+    msg = putil.ensure_dir(args.output_dir)
+    # if an error occurs, print and exit
+    if msg:
+        sys.exit(msg)
+
+    # parse mapping file
     try:
         header, sample_map = putil.parse_map_file(args.map_file)
     except Exception as ioe:
