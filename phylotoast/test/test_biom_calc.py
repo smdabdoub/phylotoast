@@ -4,6 +4,7 @@
 :Date Created: 10/15/2014
 :Abstract: Automated Tests for BIOM calculation.
 """
+import math
 import unittest
 from phylotoast import biom_calc as bc
 from biom import load_table
@@ -130,16 +131,25 @@ class biom_calc_Test(unittest.TestCase):
                  error.
         """
         self.result = bc.transform_raw_abundance(self.biomf, sample_abd=False)
+        self.result1 = bc.transform_raw_abundance(self.biomf, fn=math.sqrt)
 
         # Obtaining manual calculations for comparison testing
         hand_calc = {"GG_OTU_1": 1.544068044, "GG_OTU_2": 1.579783597,
                      "GG_OTU_3": 1.73239376, "GG_OTU_4": 1.73239376,
                      "GG_OTU_5": 1.62324929}
+        hand_calc1 = {"S9": 3.0, "S8": 5.09901951, "S3": 4.24264069, "S2": 5.56776436,
+                      "S1": 5.09901951, "S10": 4.89897949, "S7": 5.29150262,
+                      "S6": 5.19615242, "S5": 4.79583152, "S4": 3.31662479}
 
         # Testing the validity of transform function
         for hand, func in zip(hand_calc.values(), self.result.values()):
             self.assertAlmostEqual(
                 func, hand,
+                msg="Raw abundance transformation not computed accurately."
+            )
+        for hand1, func1 in zip(hand_calc1.values(), self.result1.values()):
+            self.assertAlmostEqual(
+                func1, hand1,
                 msg="Raw abundance transformation not computed accurately."
             )
 

@@ -2,55 +2,55 @@
 otu_calc module
 ===============
 
-load_core_file
---------------
-For core OTU data file, returns Genus-species identifier for each data entry.
-
-.. code-block:: bash
-
-	usage: phylotoast.otu_calc.load_core_file(core_fp)
-
-.. cmdoption:: core_fp:
-
-	A file containing core OTU data.
-
-.. cmdoption:: return:
-
-	Returns genus-species identifier based on identified taxonomical level.
-
------------------------------
-
-otu_name_biom
--------------
-Given an OTU row from a BIOM table, determine a Genus-species identifier from the taxonomic specifier (see otu_name() method).
-
-.. code-block:: bash
-
-	usage: phylotoast.otu_calc.otu_name_biom(biom_row)
-
-.. cmdoption:: biom_row:
-
-	Row entry of a BIOM file containing full taxonomy.
-
-.. cmdoption:: return:
-
-	Returns the genus-species identifier.
-
------------------------------
-
 otu_name
 --------
 Determine a simple Genus-species identifier for an OTU, if possible. If OTU is not identified to the species level, name it as Unclassified (familly/genus/etc...).
 
 .. code-block:: bash
 
-	usage: phylotoast.otu_calc.otu_name(tax)
+    usage: phylotoast.otu_calc.otu_name(tax)
 
 .. cmdoption:: tax:
 
-	QIIME-style taxonomy identifiers, e.g. ['k__Bacteria', u'p__Firmicutes', u'c__Bacilli', ...]
+    QIIME-style taxonomy identifiers, e.g. ['k__Bacteria', u'p__Firmicutes', u'c__Bacilli', ...]
 
 .. cmdoption:: return:
 
-	Returns genus-species identifier based on identified taxonomical level.
+    Returns genus-species identifier based on identified taxonomical level.
+
+-----------------------------
+
+load_core_file
+--------------
+For core OTU data file, returns Genus-species identifier for each data entry.
+
+.. code-block:: bash
+
+    usage: phylotoast.otu_calc.load_core_file(core_fp)
+
+.. cmdoption:: core_fp:
+
+    A file containing core OTU data. Output text file from QIIME's compute_core_microbiome.py script.
+
+.. cmdoption:: return:
+
+    Returns genus-species identifier based on identified taxonomical level.
+
+-----------------------------
+
+assign_otu_membership
+---------------------
+Determines the OTUIDs present in each sample.
+
+.. code-block:: bash
+
+    usage: phylotoast.otu_calc.assign_otu_membership(biomfile)
+
+.. cmdoption:: biomfile:
+
+    BIOM table object from the biom-format library.
+
+.. cmdoption:: return:
+
+    Returns a dictionary keyed on Sample ID with sets containing the IDs of OTUIDs found in each sample.
 
