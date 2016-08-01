@@ -15,12 +15,16 @@ try:
 except ImportError as ie:
     errors.append(ie)
 try:
+    import numpy as np
+except ImportError as ie:
+    errors.append(ie)
+try:
     import pandas as pd
 except ImportError as ie:
     errors.append(ie)
 try:
-    import matplotlib.pyplot as plt
     import matplotlib as mpl
+    import matplotlib.pyplot as plt
     mpl.rc("font", family="Arial")  # define font for figure text
     mpl.rc("xtick", labelsize=12)  # increase X axis ticksize
     mpl.rc("ytick", labelsize=12)  # increase Y axis ticksize
@@ -117,9 +121,7 @@ def main():
 
     # Get otus for LDA bubble plots
     try:
-        with open(args.otu_ids_fp) as oif:
-            for line in oif.readlines():
-                bubble_otus = line.strip().split("\r")
+        bubble_otus = set(pd.read_csv(args.otu_ids_fp, sep="\n", header=None)[0])
     except IOError as ioe:
         err_msg = "\nError in OTU IDs file (--bubble): {}\n"
         sys.exit(err_msg.format(ioe))
@@ -134,6 +136,10 @@ def main():
     # Get normalized relative abundances
     rel_abd = bc.relative_abundance(biomf)
     rel_abd = bc.arcsine_sqrt_transform(rel_abd)
+    abd_val = {abd for sid, v1 in rel_abd.items() for otuid, abd in v1.items() if abd > 0}
+    bubble_range = np.linspace(min(abd_val), max(abd_val), num=5) * args.scale_by
+    # Get abundance to the nearest 50
+    bubble_range = [int(50 * round(float(abd)/50)) for abd in bubble_range[1:]]
 
     # Set up input for LDA calc and get LDA transformed data
     if args.dist_matrix_file:
@@ -150,7 +156,8 @@ def main():
         X_lda, y_lda, exp_var = run_LDA(uf_data)
     else:
         df_rel_abd = pd.DataFrame(rel_abd).T
-        df_rel_abd.insert(0, "Condition", [imap[sid][category_idx] for sid in df_rel_abd.index])
+        df_rel_abd.insert(0, "Condition", [imap[sid][category_idx]
+                                           for sid in df_rel_abd.index])
         sampleids = df_rel_abd.index
         if args.save_lda_input:
             df_rel_abd.to_csv(args.save_lda_input, sep="\t")
@@ -178,8 +185,8 @@ def main():
         ax = fig.add_subplot(111)
         for i, cat in enumerate(plot_data):
             plt.scatter(plot_data[cat]["x"], plot_data[cat]["y"],
-                        plot_data[cat]["size"], label=cat, color=class_colors[cat],
-                        alpha=0.85, marker="o", edgecolor="k")
+                        s=plot_data[cat]["size"], label=cat, color=class_colors[cat],
+                        alpha=0.85, marker="o", edgecolors="k")
         if X_lda.shape[1] == 1:
             plt.ylim((0.5, 2.5))
         plt.title(" ".join(otuname.split("_")), style="italic", fontsize=13)
@@ -194,9 +201,16 @@ def main():
         except:
             plt.ylabel("LD2", fontsize=13, labelpad=15)
 
-        lgnd = plt.legend(loc="best", scatterpoints=3, fontsize=13)
+        lgnd1 = plt.legend(loc="best", scatterpoints=3, fontsize=13)
         for i in range(len(class_colors.keys())):
-            lgnd.legendHandles[i]._sizes = [80]  # Change the legend marker size manually
+            lgnd1.legendHandles[i]._sizes = [80]  # Change the legend marker size manually
+        # Add the legend manually to the current Axes.
+        plt.gca().add_artist(lgnd1)
+
+        c = [plt.scatter([], [], c="k", s=s1) for s1 in bubble_range]
+        plt.legend(c, ["{}".format(s2) for s2 in bubble_range],
+                   title="Area Scale", frameon=True, labelspacing=2,
+                   fontsize=13, loc=4, scatterpoints=1, borderpad=1.1)
 
         # Set style for LDA bubble plots
         if args.ggplot2_style:
@@ -212,7 +226,6 @@ def main():
                     facecolor=fc, edgecolor="none", dpi=300,
                     bbox_inches="tight", pad_inches=0.2)
         plt.close(fig)
-
 
 if __name__ == "__main__":
     sys.exit(main())
