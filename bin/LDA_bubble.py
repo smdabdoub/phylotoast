@@ -186,7 +186,7 @@ def main():
         for i, cat in enumerate(plot_data):
             plt.scatter(plot_data[cat]["x"], plot_data[cat]["y"],
                         s=plot_data[cat]["size"], label=cat, color=class_colors[cat],
-                        alpha=0.85, marker="o", edgecolors="k")
+                        alpha=0.85, edgecolors="k")
         if X_lda.shape[1] == 1:
             plt.ylim((0.5, 2.5))
         plt.title(" ".join(otuname.split("_")), style="italic", fontsize=13)
@@ -204,12 +204,12 @@ def main():
         lgnd1 = plt.legend(loc="best", scatterpoints=3, fontsize=13)
         for i in range(len(class_colors.keys())):
             lgnd1.legendHandles[i]._sizes = [80]  # Change the legend marker size manually
-        # Add the legend manually to the current Axes.
+        # Add the legend manually to the current plot
         plt.gca().add_artist(lgnd1)
 
-        c = [plt.scatter([], [], c="k", s=s1) for s1 in bubble_range]
+        c = [plt.scatter([], [], c="w", edgecolors="k", s=s1) for s1 in bubble_range]
         plt.legend(c, ["{}".format(s2) for s2 in bubble_range],
-                   title="Area Scale", frameon=True, labelspacing=2,
+                   title="Scaled Bubble\n       Sizes", frameon=True, labelspacing=2,
                    fontsize=13, loc=4, scatterpoints=1, borderpad=1.1)
 
         # Set style for LDA bubble plots
