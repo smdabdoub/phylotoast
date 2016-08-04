@@ -95,6 +95,9 @@ def handle_program_options():
                         help="Species relative abundance is multiplied by this factor in \
                               order to make appropriate visible bubbles in the output \
                               plots. Default scaling is 1000.")
+    parser.add_argument("--figsize", default=[14, 8], type=int, nargs=2,
+                        help="Specify the 'width height' in inches for LDA bubble plots."
+                             "By default, figure size is 14x8 inches.")
     parser.add_argument("-s", "--save_as", default="svg",
                         help="The type of image file for LDA plots. By default, plots \
                               will be saved in 'svg' format.")
@@ -181,7 +184,7 @@ def main():
             category["size"].append(size)
 
         # Plot LDA bubble for each OTU
-        fig = plt.figure(figsize=(14, 8))
+        fig = plt.figure(figsize=args.figsize)
         ax = fig.add_subplot(111)
         for i, cat in enumerate(plot_data):
             plt.scatter(plot_data[cat]["x"], plot_data[cat]["y"],
