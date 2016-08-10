@@ -11,6 +11,7 @@ All available PhyloToAST scripts.
    condense_workflow
    diversity
    extract_shared_or_unique_otuids
+   filter_biom.txt
    filter_keep_otus_by_sample
    filter_rep_set
    iTol

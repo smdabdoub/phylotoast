@@ -1,0 +1,35 @@
+===============
+filter_biom.py
+===============
+
+Filter biom file on both 'sample' and 'observation' axes, given a list ofsampieIDs to retain.
+
+    .. code-block:: bash
+    
+        usage: filter_biom.py [-h] [-fo FILTER_OTUIDS_FNH] input_biom_fnh output_biom_fnh mapping_fnh
+
+Required arguments
+^^^^^^^^^^^^^^^^^^
+
+.. cmdoption:: input_biom_fnh
+
+    BIOM file path.
+
+.. cmdoption:: output_biom_fnh
+
+    Filtered biom output file.
+
+.. cmdoption:: mapping_fnh
+
+    Mapping file with sampleIDs to retain in it. The '#SampleID' column will be used to get the list of all ids to retain.
+
+Optional arguments
+^^^^^^^^^^^^^^^^^^
+
+.. cmdoption:: -fo FILTER_OTUIDS_FNH, --filter_otuids_fnh FILTER_OTUIDS_FNH
+
+    Path to file to write out the list of OTUIDs not present in any SampleIDs in mapping file. This output is usually used to filter out unwanted otuids from ".tre" file. If not given, the discarded OTUIDs list will be saved in the current working directory.
+
+.. cmdoption:: -h, --help
+    
+    Show the help message and exit
