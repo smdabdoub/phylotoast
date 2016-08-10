@@ -12,6 +12,7 @@ try:
     import matplotlib as mpl
     import matplotlib.pyplot as plt
     from mpl_toolkits.mplot3d import Axes3D
+    from mpl_toolkits.mplot3d import proj3d  # for annotating 3D plot
     mpl.rc("font", family="Arial")  # define font for figure text
 except ImportError as ie:
     errors.append(ie)
@@ -37,8 +38,8 @@ if len(errors) != 0:
     sys.exit()
 
 
-def plot_LDA(X_lda, y_lda, class_colors, exp_var, style, fig_size, label_pad, font_size,
-             dim=2, zangles=None, out_fp=""):
+def plot_LDA(X_lda, y_lda, class_colors, exp_var, style, fig_size, label_pad,
+             font_size, sids, dim=2, zangles=None, out_fp=""):
     """
     Plot transformed LDA data.
     """
@@ -59,6 +60,13 @@ def plot_LDA(X_lda, y_lda, class_colors, exp_var, style, fig_size, label_pad, fo
             ax.scatter(xs=cat_x, ys=cat_y, zs=cat_z, label=target_name,
                        c=class_colors[target_name], alpha=0.85, s=250,
                        edgecolors="k", zdir="z")
+        # Annotate data points with sample IDs
+        if sids is not None:
+            for sample, point in zip(sids, X_lda):
+                x_2D, y_2D, _ = proj3d.proj_transform(point[0], point[1], point[2],
+                                                      ax.get_proj())
+                ax.annotate(s=sample, xy=(x_2D, y_2D), xytext=(-15, -15),
+                            textcoords="offset points", ha="center", va="center")
     else:
         ax = fig.add_subplot(111)
         for i, target_name in zip(range(len(cats)), cats):
@@ -70,6 +78,13 @@ def plot_LDA(X_lda, y_lda, class_colors, exp_var, style, fig_size, label_pad, fo
             ax.scatter(x=cat_x, y=cat_y, label=target_name,
                        color=class_colors[target_name],
                        alpha=0.85, s=250, edgecolors="k")
+        # Annotate data points with sample IDs
+        if sids is not None:
+            for sample, point in zip(sids, X_lda):
+                ax.annotate(s=sample, xy=point, xytext=(-15, -15),
+                            textcoords="offset points", ha="center", va="center")
+
+
     if X_lda.shape[1] == 1:
         plt.ylim((0.5, 2.5))
     try:
@@ -164,8 +179,11 @@ def handle_program_options():
     parser.add_argument("--label_padding", default=15, type=int,
                         help="Sets the spacing in points between the each axis and its \
                              label.")
+    parser.add_argument("--annotate", action="store_true",
+                        help="If specified, each data point will be labeled with "
+                             "its sample ID. Default is False.")
     parser.add_argument("--ggplot2_style", action="store_true",
-                        help="Apply ggplot2 styling to the figure.")
+                        help="Apply ggplot2 styling to the figure. Default is False.")
     return parser.parse_args()
 
 
@@ -179,6 +197,7 @@ def main():
     except IOError as ioe:
         err_msg = "\nError in metadata mapping filepath (-m): {}\n"
         sys.exit(err_msg.format(ioe))
+
     # Obtain group colors
     class_colors = util.color_mapping(imap, header, args.group_by, args.color_by)
 
@@ -191,20 +210,15 @@ def main():
             sys.exit(err_msg.format(ioe))
         uf_data = pd.read_csv(args.dist_matrix_file, sep="\t", index_col=0)
         uf_data.insert(0, "Condition", [imap[sid][category_idx] for sid in uf_data.index])
+        if args.annotate:
+            sampleids = uf_data.index
+        else:
+            sampleids = None
         if args.save_lda_input:
             uf_data.to_csv(args.save_lda_input, sep="\t")
+
         # Run LDA
         X_lda, y_lda, exp_var = run_LDA(uf_data)
-        # Plot LDA
-        if args.dimensions == 3:
-            plot_LDA(X_lda, y_lda, class_colors, exp_var, style=args.ggplot2_style,
-                     fig_size=args.figsize, label_pad=args.label_padding,
-                     font_size=args.font_size, dim=3, zangles=args.z_angles,
-                     out_fp=args.out_fp)
-        else:
-            plot_LDA(X_lda, y_lda, class_colors, exp_var, style=args.ggplot2_style,
-                     fig_size=args.figsize, label_pad=args.label_padding,
-                     font_size=args.font_size, out_fp=args.out_fp)
     else:
         # Load biom file and calculate relative abundance
         try:
@@ -212,25 +226,33 @@ def main():
         except IOError as ioe:
             err_msg = "\nError with biom format file (-d): {}\n"
             sys.exit(err_msg.format(ioe))
+
         # Get normalized relative abundances
         rel_abd = bc.relative_abundance(biomf)
         rel_abd = bc.arcsine_sqrt_transform(rel_abd)
         df_rel_abd = pd.DataFrame(rel_abd).T
-        df_rel_abd.insert(0, "Condition", [imap[sid][category_idx] for sid in df_rel_abd.index])
+        df_rel_abd.insert(0, "Condition", [imap[sid][category_idx]
+                                           for sid in df_rel_abd.index])
+        if args.annotate:
+            sampleids = df_rel_abd.index
+        else:
+            sampleids = None
         if args.save_lda_input:
             df_rel_abd.to_csv(args.save_lda_input, sep="\t")
+
         # Run LDA
         X_lda, y_lda, exp_var = run_LDA(df_rel_abd)
-        # Plot LDA
-        if args.dimensions == 3:
-            plot_LDA(X_lda, y_lda, class_colors, exp_var, style=args.ggplot2_style,
-                     fig_size=args.figsize, label_pad=args.label_padding,
-                     font_size=args.font_size, dim=3, zangles=args.z_angles,
-                     out_fp=args.out_fp)
-        else:
-            plot_LDA(X_lda, y_lda, class_colors, exp_var, style=args.ggplot2_style,
-                     fig_size=args.figsize, label_pad=args.label_padding,
-                     font_size=args.font_size, out_fp=args.out_fp)
+
+    # Plot LDA
+    if args.dimensions == 3:
+        plot_LDA(X_lda, y_lda, class_colors, exp_var, style=args.ggplot2_style,
+                 fig_size=args.figsize, label_pad=args.label_padding,
+                 font_size=args.font_size, sids=sampleids, dim=3,
+                 zangles=args.z_angles, out_fp=args.out_fp)
+    else:
+        plot_LDA(X_lda, y_lda, class_colors, exp_var, style=args.ggplot2_style,
+                 fig_size=args.figsize, label_pad=args.label_padding,
+                 font_size=args.font_size, sids=sampleids, out_fp=args.out_fp)
 
 
 if __name__ == "__main__":
