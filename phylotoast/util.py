@@ -3,12 +3,12 @@ Created on Feb 2, 2013
 
 :author: Shareef Dabdoub
 """
-from collections import namedtuple, OrderedDict
 import errno
 import itertools
 import os
 import sys
 from textwrap import dedent as twdd
+from collections import namedtuple, OrderedDict, defaultdict
 try:
     from palettable.colorbrewer.qualitative import Set3_12
 except ImportError as ie:
@@ -20,40 +20,37 @@ FASTARecord = namedtuple("FASTA_Record", "id descr data")
 
 def storeFASTA(fastaFNH):
     """
-    Parse the records in a FASTA-format file by first reading the entire file
-    into memory.
+    Parse the records in a FASTA-format file by first reading the entire file into memory.
 
-    :type source: list or open file handle
-    :param source: The data source from which to parse the FASTA records.
-                    Expects the input to resolve to a collection that can be
-                    iterated through, such as a list or an open file handle.
+    :type source: path to FAST file or open file handle
+    :param source: The data source from which to parse the FASTA records. Expects the
+                   input to resolve to a collection that can be iterated through, such as
+                   an open file handle.
 
     :rtype: tuple
     :return: FASTA records containing entries for id, description and data.
     """
     fasta = file_handle(fastaFNH).read()
-    return [
-        FASTARecord(rec[0].split()[0], rec[0], "".join(rec[1:]))
-        for rec in (x.strip().split("\n") for x in fasta.split(">")[1:])
-        ]
+    return [FASTARecord(rec[0].split()[0], rec[0].split(None, 1)[1], "".join(rec[1:]))
+            for rec in (x.strip().split("\n") for x in fasta.split(">")[1:])]
 
 
 def parseFASTA(fastaFNH):
     """
-    Parse the records in a FASTA-format file keeping the file open, and
-    reading through one line at a time.
+    Parse the records in a FASTA-format file keeping the file open, and reading through
+    one line at a time.
 
-    :type source: list or open file handle
+    :type source: path to FAST file or open file handle
     :param source: The data source from which to parse the FASTA records.
-                    Expects the input to resolve to a collection that can be
-                    iterated through, such as a list or an open file handle.
+                   Expects the input to resolve to a collection that can be iterated
+                   through, such as an open file handle.
 
     :rtype: tuple
     :return: FASTA records containing entries for id, description and data.
     """
     recs = []
     seq = []
-    ID = ""
+    seqID = ""
     descr = ""
 
     for line in file_handle(fastaFNH):
@@ -63,37 +60,35 @@ def parseFASTA(fastaFNH):
         if line[0] == ">":
             # conclude previous record
             if seq:
-                recs.append(FASTARecord(ID, descr, "".join(seq)))
+                recs.append(FASTARecord(seqID, descr, "".join(seq)))
                 seq = []
             # start new record
-            line = line[1:].split()
-            ID, descr = line[0], " ".join(line[1:])
+            line = line[1:].split(None, 1)
+            seqID, descr = line[0], line[1]
         else:
             seq.append(line)
 
     # catch last seq in file
     if seq:
-        recs.append(FASTARecord(ID, descr, "".join(seq)))
+        recs.append(FASTARecord(seqID, descr, "".join(seq)))
     return recs
 
 
 def parse_map_file(mapFNH):
     """
-    Opens a QIIME mapping file and stores the contents in a dictionary
-    keyed on SampleID (default) or a user-supplied one. The only
-    required fields are SampleID, BarcodeSequence, LinkerPrimerSequence
-    (in that order), and Description (which must be the final field).
+    Opens a QIIME mapping file and stores the contents in a dictionary keyed on SampleID
+    (default) or a user-supplied one. The only required fields are SampleID,
+    BarcodeSequence, LinkerPrimerSequence (in that order), and Description
+    (which must be the final field).
 
-    :type mapFNH: file or str
-    :param mapFNH: Either the full path to the map file or an open file
-                    handle
+    :type mapFNH: str
+    :param mapFNH: Either the full path to the map file or an open file handle
 
     :rtype: tuple, dict
-    :return: A tuple of header line for mapping file and a map associating
-             each line of the mapping file with the appropriate sample ID
-             (each value of the map also contains the sample ID). An
-             OrderedDict is used for mapping so the returned map is guaranteed
-             to have the same order as the input file.
+    :return: A tuple of header line for mapping file and a map associating each line of
+             the mapping file with the appropriate sample ID (each value of the map also
+             contains the sample ID). An OrderedDict is used for mapping so the returned
+             map is guaranteed to have the same order as the input file.
 
     Example data:
     #SampleID BarcodeSequence LinkerPrimerSequence State   Description
@@ -116,9 +111,8 @@ def parse_map_file(mapFNH):
 
 def write_map_file(mapFNH, items, header):
     """
-    Given a list of mapping items (in the form described by the
-    parse_mapping_file method) and a header line, write each row to the given
-    input file with fields separated by tabs.
+    Given a list of mapping items (in the form described by the parse_mapping_file method)
+    and a header line, write each row to the given input file with fields separated by tabs.
 
     :type mapFNH: file or str
     :param mapFNH: Either the full path to the map file or an open file handle
@@ -127,8 +121,8 @@ def write_map_file(mapFNH, items, header):
     :param item: The list of row entries to be written to the mapping file
 
     :type header: list or str
-    :param header: The descriptive column names that are required as the first
-                    line of the mapping file
+    :param header: The descriptive column names that are required as the first line of
+                   the mapping file
 
     :rtype: None
     """
@@ -147,13 +141,12 @@ def parse_taxonomy_table(idtaxFNH):
     method parses that file into a map with (key,val) = (OTU, taxonomy).
 
     :type idtaxFNH: file or str
-    :param idtaxFNH: Either the full path to the map file or an open file
-                      handle
+    :param idtaxFNH: Either the full path to the map file or an open file handle
 
     :rtype: dict
-    :return: A map associating each OTU ID with the taxonomic specifier.
-              An OrderedDict is used so the returned map is guaranteed to have
-              the same order as the input file.
+    :return: A map associating each OTU ID with the taxonomic specifier. An OrderedDict
+             is used so the returned map is guaranteed to have the same order as the input
+             file.
     """
     idtax = OrderedDict()
     with file_handle(idtaxFNH) as idtxF:
@@ -166,17 +159,15 @@ def parse_taxonomy_table(idtaxFNH):
 
 def split_phylogeny(p, level="s"):
     """
-    Return either the full or truncated version of a QIIME-formatted
-    taxonomy string.
+    Return either the full or truncated version of a QIIME-formatted taxonomy string.
 
     :type p: str
     :param p: A QIIME-formatted taxonomy string: k__Foo; p__Bar; ...
 
     :type level: str
-    :param level: The different level of identification are kingdom (k),
-                phylum (p), class (c),order (o), family (f), genus (g)
-                and species (s). If level is not provided, the default level
-                of identification is species.
+    :param level: The different level of identification are kingdom (k), phylum (p),
+                  class (c),order (o), family (f), genus (g) and species (s). If level is
+                  not provided, the default level of identification is species.
 
     :rtype: str
     :return: A QIIME-formatted taxonomy string up to the classification given
@@ -189,15 +180,15 @@ def split_phylogeny(p, level="s"):
 
 def ensure_dir(d):
     """
-    Check to make sure the supplied directory path does not exist, if so,
-    create it. The method catches OSError exceptions and returns a descriptive
-    message instead of re-raising the error.
+    Check to make sure the supplied directory path does not exist, if so, create it. The
+    method catches OSError exceptions and returns a descriptive message instead of
+    re-raising the error.
 
     :type d: str
     :param d: It is the full path to a directory.
 
-    :return: Does not return anything, but creates a directory path if it
-             doesn't exist already.
+    :return: Does not return anything, but creates a directory path if it doesn't exist
+             already.
     """
     if not os.path.exists(d):
         try:
@@ -206,28 +197,27 @@ def ensure_dir(d):
             # should not happen with os.makedirs
             # ENOENT: No such file or directory
             if os.errno == errno.ENOENT:
-                msg = twdd("""One or more directories in the path ({}) 
-                              do not exist. If you are specifying a new
-                              directory for output, please ensure all other
-                              directories in the path currently exist.""")
+                msg = twdd("""One or more directories in the path ({}) do not exist. If 
+                           you are specifying a new directory for output, please ensure 
+                           all other directories in the path currently exist.""")
                 return msg.format(d)
             else:
-                msg = twdd("""An error occurred trying to create the output
-                              directory ({}) with message: {}""")
+                msg = twdd("""An error occurred trying to create the output directory 
+                           ({}) with message: {}""")
                 return msg.format(d, oe.strerror)
 
 
 def file_handle(fnh, mode="rU"):
     """
-    Takes either a file path or an open file handle, checks validity and
-    returns an open file handle or raises an appropriate Exception.
+    Takes either a file path or an open file handle, checks validity and returns an open
+    file handle or raises an appropriate Exception.
 
     :type fnh: str
     :param fnh: It is the full path to a file, or open file handle
 
     :type mode: str
-    :param mode: The way in which this file will be used, for example to read
-                 or write or both. By default, file will be opened in rU mode.
+    :param mode: The way in which this file will be used, for example to read or write or
+                 both. By default, file will be opened in rU mode.
 
     :return: Returns an opened file for appropriate usage.
     """
@@ -248,54 +238,76 @@ DataCategory = namedtuple("DataCategory", "sids results")
 
 def gather_categories(imap, header, categories=None):
     """
-    Find the user specified categories in the map and create a dictionary
-    to contain the relevant data for each type within the categories. Multiple
-    categories will have their types combined such that each possible
-    combination will have its own entry in the dictionary.
+    Find the user specified categories in the map and create a dictionary to contain the
+    relevant data for each type within the categories. Multiple categories will have their
+    types combined such that each possible combination will have its own entry in the
+    dictionary.
 
     :type imap: dict
     :param imap: The input mapping file data keyed by SampleID
     :type header: list
-    :param header: The header line from the input mapping file. This will be
-                   searched for the user-specified categories
+    :param header: The header line from the input mapping file. This will be searched for
+                   the user-specified categories
     :type categories: list
-    :param categories: The list of user-specified categories from the mapping
-                        file
+    :param categories: The list of user-specified category column name from mapping file
     :rtype: dict
-    :return: A sorted dictionary keyed on the combinations of all the types
-              found within the user-specified categories. Each entry will
-              contain an empty DataCategory namedtuple. If no categories are
-              specified, a single entry with the key 'default' will be
-              returned
+    :return: A sorted dictionary keyed on the combinations of all the types found within
+             the user-specified categories. Each entry will contain an empty DataCategory
+             namedtuple. If no categories are specified, a single entry with the key
+             'default' will be returned
     """
+    # If no categories provided, return all SampleIDs
     if categories is None:
         return {"default": DataCategory(set(imap.keys()), {})}
 
     cat_ids = [header.index(cat)
                for cat in categories if cat in header and "=" not in cat]
-    conditions = {}
-    for cat in categories:
+    
+    table = OrderedDict()
+    conditions = defaultdict(set)
+    for i, cat in enumerate(categories):
         if "=" in cat and cat.split("=")[0] in header:
-            conditions[header.index(cat.split("=")[0])] = cat.split("=")[1]
+            cat_name = header[header.index(cat.split("=")[0])]
+            conditions[cat_name].add(cat.split("=")[1])
 
+    # If no categories or conditions identified, return all SampleIDs
     if not cat_ids and not conditions:
         return {"default": DataCategory(set(imap.keys()), {})}
 
-    if not cat_ids and conditions:
-        sids = {sid for sid, row in imap.iteritems()
-                if all([row[c] == conditions[c] for c in conditions])}
-        return {"default": DataCategory(sids, {})}
+    #If only category column given, return column-wise SampleIDs
+    if cat_ids and not conditions:
+        for sid, row in imap.items():
+            cat_name = "_".join([row[cid] for cid in cat_ids])
+            if cat_name not in table:
+                table[cat_name] = DataCategory(set(), {})
+            table[cat_name].sids.add(sid)
+        return table
 
-    table = OrderedDict()
-    for sid, row in imap.iteritems():
-        if all([row[c] == conditions[c] for c in conditions]):
-            key = "_".join([row[cid] for cid in cat_ids])
-            if key not in table:
+    # Collect all condition names
+    cond_ids = set()
+    for k in conditions:
+        try:
+            cond_ids.add(header.index(k))
+        except ValueError:
+            continue
+    idx_to_test = set(cat_ids).union(cond_ids)
+
+    # If column name and condition given, return overlapping SampleIDs of column and 
+    # condition combinations
+    for sid, row in imap.items():
+        if all([row[header.index(c)] in conditions[c] for c in conditions]):
+            key = "_".join([row[idx] for idx in idx_to_test])
+            try:
+                assert key in table.keys()
+            except AssertionError:
                 table[key] = DataCategory(set(), {})
             table[key].sids.add(sid)
-
-    return table
-
+    try:
+        assert len(table) > 0
+    except AssertionError:
+        return {"default": DataCategory(set(imap.keys()), {})}
+    else:
+        return table
 
 def parse_unifrac(unifracFN):
     """
@@ -305,31 +317,30 @@ def parse_unifrac(unifracFN):
     :param unifracFN: The path to the unifrac results file
 
     :rtype: dict
-    :return: A dictionary with keys: 'pcd' (principle coordinates data) which
-             is a dictionary of the data keyed by sample ID,
-             'eigvals' (eigenvalues), and 'varexp' (variation explained)
+    :return: A dictionary with keys: 'pcd' (principle coordinates data) which is a
+             dictionary of the data keyed by sample ID, 'eigvals' (eigenvalues), and
+             'varexp' (variation explained)
     """
-    with open(unifracFN) as uF:
-        unifrac = {"pcd": OrderedDict(), "eigvals": [], "varexp": []}
-
+    with open(unifracFN, "rU") as uF:
         first = uF.next().split("\t")
         lines = [line.strip() for line in uF]
 
-        if first[0] == "pc vector number":
-            return parse_unifrac_v1_8(unifrac, lines)
-        elif first[0] == "Eigvals":
-            return parse_unifrac_v1_9(unifrac, lines)
-        else:
-            # raise file format not supported/recognized error
-            pass
+    unifrac = {"pcd": OrderedDict(), "eigvals": [], "varexp": []}
+    if first[0] == "pc vector number":
+        return parse_unifrac_v1_8(unifrac, lines)
+    elif first[0] == "Eigvals":
+        return parse_unifrac_v1_9(unifrac, lines)
+    else:
+        raise ValueError("File format not supported/recognized. Please check input "
+                         "unifrac file.")
 
 
 def parse_unifrac_v1_8(unifrac, file_data):
     """
-    Function to parse data from older version of unifrac file obtained from
-    Qiime version 1.8 and earlier.
+    Function to parse data from older version of unifrac file obtained from Qiime version
+    1.8 and earlier.
 
-    :type unifracFN: str
+    :type unifrac: dict
     :param unifracFN: The path to the unifrac results file
 
     :type file_data: list
@@ -348,8 +359,8 @@ def parse_unifrac_v1_8(unifrac, file_data):
 
 def parse_unifrac_v1_9(unifrac, file_data):
     """
-    Function to parse data from newer version of unifrac file obtained from
-    Qiime version 1.9 and later.
+    Function to parse data from newer version of unifrac file obtained from Qiime version
+    1.9 and later.
 
     :type unifracFN: str
     :param unifracFN: The path to the unifrac results file
@@ -369,14 +380,13 @@ def parse_unifrac_v1_9(unifrac, file_data):
 
 def color_mapping(sample_map, header, group_column, color_column=None):
     """
-    Determine color-category mapping. If color_column was specified, then
-    map the category names to color values. Otherwise, use the palettable colors
-    to automatically generate a set of colors for the group values.
+    Determine color-category mapping. If color_column was specified, then map the category
+    names to color values. Otherwise, use the palettable colors to automatically generate
+    a set of colors for the group values.
 
     :type sample_map: dict
-    :param unifracFN: Map associating each line of the mapping file with the 
-                      appropriate sample ID (each value of the map also 
-                      contains the sample ID)
+    :param unifracFN: Map associating each line of the mapping file with the appropriate
+                      sample ID (each value of the map also contains the sample ID)
 
     :type header: tuple
     :param A tuple of header line for mapping file

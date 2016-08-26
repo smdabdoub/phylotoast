@@ -66,10 +66,41 @@ Optional arguments
 
     Sets the spacing in points between the each axis and its label.
 
+.. cmdoption:: --annotate
+
+    If specified, each data point will be labeled with its sample ID. Default is False.
+
 .. cmdoption:: --ggplot2_style
 
-    Apply ggplot2 styling to the figure.
+    Apply ggplot2 styling to the figure. Default is False.
 
 .. cmdoption:: -h, --help
 
     Show the help message and exit.
+
+
+Workflow for generating LDA plots using PhyloToAST
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**Step 1** :
+Obtain distance matrix file from QIIME's `beta diversity <http://qiime.org/scripts/index.html>`_ script.
+
+**Step 2** :
+Users can use either diversity distance matrix file or BIOM format file to run ``LDA.py`` script with all relevant parameters. If a distance matrix file is provided, LDA will use the distance matrix as an input, otherwise it will calculate relative abundances from input BIOM format file and run LDA on the relative abundances.
+
+Example plots
+--------------
+
+2D LDA plot based on relative abundances with 5 metadata categories [1]_.
+
+.. code-block:: bash
+
+    LDA.py -i table.biom -m mapping.txt -g Condition -c Colors
+
+.. image:: LDA/2D_LDA.png
+   :scale: 24%
+   :align: center
+
+Citation:
+
+.. [1] Dabdoub, S. M. et al. **PhyloToAST: Bioinformatics tools for species-level analysis and visualization of complex microbial datasets**. Sci. Rep. 6, 29123; doi: `10.1038/srep29123 <http://www.nature.com/articles/srep29123>`_ (2016).
