@@ -1,26 +1,40 @@
 #!/usr/bin/env python
 
-import argparse
 import sys
-from phylotoast import otu_calc as otuc, util
+import argparse
+from phylotoast import otu_calc as otuc
+importerrors = []
+try:
+    import biom
+except ImportError:
+    importerrors.append("biom")
+try:
+    import pandas as pd
+except ImportError:
+    importerrors.append("pandas")
+if len(importerrors) > 0:
+    for err in importerrors:
+        print("Please install missing module: {}".format(err))
+    sys.exit()
 
 
 def handle_program_options():
-    parser = argparse.ArgumentParser(description="Convert a list of OTU IDs to a list of\
-                                                  OTU IDs paired with Genus_species \
-                                                  identifiers and perform reverse lookup, \
-                                                  if needed.")
-    parser.add_argument("-i", "--otu_id_fp", required=True,
-                        help="Either a text file containing a list (one per line) \
-                        of OTU IDs, or a tab-separated (classic) BIOM-format file.")
-    parser.add_argument("-t", "--taxonomy_fp", required=True,
-                        help="A file associating OTU ID with a full taxonomic specifier.")
-    parser.add_argument("-o", "--output_fp", default="otu_taxonomy.txt",
-                        help="For a list input, a new file containing a list of OTU IDs \
-                              and their corresponding short taxonomic identifiers \
-                              separated by tabs. For a BIOM file input, a new \
-                              mapping file with all the OTU IDs replaced by the short\
-                              identifier.")
+    parser = argparse.ArgumentParser(description="Convert a list of OTU IDs to a list of "
+                                                 "OTU IDs paired with Genus_Species "
+                                                 "identifiers and perform reverse lookup,"
+                                                 " if needed.")
+    parser.add_argument("-i", "--otu_table", required=True,
+                        help="Input biom file format OTU table. [REQUIRED]")
+    parser.add_argument("-oid", "--otu_id_fp", required=True,
+                        help="Either a text file containing a list (one per line) "
+                        "of OTU IDs, or a tab-separated (classic) BIOM-format file. "
+                        "[REQUIRED]")
+    parser.add_argument("-o", "--output_fp", default="converted_otus.txt",
+                        help="For a list input, a new file containing a list of OTU IDs "
+                              "and their corresponding short taxonomic identifiers "
+                              "separated by tabs. For a BIOM file input, a new "
+                              "mapping file with all the OTU IDs replaced by the short "
+                              "identifier.")
     parser.add_argument("--reverse_lookup", action="store_true",
                         help="Get OTUIDs from genus-species OTU name.")
     return parser.parse_args()
@@ -29,58 +43,32 @@ def handle_program_options():
 def main():
     args = handle_program_options()
 
+    # Read biom format file
     try:
-        with open(args.otu_id_fp):
-            pass
+        biomf = biom.load_table(args.otu_table)
     except IOError as ioe:
-        sys.exit("\nError with file containing OTUIDs/BIOM format:{}\n".format(ioe))
+        sys.exit("\nError with biom format file (-i): {}\n".format(ioe))
 
-    with open(args.otu_id_fp, "rU") as otuF:
+    # Read in otus file data
+    try:
+        otu_fnh = pd.read_csv(args.otu_id_fp, sep="\n")
+    except IOError as ioe:
+        sys.exit("\nError with file containing OTUs:{}\n".format(ioe))
+    else:
+        otu_ids = otu_fnh.iloc[:, 0].values  # get only first column data (otus)
+
+    output = []
+    for val, idx, md in biomf.iter(axis="observation"):
+        name = otuc.otu_name(md["taxonomy"])
         if args.reverse_lookup:
-            otu_ids = []
-            for line in otuF.readlines():
-                if line:
-                    otu_ids.append(line.strip())
+            if name in otu_ids:
+                output.append(idx)   # Get otuids from otu names
         else:
-            otu_ids = [line.strip().split("\t") for line in otuF.readlines()]
-    taxa = util.parse_taxonomy_table(args.taxonomy_fp)
+            if idx in otu_ids:
+                output.append(name)  # Get otu name from otu IDs
+    name_S = pd.Series(output)
+    name_S.to_csv(args.output_fp, sep="\n", index=False)
 
-    with open(args.output_fp, "w") as outF:
-        for entry in otu_ids:
-            if isinstance(entry, list):
-                # check for comments in BIOM files
-                if not entry[0][0] == "#":
-                    ID = entry[0]
-                else:
-                    outF.write("{}\n".format("\t".join(entry)))
-                    continue
-            # instead of a BIOM file, a line-by-line list of OTU IDs
-            else:
-                ID = entry
-
-            # for looking up OTUIDs
-            if args.reverse_lookup:
-                for id, fulltaxa in taxa.iteritems():
-                    otuname = otuc.otu_name(fulltaxa.split("; "))
-                    if otuname == ID:
-                        taxa_id = id
-            # for looking up OTU name
-            else:
-                if ID in taxa:
-                    named_ID = otuc.otu_name(taxa[ID].split("; "))
-                else:
-                    print "Error: OTU ID {} not found in supplied taxonomy file.".format(ID)
-                    return
-
-            # write out to file
-            out_str = "{}\t{}\n"
-            if isinstance(entry, list):
-                outF.write(out_str.format(named_ID, "\t".join(entry[1:])))
-            else:
-                if args.reverse_lookup:
-                    outF.write("{}\n".format(taxa_id))
-                else:
-                    outF.write(out_str.format(ID, named_ID))
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
