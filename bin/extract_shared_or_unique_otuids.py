@@ -8,7 +8,7 @@ import argparse
 import os.path as osp
 from itertools import combinations
 from collections import defaultdict
-from phylotoast import biom_calc as bc, util
+from phylotoast import otu_calc as oc, util
 try:
     import biom
 except ImportError as ie:
@@ -17,24 +17,6 @@ try:
     import pandas as pd
 except ImportError as ie:
     sys.exit("Please install missing module: {}.".format(ie))
-
-
-def assign_otu_membership(biomfile):
-    """
-    Determines the OTUIDs present in each sample.
-
-    :type biomfile: biom.table.Table
-    :param biomfile: BIOM table object from the biom-format library.
-
-    :rtype: dict
-    :return: Returns a dictionary keyed on Sample ID with sets containing
-    the IDs of OTUIDs found in each sample.
-    """
-    samples = defaultdict(set)
-    rel_abd = bc.relative_abundance(biomfile)
-    for sid in rel_abd:
-        samples[sid].update([oid for oid, ra in rel_abd[sid].items() if ra > 0])
-    return samples
 
 
 def sample_group(sid, groups):
@@ -95,7 +77,7 @@ def shared_otuids(groups):
     :return: Dict keyed on group combination and their shared OTUIDs as values.
     """
     for g in sorted(groups):
-        print "# of OTUs in {}: {}".format(g, len(groups[g].results["otuids"]))
+        print("Number of OTUs in {0}: {1}".format(g, len(groups[g].results["otuids"])))
     number_of_categories = len(groups)
     shared = defaultdict()
     for i in range(2, number_of_categories+1):
@@ -104,7 +86,8 @@ def shared_otuids(groups):
             for grp in j:
                 # initialize combo values
                 shared[combo_name] = groups[j[0]].results["otuids"].copy()
-                # iterate through all groups and keep updating combo OTUIDs with intersection_update
+                """iterate through all groups and keep updating combo OTUIDs with set
+                intersection_update"""
                 for grp in j[1:]:
                     shared[combo_name].intersection_update(groups[grp].results["otuids"])
     return shared
@@ -140,14 +123,15 @@ def handle_program_options():
                                      "list of unique OTUIDs found in each category in "
                                      "mapping file.")
     parser.add_argument("input_biom_fp", help="BIOM format file path.")
-    parser.add_argument("-o", "--output_dir", default="./",
+    parser.add_argument("output_dir",
                         help="Path to save category unique OTUIDs.")
     parser.add_argument("mapping_file", help="Mapping file with category information.")
     parser.add_argument("category_column", help="Column in mapping file specifying the "
                         "category/condition of all samples.")
     parser.add_argument("-p", "--prefix", default="unique", help="Provide specific text "
                         "to prepend the output file names. By default, the 'unique' will "
-                        "be added in front of output filenames.")
+                        "be added in front of output filenames, for uniques calculations "
+                        "only.")
     parser.add_argument("-r", "--reverse",
                         help="Get shared OTUIDs among all unique combinations of groups "
                              "and write out the results to path provided to this option.")
@@ -165,7 +149,7 @@ def main():
                  "Error: {}.".format(te))
 
     # Determine OTUIDs present in each sample
-    sample_otus = assign_otu_membership(biomf)
+    sample_otus = oc.assign_otu_membership(biomf)
 
     try:
         # Parse mapping file
@@ -191,12 +175,10 @@ def main():
         # Write out shared OTUIDs results
         shared_df = pd.DataFrame.from_dict(shared, orient="index").T
         shared_df.to_csv(args.reverse, sep="\t", index=False)
-    else:
-        # Create input for unique_otus
-        group_otuids = {group: group_data[group].results["otuids"]
-                        for group in group_data}
-        # Write out unique OTUIDs to file
-        write_uniques(args.output_dir, args.prefix, unique_otuids(group_otuids))
+    # Create input for unique_otus
+    group_otuids = {group: group_data[group].results["otuids"] for group in group_data}
+    # Write out unique OTUIDs to file
+    write_uniques(args.output_dir, args.prefix, unique_otuids(group_otuids))
 
 if __name__ == "__main__":
     sys.exit(main())
