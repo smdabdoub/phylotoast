@@ -1,7 +1,6 @@
 """
-Created on Feb 2, 2013
-
-:author: Shareef Dabdoub
+:Date: Created on Feb 2, 2013
+:Author: Shareef Dabdoub
 """
 import errno
 import itertools
@@ -197,12 +196,12 @@ def ensure_dir(d):
             # should not happen with os.makedirs
             # ENOENT: No such file or directory
             if os.errno == errno.ENOENT:
-                msg = twdd("""One or more directories in the path ({}) do not exist. If 
-                           you are specifying a new directory for output, please ensure 
+                msg = twdd("""One or more directories in the path ({}) do not exist. If
+                           you are specifying a new directory for output, please ensure
                            all other directories in the path currently exist.""")
                 return msg.format(d)
             else:
-                msg = twdd("""An error occurred trying to create the output directory 
+                msg = twdd("""An error occurred trying to create the output directory
                            ({}) with message: {}""")
                 return msg.format(d, oe.strerror)
 
@@ -262,7 +261,7 @@ def gather_categories(imap, header, categories=None):
 
     cat_ids = [header.index(cat)
                for cat in categories if cat in header and "=" not in cat]
-    
+
     table = OrderedDict()
     conditions = defaultdict(set)
     for i, cat in enumerate(categories):
@@ -270,7 +269,7 @@ def gather_categories(imap, header, categories=None):
             cat_name = header[header.index(cat.split("=")[0])]
             conditions[cat_name].add(cat.split("=")[1])
 
-    # If no categories or conditions identified, return all SampleIDs
+    # If invalid categories or conditions identified, return all SampleIDs
     if not cat_ids and not conditions:
         return {"default": DataCategory(set(imap.keys()), {})}
 
@@ -292,7 +291,7 @@ def gather_categories(imap, header, categories=None):
             continue
     idx_to_test = set(cat_ids).union(cond_ids)
 
-    # If column name and condition given, return overlapping SampleIDs of column and 
+    # If column name and condition given, return overlapping SampleIDs of column and
     # condition combinations
     for sid, row in imap.items():
         if all([row[header.index(c)] in conditions[c] for c in conditions]):

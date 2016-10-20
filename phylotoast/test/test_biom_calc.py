@@ -108,6 +108,27 @@ class biom_calc_Test(unittest.TestCase):
                 msg="Mean relative OTU percent abundance (MRA) not calculated accurately."
             )
 
+        # Checking MRA calc with transformation
+        hand_calc1 = {"GG_OTU_1": 35.0842846, "GG_OTU_2": 37.00402086,
+                      "GG_OTU_3": 47.88666428, "GG_OTU_4": 44.93767908,
+                      "GG_OTU_5": 40.35653848}
+        self.result1 = bc.MRA(self.biomf, transform=math.sqrt)
+        for oid in hand_calc1.keys():
+            self.assertAlmostEqual(
+                hand_calc1[oid], self.result1[oid],
+                msg="MRA with transformation not calculated accurately."
+            )
+
+        self.result2 = bc.MRA(self.biomf, transform=math.sin)
+        hand_calc2 = {"GG_OTU_1": 14.40790049, "GG_OTU_2": 15.6228805,
+                      "GG_OTU_3": 25.97876225, "GG_OTU_4": 22.62048068,
+                      "GG_OTU_5": 19.88517791}
+        for oid in hand_calc2.keys():
+            self.assertAlmostEqual(
+                hand_calc2[oid], self.result2[oid],
+                msg="MRA with transformation not calculated accurately."
+            )
+
     def test_raw_abundance(self):
         """
         Testing raw_abundance() function of biom_calc.py.
@@ -138,6 +159,13 @@ class biom_calc_Test(unittest.TestCase):
                              msg="Abundances not calculated for SampleID's")
         self.assertDictEqual(self.result3, hand_calc3,
                              msg="Abundances not calculated for OTUID's")
+
+        # Test for passed sampleID validity
+        with self.assertRaisesRegexp(ValueError, "\nError while calculating raw total "
+                                     "abundances: The sampleIDs provided do not match "
+                                     "the sampleIDs in biom file. Please double check "
+                                     "the sampleIDs provided.\n"):
+            bc.raw_abundance(self.biomf, sampleIDs=["NS01", "NS02", "NS03"])
 
     def test_relative_abundance(self):
         """
@@ -186,6 +214,13 @@ class biom_calc_Test(unittest.TestCase):
                     hand_calc[sid][otuid], self.result[sid][otuid],
                     msg="Relative abundances not calculated accurately."
                 )
+
+        # Test for valid sample IDs passed into function
+        with self.assertRaisesRegexp(ValueError, "\nError while calculating relative "
+                                     "abundances: The sampleIDs provided do not match "
+                                     "the sampleIDs in biom file. Please double check "
+                                     "the sampleIDs provided.\n"):
+            bc.relative_abundance(self.biomf, sampleIDs=["NS01", "NS02", "NS03"])
 
     def test_transform_raw_abundance(self):
         """

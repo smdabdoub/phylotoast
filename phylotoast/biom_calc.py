@@ -77,13 +77,17 @@ def MRA(biomf, sampleIDs=None, transform=None):
     :type sampleIDs: list
     :param sampleIDs: A list of sample id's from BIOM format OTU table.
 
+    :param transform: Mathematical function which is used to transform smax to another
+                      format. By default, the function has been set to None.
+
     :rtype: dict
     :return: A dictionary keyed on OTUID's and their mean relative abundance for a given
              number of sampleIDs.
     """
     ra = relative_abundance(biomf, sampleIDs)
     if transform is not None:
-        ra = transform(ra)
+        ra = {sample: {otuID: transform(abd) for otuID, abd in ra[sample].items()}
+              for sample in ra.keys()}
     otuIDs = biomf.ids(axis="observation")
     return mean_otu_pct_abundance(ra, otuIDs)
 
