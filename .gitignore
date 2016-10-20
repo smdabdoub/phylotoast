@@ -1,6 +1,16 @@
 # Python files
 *.py[cod]
 
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*,cover
+
 # Sequence-related
 *.fasta
 *.biom
