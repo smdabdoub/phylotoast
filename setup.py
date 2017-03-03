@@ -4,8 +4,8 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 
-requires = ['numpy', 'scipy', 'matplotlib >= 1.5.0', 'biopython >= 1.60',
-            'scikit-bio', 'scikit-learn', 'pandas', 'statsmodels',
+requires = ['numpy', 'scipy', 'matplotlib <= 1.5.3', 'biopython >= 1.60',
+            'scikit-bio <= 0.4.2', 'scikit-learn', 'pandas', 'statsmodels',
             'palettable', 'biom-format >= 2.1.5', 'h5py']
 
 scripts = ['bin/LDA.py',
