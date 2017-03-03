@@ -45,7 +45,7 @@ setup(
   packages=['phylotoast', 'phylotoast.test'],
   include_package_data=True,
   url='https://github.com/smdabdoub/phylotoast',
-  #install_requires=requires,
+  install_requires=requires,
   scripts=scripts,
   data_files=[('data', ['data/pbs_job_template.pbs', 'data/slurm_job_template.sbatch'])],
   keywords=['bioinformatics', 'QIIME', 'phylotoast', 'microbial ecology', '16S', 'microbiology'],
