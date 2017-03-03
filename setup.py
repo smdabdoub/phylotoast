@@ -4,9 +4,9 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 
-requires = ['numpy', 'scipy', 'matplotlib >= 1.5.0', 'biopython >= 1.60', 
-            'scikit-bio', 'scikit-learn', 'pandas', 'statsmodels', 
-            'brewer2mpl', 'biom-format >= 2.1.5', 'h5py']
+requires = ['numpy', 'scipy', 'matplotlib >= 1.5.0', 'biopython >= 1.60',
+            'scikit-bio', 'scikit-learn', 'pandas', 'statsmodels',
+            'palettable', 'biom-format >= 2.1.5', 'h5py']
 
 scripts = ['bin/PCoA_bubble.py', 'bin/biom_relative_abundance.py', 'bin/filter_rep_set.py',
            'bin/biom_phyla_summary.py', 'bin/filter_keep_otus_by_sample.py',
