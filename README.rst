@@ -34,6 +34,12 @@ To install PhyloToAST from PyPI:
 
     $ pip install phylotoast
 
+Directly from the repository on GitHub:
+
+.. code-block:: bash
+
+    $ pip install git+http://github.com/smdabdoub/phylotoast.git
+
 From source:
 
 .. code-block:: bash
