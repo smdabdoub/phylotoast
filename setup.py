@@ -11,7 +11,7 @@ requires = ['numpy', 'scipy', 'matplotlib <= 1.5.3', 'biopython >= 1.60',
 scripts = ['bin/LDA.py',
            'bin/LDA_bubble.py',
            'bin/PCoA.py',
-           'bin/PCoA_bubble.py'
+           'bin/PCoA_bubble.py',
            'bin/assign_taxonomy_by_blast_result.py',
            'bin/barcode_filter.py',
            'bin/biom_relative_abundance.py',
