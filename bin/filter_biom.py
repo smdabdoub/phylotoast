@@ -1,20 +1,17 @@
 #!/usr/bin/env python
 """
-Abstract: Filter biom file on both 'sample' and 'observation' axes, given a
-          list of sampleIDs to retain.
+Abstract: Filter biom file on both 'sample' and 'observation' axes, given a list of
+          sampleIDs to retain.
 Author: Akshay Paropkari
 Date: 02/15/2016
 """
 import sys
 import argparse
+from phylotoast import util
 importerrors = []
 try:
     import biom
     from biom.util import biom_open as bo
-except ImportError as ie:
-    importerrors.append(ie)
-try:
-    import pandas as pd
 except ImportError as ie:
     importerrors.append(ie)
 if len(importerrors) > 0:
@@ -53,14 +50,14 @@ def main():
     except IOError as ioe:
         sys.exit("\nError in BIOM file path: {}\n".format(ioe))
     try:
-        mapf = pd.read_csv(args.mapping_fnh, sep="\t")
+        mheader, mapf = util.parse_map_file(args.mapping_fnh)
     except IOError as ioe:
         sys.exit("\nError in mapping file path: {}\n".format(ioe))
 
     # Get filtered biom data
-    keep_sampleIDs = list(mapf["#SampleID"])  # because biom.filter() expects a list of ids
-    sid_filtered_biomf = biomf.filter(keep_sampleIDs, inplace=False)
-    print("\n{} sampleIDs retained from original biom file.".format(len(keep_sampleIDs)))
+    sid_filtered_biomf = biomf.filter(mapf.keys(), inplace=False)
+    print("\n{} sampleIDs retained from original biom file.".
+          format(len(sid_filtered_biomf.ids())))
     obs_abd_sum = sid_filtered_biomf.sum(axis="observation")
     otuids = sid_filtered_biomf.ids("observation")
     abd_sum = {a: b for a, b in zip(otuids, obs_abd_sum)}
@@ -71,8 +68,8 @@ def main():
                                                      "observation",
                                                      invert=True,
                                                      inplace=False)
-    print("{} otuIDs filtered out of the original biom file.\n"
-          .format(len(redundant_otuids)))
+    print("{} IDs filtered out of the original biom file.\n".
+          format(len(redundant_otuids)))
 
     # Write out files
     with bo(args.output_biom_fnh, "w") as rth:

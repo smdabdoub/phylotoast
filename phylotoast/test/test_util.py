@@ -1,8 +1,6 @@
 """
 :Author: Akshay Paropkari
-
 :Date Created: 10/13/2014
-
 :Abstract: Automated tests for util.py functions.
 """
 import os
@@ -176,41 +174,35 @@ class util_Test(unittest.TestCase):
                     ut.split_phylogeny(p1, "k"), "k__Bacteria",
                     msg="Error. Identification failed at level 'k'."
                     )
-
             if lvl == "p":
                 self.assertEqual(
                     ut.split_phylogeny(p1, "p"), "k__Bacteria; p__Firmicutes",
                     msg="Error. Identification failed at level 'p'."
                     )
-
             if lvl == "c":
                 self.assertEqual(
                     ut.split_phylogeny(p1, "c"),
                     "k__Bacteria; p__Firmicutes; c__Clostridia",
                     msg="Error. Identification failed at level 'c'."
                     )
-
             if lvl == "o":
                 self.assertEqual(
                     ut.split_phylogeny(p1, "o"),
                     "k__Bacteria; p__Firmicutes; c__Clostridia; o__Clostridiales",
                     msg="Error. Identification failed at level 'o'."
                     )
-
             if lvl == "f":
                 self.assertEqual(
                     ut.split_phylogeny(p1, "f"),
                     "k__Bacteria; p__Firmicutes; c__Clostridia; o__Clostridiales; f__Veillonellaceae",
                     msg="Error. Identification failed at level 'f'."
                     )
-
             if lvl == "g":
                 self.assertEqual(
                     ut.split_phylogeny(p1, "g"),
                     "k__Bacteria; p__Firmicutes; c__Clostridia; o__Clostridiales; f__Veillonellaceae; g__Veillonella",
                     msg="Error. Identification failed at level 'g'."
                     )
-
             if lvl == "s":
                 self.assertEqual(
                     ut.split_phylogeny(p1, "s"),
@@ -276,6 +268,8 @@ class util_Test(unittest.TestCase):
         result8 = ut.gather_categories(self.map_data, self.map_header,
                                        ["Smoking=Never_Smoker", "Treatment",
                                         "Gender=Female"])  # more than 2 categories - mix
+        result9 = ut.gather_categories(self.map_data, self.map_header,
+                                       categories="Nationality:Peru")
 
         # Testing if the function calculates without any categories.
         manual = {"default": DataCategory({"PC.354", "PC.355", "PC.356", "PC.481",
@@ -356,6 +350,16 @@ class util_Test(unittest.TestCase):
             result8, manual8,
             msg="With two or more conditions/categories given, gather_categories() did "
                 "not return SampleIDs for all condition combinations, as expected."
+        )
+
+        # Testing invalid categories or conditions identified
+        manual9 = {"default": DataCategory({"PC.354", "PC.355", "PC.356", "PC.481",
+                                            "PC.593", "PC.607", "PC.634", "PC.635",
+                                            "PC.636"}, {})}
+        self.assertDictEqual(
+            result9, manual9,
+            msg="With invalid category or condition given, gather_categories() did not "
+                "return all SampleIDs as expected."
         )
 
     def test_parse_unifrac(self):

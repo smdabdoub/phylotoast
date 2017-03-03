@@ -41,7 +41,7 @@ class otu_calc_Test(unittest.TestCase):
              "f__", "g__Fusobacterium", "s__nucleatum"],
             "Fusobacterium_spp.":
             ["k__Bacteria", "p__Fusobacteria", "c__Fusobacteria", "o__",
-            "f__", "g__Fusobacterium", "s__"]
+             "f__", "g__Fusobacterium", "s__"]
         }
 
         for expected, test in self.taxa.items():
