@@ -39,7 +39,7 @@ scripts = ['bin/LDA.py',
 setup(
   name='phylotoast',
   version='1.3.0',
-  description='Useful additions to the QIIME analysis pipeline including tools for data visualization and cluster-computing.',
+  description='Tools for phylogenetic data analysis including visualization and cluster-computing support. Integrates with the QIIME pipeline. http://phylotoast.org',
   author='Shareef M. Dabdoub',
   author_email='dabdoub.2@osu.edu',
   packages=['phylotoast', 'phylotoast.test'],
