@@ -14,15 +14,25 @@ Required Arguments
 
 .. cmdoption:: -i COORD_FP, --coord_fp COORD_FP
 
-    Input principal coordinates filepath (i.e., resulting file from principal_coordinates.py).
+    Path to the principal coordinates result file (i.e., output from principal_coordinates.py).
 
 .. cmdoption:: -m MAP_FP, --map_fp MAP_FP
 
-    Input metadata mapping file-path.
+    Path to the metadata mapping file.
 
 .. cmdoption:: -b COLORBY, --colorby COLORBY
 
-     Metadata categories (column headers) to color by in the plots.
+     Metadata category/categories (column headers) to group samples by in the plot. A single
+     category can be specified as follows: ``-b Treatment``. Multiple categories can also be 
+     specified: ``-b Treatment,Age``. Finally, each specified category can be fixed to a single
+     value: ``-b Treatment,Age,Gender=male``. Note that in all cased, no spaces should be used). 
+     The program will create one group for each unique combination of values for the specified
+     categories and put each sample in the appropriate group that matches its metadata. For
+     example, if Treatment has two values (TreatmentA, TreatmentB) and Gender has two values 
+     (male, female), there are a total of 4 possible groups: TreatmentA and male, TreatmentA
+     and female, TreatmentB and male, TreatmentB and female. In the output plot legend,
+     multiple-category groups will have their  values joined by an underscore: TreatmentA_male,
+     TreatmentB_female.
 
 
 Optional Arguments
@@ -87,10 +97,22 @@ Workflow for generating PCoA plots using PhyloToAST
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Step 1** :
-Obtain unifrac principal coordinates file from QIIME's `beta_diversity_through_plots.py <http://qiime.org/scripts/beta_diversity_through_plots.html>`_ script.
+Create an all-pairs distance matrix for your sample data using the `beta_diversity.py <http://qiime.org/scripts/beta_diversity.html>`_ QIIME script. Different distance metrics can be calculated here: bray_cutis, morisita_horn, 
+kulczynski, and many others.
 
 **Step 2** :
-Run ``PCoA.py`` script with ``-t Path to the tree file`` parameters.
+Perform a principal coordinates analysis of the distance matrix from Step 1 using QIIME's `principal_coordinates.py <http://qiime.org/scripts/principal_coordinates.html>`_ script.
+
+**Alternate Step 1 and 2 combined for UniFrac PCoA**:
+The `beta_diversity_through_plots.py <http://qiime.org/scripts/beta_diversity_through_plots.html>`_ script
+produces the PCoA analysis of the UniFrac distances (weighted and unweighted) in one step.
+
+**Step 3** :
+Run PhyloToAST's ``PCoA.py`` with the input (``-i``) set to the output from Step 2.
+
+For minimum functionality, also set the mapping file (``-m``), and the grouping category column 
+within the mapping file (``-b``). If you want to specify your own colors for the groups, also specify
+``-c`` option. To get a 3D plot that is rotatable/zoomable specify ``-d 3``.
 
 Example plots
 --------------
