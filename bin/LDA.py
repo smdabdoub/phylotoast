@@ -6,6 +6,7 @@ Abstract: This script calculates and returns LDA plots based on normalized relat
 
 import sys
 import argparse
+from itertools import cycle
 from phylotoast import util, biom_calc as bc, graph_util as gu
 errors = []
 try:
@@ -32,6 +33,10 @@ try:
     from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 except ImportError as ie:
     errors.append(ie)
+try:
+    from palettable.colorbrewer.qualitative import Set3_12
+except ImportError as ie:
+    errors.append("No module named palettable")
 if len(errors) != 0:
     for item in errors:
         print("Import Error:", item)
@@ -76,14 +81,12 @@ def plot_LDA(X_lda, y_lda, class_colors, exp_var, style, fig_size, label_pad,
             else:
                 cat_y = X_lda[:, 1][y_lda == target_name]
             ax.scatter(x=cat_x, y=cat_y, label=target_name,
-                       color=class_colors[target_name],
-                       alpha=0.85, s=250, edgecolors="k")
+                       color=class_colors[target_name], alpha=0.85, s=250, edgecolors="k")
         # Annotate data points with sample IDs
         if sids is not None:
             for sample, point in zip(sids, X_lda):
                 ax.annotate(s=sample, xy=point, xytext=(-15, -15),
                             textcoords="offset points", ha="center", va="center")
-
 
     if X_lda.shape[1] == 1:
         plt.ylim((0.5, 2.5))
@@ -108,8 +111,8 @@ def plot_LDA(X_lda, y_lda, class_colors, exp_var, style, fig_size, label_pad,
 
     # save or display result
     if out_fp:
-        plt.savefig(out_fp, facecolor=fc, edgecolor="none", dpi=300,
-                    bbox_inches="tight", pad_inches=0.1)
+        plt.savefig(out_fp, facecolor=fc, edgecolor="none", dpi=300, bbox_inches="tight",
+                    pad_inches=0.1)
     else:
         plt.show()
 
@@ -150,11 +153,11 @@ def handle_program_options():
                               groups. Each sample ID must have a group entry. \
                               Default is no categories and all the data will be \
                               treated as a single group. [REQUIRED]")
-    parser.add_argument("-c", "--color_by", required=True,
+    parser.add_argument("-c", "--colors",
                         help="A column name in the mapping file containing\
                               hexadecimal (#FF0000) color values that will\
                               be used to color the groups. Each sample ID must\
-                              have a color entry. [REQUIRED]")
+                              have a color entry.")
     parser.add_argument("-dm", "--dist_matrix_file",
                         help="Input distance matrix file.")
     parser.add_argument("--save_lda_input",
@@ -179,7 +182,7 @@ def handle_program_options():
     parser.add_argument("--label_padding", default=15, type=int,
                         help="Sets the spacing in points between the each axis and its \
                              label.")
-    parser.add_argument("--annotate", action="store_true",
+    parser.add_argument("--annotate_points", action="store_true",
                         help="If specified, each data point will be labeled with "
                              "its sample ID. Default is False.")
     parser.add_argument("--ggplot2_style", action="store_true",
@@ -199,7 +202,14 @@ def main():
         sys.exit(err_msg.format(ioe))
 
     # Obtain group colors
-    class_colors = util.color_mapping(imap, header, args.group_by, args.color_by)
+    try:
+        assert args.colors is not None
+    except AssertionError:
+        categories = {v[category_idx] for k, v in imap.items()}
+        color_cycle = cycle(Set3_12.hex_colors)
+        class_colors = {c:color_cycle.next() for c in categories}
+    else:
+        class_colors = util.color_mapping(imap, header, args.group_by, args.colors)
 
     if args.dist_matrix_file:
         try:
@@ -210,7 +220,7 @@ def main():
             sys.exit(err_msg.format(ioe))
         uf_data = pd.read_csv(args.dist_matrix_file, sep="\t", index_col=0)
         uf_data.insert(0, "Condition", [imap[sid][category_idx] for sid in uf_data.index])
-        if args.annotate:
+        if args.annotate_points:
             sampleids = uf_data.index
         else:
             sampleids = None
@@ -233,7 +243,7 @@ def main():
         df_rel_abd = pd.DataFrame(rel_abd).T
         df_rel_abd.insert(0, "Condition", [imap[sid][category_idx]
                                            for sid in df_rel_abd.index])
-        if args.annotate:
+        if args.annotate_points:
             sampleids = df_rel_abd.index
         else:
             sampleids = None
