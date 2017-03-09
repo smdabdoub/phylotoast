@@ -36,7 +36,7 @@ def handle_program_options():
                              "[REQUIRED].")
     parser.add_argument("-m", "--map_fp", required=True,
                         help="Input metadata mapping filepath [REQUIRED].")
-    parser.add_argument("-b", "--colorby", required=True,
+    parser.add_argument("-g", "--group_by", required=True,
                         help="Any mapping categories, such as treatment type,  "
                               "that will be used to group the data in the  "
                               "output iTol table. For example, one category  "
@@ -120,7 +120,7 @@ def main():
     map_header, imap = util.parse_map_file(args.map_fp)
 
     data_gather = util.gather_categories(imap, map_header,
-                                         args.colorby.split(","))
+                                         args.group_by.split(","))
     categories = OrderedDict([(condition, {"pc1": [], "pc2": [], "pc3": []})
                               for condition in data_gather.keys()])
 
@@ -129,30 +129,30 @@ def main():
         colors = [bcolors.next() for _ in categories]
     else:
         colors = util.color_mapping(imap, map_header,
-                                    args.colorby, args.colors)
+                                    args.group_by, args.colors)
         colors = colors.values()
 
     parsed_unifrac = util.parse_unifrac(args.coord_fp)
 
-    pco = [dim - 1 for dim in args.pc_order]
+    pco = args.pc_order
     if args.dimensions == 3:
-        pco.append(2)
+        pco.append(3)
 
-    pc1v = parsed_unifrac["varexp"][pco[0]]
-    pc2v = parsed_unifrac["varexp"][pco[1]]
+    pc1v = parsed_unifrac["varexp"][pco[0] - 1]
+    pc2v = parsed_unifrac["varexp"][pco[1] - 1]
     if args.dimensions == 3:
-        pc3v = parsed_unifrac["varexp"][pco[2]]
+        pc3v = parsed_unifrac["varexp"][pco[2] - 1]
 
     for sid, points in parsed_unifrac["pcd"].items():
         for condition, dc in data_gather.items():
             if sid in dc.sids:
                 cat = condition
                 break
-        categories[cat]["pc1"].append((sid, points[pco[0]]))
-        categories[cat]["pc2"].append((sid, points[pco[1]]))
+        categories[cat]["pc1"].append((sid, points[pco[0] - 1]))
+        categories[cat]["pc2"].append((sid, points[pco[1] - 1]))
 
         if args.dimensions == 3:
-            categories[cat]["pc3"].append((sid, points[pco[2]]))
+            categories[cat]["pc3"].append((sid, points[pco[2] - 1]))
 
     axis_str = "PC{} (Percent Explained Variance {:.3f}%)"
     # initialize plot
@@ -193,8 +193,8 @@ def main():
     if args.y_limits:
         ax.set_ylim(args.y_limits)
 
-    ax.set_xlabel(axis_str.format(1, float(pc1v)), labelpad=args.label_padding)
-    ax.set_ylabel(axis_str.format(2, float(pc2v)), labelpad=args.label_padding)
+    ax.set_xlabel(axis_str.format(pco[0], float(pc1v)), labelpad=args.label_padding)
+    ax.set_ylabel(axis_str.format(pco[1], float(pc2v)), labelpad=args.label_padding)
 
     leg = plt.legend(loc="best", scatterpoints=3, frameon=True, framealpha=1)
     leg.get_frame().set_edgecolor('k')
