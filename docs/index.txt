@@ -43,6 +43,9 @@ Dabdoub, S. M. et al. PhyloToAST: Bioinformatics tools for species-level analysi
 
 Publications using PhyloToAST
 =============================
+Paropkari, A. D. et al. *Smoking, Pregnancy and the Subgingival Microbiome*.
+Sci. Rep. 6, 30388, 2016; doi: `10.1038/srep30388 <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4961950/>`_
+
 Tsigarida and Dabdoub et al., *The Influence of Smoking on the Peri-Implant
 Microbiome*. Journal of Dental Research, 2015; doi: `10.1177/0022034515590581 <http://jdr.sagepub.com/content/94/9/1202.full>`_
 

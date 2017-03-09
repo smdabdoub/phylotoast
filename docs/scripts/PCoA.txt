@@ -20,15 +20,15 @@ Required Arguments
 
     Path to the metadata mapping file.
 
-.. cmdoption:: -b COLORBY, --colorby COLORBY
+.. cmdoption:: -g GROUP_BY, --group_by GROUP_BY
 
      Metadata category/categories (column headers) to group samples by in the plot. A single
-     category can be specified as follows: ``-b Treatment``. Multiple categories can also be 
+     category can be specified as follows: ``-b Treatment``. Multiple categories can also be
      specified: ``-b Treatment,Age``. Finally, each specified category can be fixed to a single
-     value: ``-b Treatment,Age,Gender=male``. Note that in all cased, no spaces should be used). 
+     value: ``-b Treatment,Age,Gender=male``. Note that in all cased, no spaces should be used).
      The program will create one group for each unique combination of values for the specified
      categories and put each sample in the appropriate group that matches its metadata. For
-     example, if Treatment has two values (TreatmentA, TreatmentB) and Gender has two values 
+     example, if Treatment has two values (TreatmentA, TreatmentB) and Gender has two values
      (male, female), there are a total of 4 possible groups: TreatmentA and male, TreatmentA
      and female, TreatmentB and male, TreatmentB and female. In the output plot legend,
      multiple-category groups will have their  values joined by an underscore: TreatmentA_male,
@@ -40,16 +40,11 @@ Optional Arguments
 
 .. cmdoption:: -d {2,3}, --dimensions {2,3}
 
-    Choose whether to plot 2D or 3D.
+    Choose whether to plot 2D or 3D. Default is a 2D plot.
 
 .. cmdoption:: -c COLORS, --colors COLORS
 
-    A file containing user defined colors in hex values or matplotlib named colors, each on
-    separate line. If user color list is not sufficient or ont defined, program will use
-    Qualitative Set1 scheme from `brewer colors
-    <https://jiffyclub.github.io/palettable/colorbrewer/qualitative/>`_.
-    More information on `matplotlib named colors
-    <http://stackoverflow.com/questions/22408237/named-colors-in-matplotlib>`_.
+    A column name in the mapping file containing hexadecimal (#FF0000) color values that will be used to color the groups. Each sample ID must have a color entry.
 
 .. cmdoption:: -s POINT_SIZE, --point_size POINT_SIZE
 
@@ -57,37 +52,51 @@ Optional Arguments
 
 .. cmdoption:: --pc_order PC_ORDER
 
-    Choose which Principle Coordinates are displayed and in which order, for
-    example: 1,2 (Note the lack of any spaces around the comma).
+    Choose which Principle Coordinates are displayed and in which order, for example: 1,2 (Note the lack of any spaces around the comma).
 
 .. cmdoption:: --x_limits X_LIMITS X_LIMITS
 
-    Specify limits for the x-axis instead of automatic setting based on the
-    data range. Should take the form: --x_limits -0.5 0.5
+    Specify limits for the x-axis instead of automatic setting based on the data range. Should take the form: --x_limits -0.5 0.5
 
 .. cmdoption:: --y_limits Y_LIMITS Y_LIMITS
 
-    Specify limits for the y-axis instead of automatic setting based on the
-    data range. Should take the form: --y_limits -0.5 0.5
+    Specify limits for the y-axis instead of automatic setting based on the data range. Should take the form: --y_limits -0.5 0.5
 
 .. cmdoption:: --z_limits Z_LIMITS Z_LIMITS
 
-    Specify limits for the z-axis instead of automatic setting based on the
-    data range. Should take the form: --z_limits -0.5 0.5
+    Specify limits for the z-axis instead of automatic setting based on the data range. Should take the form: --z_limits -0.5 0.5
+
+.. cmdoption:: --z_angles Z_ANGLES Z_ANGLES
+
+    Specify the azimuth and elevation angles for a 3D plot.
 
 .. cmdoption:: -t TITLE, --title TITLE
 
     Title of the plot.
 
-.. cmdoption:: --dpi DPI
+.. cmdoption:: --figsize FIGSIZE FIGSIZE
 
-    Set plot quality in Dots Per Inch (DPI). Larger DPI will result in larger file size.
+    Specify the 'width height' in inches for PCoA plots.By default, figure size is 14x8 inches
+
+.. cmdoption:: --font_size FONT_SIZE
+
+    Sets the font size for text elements in the plot.
+
+.. cmdoption:: --label_padding LABEL_PADDING
+
+    Sets the spacing in points between the each axis and its label.
+
+.. cmdoption:: --annotate_points
+
+    If specified, each graphed point will be labeled with its sample ID.
+
+.. cmdoption:: --ggplot2_style
+
+    Apply ggplot2 styling to the figure.
 
 .. cmdoption:: -o OUT_FP, --out_fp OUT_FP
 
-    The path and file name to save the plot under. If specified, the figure
-    will be saved directly instead of opening a window in which the plot can
-    be viewed before saving.
+    The path and file name to save the plot under. If specified, the figure will be saved directly instead of opening a window in which the plot can be viewed before saving.
 
 .. cmdoption:: -h, --help
 
@@ -97,7 +106,7 @@ Workflow for generating PCoA plots using PhyloToAST
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Step 1** :
-Create an all-pairs distance matrix for your sample data using the `beta_diversity.py <http://qiime.org/scripts/beta_diversity.html>`_ QIIME script. Different distance metrics can be calculated here: bray_cutis, morisita_horn, 
+Create an all-pairs distance matrix for your sample data using the `beta_diversity.py <http://qiime.org/scripts/beta_diversity.html>`_ QIIME script. Different distance metrics can be calculated here: bray_cutis, morisita_horn,
 kulczynski, and many others.
 
 **Step 2** :
@@ -110,7 +119,7 @@ produces the PCoA analysis of the UniFrac distances (weighted and unweighted) in
 **Step 3** :
 Run PhyloToAST's ``PCoA.py`` with the input (``-i``) set to the output from Step 2.
 
-For minimum functionality, also set the mapping file (``-m``), and the grouping category column 
+For minimum functionality, also set the mapping file (``-m``), and the grouping category column
 within the mapping file (``-b``). If you want to specify your own colors for the groups, also specify
 ``-c`` option. To get a 3D plot that is rotatable/zoomable specify ``-d 3``.
 
