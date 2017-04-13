@@ -93,6 +93,14 @@ def load_core_file(core_fp):
     return core
 
 
+def load_tsv_core(core_fp, skip_header=False):
+    with open(core_fp) as inf:
+        data = inf.read().splitlines()
+        if skip_header:
+            data = data[1:]
+        return [line.split("\t")[0].strip() for line in data]
+
+
 def plot_overlaps(otus, group_otus, group_colors, 
                   out_fp, fig_size=None, title="",
                   filter_common=False):
@@ -200,13 +208,29 @@ def plot_overlaps(otus, group_otus, group_colors,
 
 def handle_program_options():
     """Parses the given options passed in at the command line."""
-    parser = argparse.ArgumentParser(description="Given a set of core microbiome "
-                                     "files, create a matching set of ovelapping "
-                                     "barplots that visualize which species belong "
-                                     "to each core microbiome.")
-    parser.add_argument("-i", "--core_files", nargs="+",
-                        help="Path to the set of core microbiome files (i.e. from "
-                             "compute_core_microbiome.py) to visualize as an overla")
+    parser = argparse.ArgumentParser(description="Given a set of core "
+                                     "microbiome files, create a matching set "
+                                     "of overlapping barplots that visualize "
+                                     "the species belonging to each core "
+                                     "microbiome.")
+    input_grp = parser.add_mutually_exclusive_group(required=True)
+    input_grp.add_argument("-i", "--core_files", nargs="+",
+                           help="Path to each core microbiome file (i.e. from "
+                                "compute_core_microbiome.py) to visualize as "
+                                "an overlap plot. NOTE: The files should be "
+                                "given in the same order that the groups "
+                                "appear in the mapping file.")
+    input_grp.add_argument("-tsv", "--tsv_core_files", nargs="+",
+                           help="Path to each core microbiome file in TSV "
+                                "format. The first column is expected to have "
+                                "the OTUs or other names that will be matched "
+                                "between the group cores. All other columns "
+                                "will be ignored. NOTE: The files should be "
+                                "given in the same order that the groups "
+                                "appear in the mapping file.")
+    parser.add_argument("--skipheader", action="store_true",
+                        help="If using TSV files (-tsv) for input, the header "
+                             "line will be skipped when reading each file.")
     parser.add_argument("-m", "--map_fp",
                         help="QIIME mapping file.")
     parser.add_argument("-g", "--group_by", required=True,
@@ -253,12 +277,21 @@ def main():
     # map groups to colors
     class_colors = util.color_mapping(imap, header, args.group_by, args.color_by)
 
+    core_files = args.core_files
+    tsv = False
+    if args.core_files is None:
+        core_files = args.tsv_core_files
+        tsv = True
+
     # map each core file to its matching category in the mapping file
     group_cores = OrderedDict()
-    for group, fp in zip(class_colors, args.core_files):
-        core = load_core_file(fp)
-        group_cores[group] = [name.replace("_", " ") for name in core.values()
-                                if not name.startswith("Unclassified")]
+    for group, fp in zip(class_colors, core_files):
+        if not tsv:
+            core = load_core_file(fp)
+            group_cores[group] = [name.replace("_", " ") for name in core.values()
+                                    if not name.startswith("Unclassified")]
+        else:
+            group_cores[group] = load_tsv_core(fp, args.skipheader)
 
     # create the overlap set of OTUs and plot
     overlap = set()
