@@ -136,7 +136,7 @@ def main():
 
     # calculate analysis results
     categories = None
-    if args.map_categories is not None:
+    if args.map_categories is not None and args.analysis_metric != "raw":
         categories = args.map_categories.split(",")
 
     # set transform if --stabilize_variance is specfied
