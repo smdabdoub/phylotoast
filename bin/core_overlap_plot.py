@@ -232,20 +232,20 @@ def handle_program_options():
                         help="If using TSV files (-tsv) for input, the header "
                              "line will be skipped when reading each file.")
     parser.add_argument("-m", "--map_fp",
-                        help="QIIME mapping file.")
+                        help="Metadata mapping file.")
     parser.add_argument("-g", "--group_by", required=True,
                         help="A column name in the mapping file containing "
-                              "categorical values that will be used to identify "
-                              "groups. Each sample ID must have a group entry. "
-                              "Default is no categories and all the data will be "
-                              "treated as a single group. [REQUIRED]")
+                              "categorical values that will be used to identify"
+                              "groups. Each sample ID must have a group entry."
+                              "Default is no categories and all the data will"
+                              "be treated as a single group. [REQUIRED]")
     parser.add_argument("-c", "--color_by", required=True,
                         help="A column name in the mapping file containing\
                               hexadecimal (#FF0000) color values that will\
                               be used to color the groups. Each sample ID must\
                               have a color entry. [REQUIRED]")
     parser.add_argument("--filtercommon", action="store_true",
-                        help="Specifying this option wil eliminate OTUs that \
+                        help="Specifying this option will hide OTUs that \
                               are shared among all groups.")
     parser.add_argument("--title", default="",
                         help="A descriptive title that will appear at the top \
@@ -258,8 +258,8 @@ def handle_program_options():
     parser.add_argument("-o", "--out_fp", default=None,
                         help="The path and file name to save the plot under. "
                               "If specified, the figure will be saved directly "
-                              "instead of opening a window in which the plot can "
-                              "be viewed before saving.")
+                              "instead of opening a window in which the plot "
+                              "can be viewed before saving.")
     return parser.parse_args()
 
 
