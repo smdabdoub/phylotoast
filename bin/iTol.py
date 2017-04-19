@@ -166,11 +166,11 @@ def main():
             itolF.write("COLOR_MAX\t#000000\n")
         else:
             itolF.write("DATASET_MULTIBAR\nSEPARATOR TAB\n")
-            itolF.write("DATASET_LABEL\tNMRA\n")
+            itolF.write("DATASET_LABEL\t{}\n".format(args.analysis_metric))
             itolF.write("FIELD_COLORS\t{}\n".format("\t".join(["#ff0000"
                         for _ in range(len(groups))])))
             itolF.write("FIELD_LABELS\t" + "\t".join(groups.keys())+"\n")
-            itolF.write("LEGEND_TITLE\tNMRA\n")
+            itolF.write("LEGEND_TITLE\t{}\n".format(args.analysis_metric))
             itolF.write("LEGEND_SHAPES\t{}\n".format("\t".join(["1"
                         for _ in range(len(groups))])))
             itolF.write("LEGEND_COLORS\t{}\n".format("\t".join(["#ff0000"
