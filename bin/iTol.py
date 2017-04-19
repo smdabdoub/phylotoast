@@ -94,6 +94,10 @@ def handle_program_options():
                         default=False,
                         help="Apply the variance-stabilizing arcsine square\
                               root transformation to the OTU proportion data.")
+    parser.add_argument("--keep_otuids", action="store_true",
+                        default=False,
+                        help="Keep OTU IDs in the output files instead of."
+                             "replacing them with shortened taxonomic names.")
 
     return parser.parse_args()
 
@@ -123,16 +127,17 @@ def main():
     biomf = biom.load_table(args.otu_table)
     map_header, imap = util.parse_map_file(args.mapping)
 
-    # rewrite tree file with otu names
-    if args.input_tree:
+    # rewrite tree file with otu names, skip if keep_otuids specified
+    if args.input_tree and not args.keep_otuids:
         with open(args.input_tree) as treF, open(args.output_tre, "w") as outF:
             tree = treF.readline()
             if "'" in tree:
                 tree = tree.replace("'", '')
             outF.write(newick_replace_otuids(tree, biomf))
 
-    oid_rows = {id_: md["taxonomy"]
-                for val, id_, md in biomf.iter(axis="observation")}
+    if not args.keep_otuids:
+        oid_rows = {id_: md["taxonomy"]
+                      for val, id_, md in biomf.iter(axis="observation")}
 
     # calculate analysis results
     categories = None
@@ -149,8 +154,12 @@ def main():
         elif args.analysis_metric == "raw":
             results = bc.transform_raw_abundance(biomf, sampleIDs=group.sids,
                                                  sample_abd=False)
-        group.results.update({oc.otu_name(oid_rows[oid]): results[oid]
-                             for oid in results})
+        if args.keep_otuids:
+            group.results.update({oid: results[oid]
+                                    for oid in results})
+        else:
+            group.results.update({oc.otu_name(oid_rows[oid]): results[oid]
+                                    for oid in results})
 
     # write iTol data set file
     with open(args.output_itol_table, "w") as itolF:
@@ -178,9 +187,13 @@ def main():
             itolF.write("LEGEND_LABELS\t" + "\t".join(groups.keys())+"\n")
             itolF.write("WIDTH\t300\n")
         itolF.write("DATA\n")
-        all_otus = frozenset({oc.otu_name(md["taxonomy"])
-                              for val, id_, md in
-                              biomf.iter(axis="observation")})
+
+        if args.keep_otuids:
+            all_otus = frozenset({id_ for id_ in biomf.ids(axis="observation")})
+        else:
+            all_otus = frozenset({oc.otu_name(md["taxonomy"])
+                                  for val, id_, md in
+                                  biomf.iter(axis="observation")})
 
         for oname in all_otus:
             row = ["{name}"]        # \t{s:.2f}\t{ns:.2f}\n"
