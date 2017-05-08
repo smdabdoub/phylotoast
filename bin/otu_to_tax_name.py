@@ -8,10 +8,6 @@ try:
     import biom
 except ImportError:
     importerrors.append("biom")
-try:
-    import pandas as pd
-except ImportError:
-    importerrors.append("pandas")
 if len(importerrors) > 0:
     for err in importerrors:
         print("Please install missing module: {}".format(err))
@@ -26,15 +22,14 @@ def handle_program_options():
     parser.add_argument("-i", "--otu_table", required=True,
                         help="Input biom file format OTU table. [REQUIRED]")
     parser.add_argument("-oid", "--otu_id_fp", required=True,
-                        help="Either a text file containing a list (one per line) "
-                        "of OTU IDs, or a tab-separated (classic) BIOM-format file. "
-                        "[REQUIRED]")
-    parser.add_argument("-o", "--output_fp", default="converted_otus.txt",
+                        help="A single or multi-column (tab-separated) file containing "
+                        "the OTU IDs to be converted in the first column. [REQUIRED]")
+    parser.add_argument("-o", "--output_fp",
                         help="For a list input, a new file containing a list of OTU IDs "
                               "and their corresponding short taxonomic identifiers "
                               "separated by tabs. For a BIOM file input, a new "
                               "mapping file with all the OTU IDs replaced by the short "
-                              "identifier.")
+                              "identifier.[REQUIRED]")
     parser.add_argument("--reverse_lookup", action="store_true",
                         help="Get OTUIDs from genus-species OTU name.")
     return parser.parse_args()
@@ -51,23 +46,24 @@ def main():
 
     # Read in otus file data
     try:
-        otu_fnh = pd.read_csv(args.otu_id_fp, sep="\n")
+        with open(args.otu_id_fp, "rU") as inf:
+            otu_ids = [line.strip() for line in inf.readlines()]
     except IOError as ioe:
         sys.exit("\nError with file containing OTUs:{}\n".format(ioe))
-    else:
-        otu_ids = otu_fnh.iloc[:, 0].values  # get only first column data (otus)
 
-    output = []
+    output = {}
     for val, idx, md in biomf.iter(axis="observation"):
         name = otuc.otu_name(md["taxonomy"])
         if args.reverse_lookup:
             if name in otu_ids:
-                output.append(idx)   # Get otuids from otu names
+                output[name] = idx   # Get otuids from otu names
         else:
             if idx in otu_ids:
-                output.append(name)  # Get otu name from otu IDs
-    name_S = pd.Series(output)
-    name_S.to_csv(args.output_fp, sep="\n", index=False)
+                output[idx] = name  # Get otu name from otu IDs
+    with open(args.output_fp, "w") as outf:
+        outf.write("Input\tOutput\n")
+        for k, v in output.items():
+            outf.write("{0}\t{1}\n".format(k, v))
 
 
 if __name__ == "__main__":
