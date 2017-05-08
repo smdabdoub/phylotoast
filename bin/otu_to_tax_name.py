@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+import csv
 import argparse
 from phylotoast import otu_calc as otuc
 importerrors = []
@@ -47,7 +48,8 @@ def main():
     # Read in otus file data
     try:
         with open(args.otu_id_fp, "rU") as inf:
-            otu_ids = [line.strip() for line in inf.readlines()]
+            csvr = csv.reader(inf, delimiter="\t")
+            otu_ids = [line[0] for line in csvr]
     except IOError as ioe:
         sys.exit("\nError with file containing OTUs:{}\n".format(ioe))
 
