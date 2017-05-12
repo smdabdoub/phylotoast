@@ -34,6 +34,7 @@ scripts = ['bin/LDA.py',
            'bin/prune_otus.py',
            'bin/restrict_repset.py',
            'bin/split_sequence_data.py',
+           'bin/transform_biom.py',
            'bin/transpose_biom.py']
 
 setup(
