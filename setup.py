@@ -44,7 +44,7 @@ setup(
   author_email='dabdoub.2@osu.edu',
   packages=['phylotoast', 'phylotoast.test'],
   include_package_data=True,
-  url='https://github.com/smdabdoub/phylotoast',
+  url='http://phylotoast.org',
   install_requires=requires,
   scripts=scripts,
   data_files=[('data', ['data/pbs_job_template.pbs', 'data/slurm_job_template.sbatch'])],
