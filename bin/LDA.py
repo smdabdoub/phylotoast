@@ -6,7 +6,7 @@ Abstract: This script calculates and returns LDA plots based on normalized relat
 
 import sys
 import argparse
-import warnings
+# import warnings
 from itertools import cycle
 from phylotoast import util, biom_calc as bc, graph_util as gu
 errors = []
@@ -54,8 +54,8 @@ def plot_LDA(X_lda, y_lda, class_colors, exp_var, style, fig_size, label_pad,
         try:
             assert X_lda.shape[1] >= 3
         except AssertionError:
-            sys.exit("\nLinear Discriminant Analysis requires atleast 4 groups of samples "
-                     "to create a 3D figure. Please update group information or use the "
+            sys.exit("\nLinear Discriminant Analysis requires atleast 4 groups of samples"
+                     " to create a 3D figure. Please update group information or use the "
                      "default 2D view of the results.\n")
         if sids is not None:
             print("\nPoint annotations are available only for 2D figure.\n")
@@ -92,8 +92,7 @@ def plot_LDA(X_lda, y_lda, class_colors, exp_var, style, fig_size, label_pad,
                     point = (point[0], cats.index(group)+1)
                 finally:
                     ax.annotate(s=sample, xy=point[:2], xytext=(0, -15), ha="center",
-                                 va="center", textcoords="offset points")
-
+                                va="center", textcoords="offset points")
     if X_lda.shape[1] == 1:
         plt.ylim((0.5, 2.5))
     try:
@@ -134,13 +133,13 @@ def run_LDA(df):
 
     # Calculate LDA
     sklearn_lda = LDA()
-    try:
-        X_lda_sklearn = sklearn_lda.fit_transform(X, y)
-    except Exception as e:
-        print("\nWarning: {}\nPlease reduce your feature (OTU/gene) list by removing "
-              "highly correlated features using Variance Inflation Factor. Another "
-              "approach maybe to perform PCoA, instead of LDA.".format(e))
-        continue
+#     try:
+    X_lda_sklearn = sklearn_lda.fit_transform(X, y)
+#     except Exception as e:
+#         pass
+#         print("\nWarning: {} Please reduce your feature (OTU/gene) list by removing "
+#               "highly correlated features using Variance Inflation Factor. Another "
+#               "approach maybe to perform PCoA, instead of LDA.".format(e))
     try:
         exp_var = sklearn_lda.explained_variance_ratio_
     except AttributeError as ae:
@@ -199,8 +198,8 @@ def handle_program_options():
 
 
 def main():
-    warnings.filterwarnings("error")
     args = handle_program_options()
+#     warnings.filterwarnings("error")
 
     # Parse and read mapping file
     try:
@@ -222,12 +221,10 @@ def main():
 
     if args.dist_matrix_file:
         try:
-            with open(args.dist_matrix_file):
-                pass
+            uf_data = pd.read_csv(args.dist_matrix_file, sep="\t", index_col=0)
         except IOError as ioe:
             err_msg = "\nError with unifrac distance matrix file (-d): {}\n"
             sys.exit(err_msg.format(ioe))
-        uf_data = pd.read_csv(args.dist_matrix_file, sep="\t", index_col=0)
         uf_data.insert(0, "Condition", [imap[sid][category_idx] for sid in uf_data.index])
         if args.annotate_points:
             sampleids = uf_data.index
