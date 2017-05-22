@@ -13,7 +13,6 @@ try:
     import matplotlib as mpl
     import matplotlib.pyplot as plt
     from mpl_toolkits.mplot3d import Axes3D
-    from mpl_toolkits.mplot3d import proj3d  # for annotating 3D plot
     mpl.rc("font", family="Arial")  # define font for figure text
 except ImportError as ie:
     errors.append(ie)
@@ -51,6 +50,14 @@ def plot_LDA(X_lda, y_lda, class_colors, exp_var, style, fig_size, label_pad,
     cats = class_colors.keys()
     fig = plt.figure(figsize=fig_size)
     if dim == 3:
+        try:
+            assert X_lda.shape[1] >= 3
+        except AssertionError:
+            sys.exit("\nLinear Discriminant Analysis requires atleast 4 groups of samples "
+                     "to create a 3D figure. Please update group information or use the "
+                     "default 2D view of the results.\n")
+        if sids is not None:
+            print("\nPoint annotations are available only for 2D figure.\n")
         ax = fig.add_subplot(111, projection="3d")
         ax.view_init(elev=zangles[1], azim=zangles[0])
         try:
@@ -63,15 +70,8 @@ def plot_LDA(X_lda, y_lda, class_colors, exp_var, style, fig_size, label_pad,
             cat_y = X_lda[:, 1][y_lda == target_name]
             cat_z = X_lda[:, 2][y_lda == target_name]
             ax.scatter(xs=cat_x, ys=cat_y, zs=cat_z, label=target_name,
-                       c=class_colors[target_name], alpha=0.85, s=250,
-                       edgecolors="k", zdir="z")
-        # Annotate data points with sample IDs
-        if sids is not None:
-            for sample, point in zip(sids, X_lda):
-                x_2D, y_2D, _ = proj3d.proj_transform(point[0], point[1], point[2],
-                                                      ax.get_proj())
-                ax.annotate(s=sample, xy=(x_2D, y_2D), xytext=(-15, -15),
-                            textcoords="offset points", ha="center", va="center")
+                       c=class_colors[target_name], alpha=0.85, s=250, edgecolors="k",
+                       zdir="z")
     else:
         ax = fig.add_subplot(111)
         for i, target_name in zip(range(len(cats)), cats):
@@ -80,13 +80,18 @@ def plot_LDA(X_lda, y_lda, class_colors, exp_var, style, fig_size, label_pad,
                 cat_y = np.ones((cat_x.shape[0], 1)) + i
             else:
                 cat_y = X_lda[:, 1][y_lda == target_name]
-            ax.scatter(x=cat_x, y=cat_y, label=target_name,
-                       color=class_colors[target_name], alpha=0.85, s=250, edgecolors="k")
+            ax.scatter(x=cat_x, y=cat_y, label=target_name, alpha=0.85, s=250,
+                       color=class_colors[target_name], edgecolors="k")
         # Annotate data points with sample IDs
         if sids is not None:
-            for sample, point in zip(sids, X_lda):
-                ax.annotate(s=sample, xy=point, xytext=(-15, -15),
-                            textcoords="offset points", ha="center", va="center")
+            for sample, point, group in zip(sids, X_lda, y_lda):
+                try:
+                    assert len(point) >= 2
+                except AssertionError:
+                    point = (point[0], cats.index(group)+1)
+                finally:
+                    ax.annotate(s=sample, xy=point[:2], xytext=(0, -15), ha="center",
+                                 va="center", textcoords="offset points")
 
     if X_lda.shape[1] == 1:
         plt.ylim((0.5, 2.5))
@@ -123,7 +128,7 @@ def run_LDA(df):
     transformed data, scalings and explained variance by discriminants.
     """
     # Prep variables for sklearn LDA
-    X = df[range(1, df.shape[1])].values     # input data matrix
+    X = df.iloc[:, 1:df.shape[1]].values     # input data matrix
     y = df["Condition"].values               # data categories list
 
     # Calculate LDA
@@ -143,48 +148,44 @@ def handle_program_options():
                                                  "plots based on normalized relative "
                                                  "abundances or distance matrices "
                                                  "(for e.g. unifrac distance matrix).")
-    parser.add_argument("-i", "--otu_table", required=True,
-                        help="Input biom file format OTU table. [REQUIRED]")
     parser.add_argument("-m", "--map_fp", required=True,
                         help="Metadata mapping file. [REQUIRED]")
     parser.add_argument("-g", "--group_by", required=True,
-                        help="A column name in the mapping file containing\
-                              categorical values that will be used to identify \
-                              groups. Each sample ID must have a group entry. \
-                              Default is no categories and all the data will be \
-                              treated as a single group. [REQUIRED]")
+                        help="A column name in the mapping file containing categorical "
+                             "values that will be used to identify groups. Each sample "
+                             "ID must have a group entry. Default is no categories and "
+                             "all the data will be treated as a single group. [REQUIRED]")
     parser.add_argument("-c", "--colors",
-                        help="A column name in the mapping file containing\
-                              hexadecimal (#FF0000) color values that will\
-                              be used to color the groups. Each sample ID must\
-                              have a color entry.")
-    parser.add_argument("-dm", "--dist_matrix_file",
-                        help="Input distance matrix file.")
+                        help="A column name in the mapping file containing hexadecimal "
+                             "(#FF0000) color values that will be used to color the "
+                             "groups. Each sample ID must have a color entry.")
+    parser.add_argument("-i", "--otu_table", help="Input biom file format OTU table.")
+    parser.add_argument("-dm", "--dist_matrix_file", help="Input distance matrix file.")
     parser.add_argument("--save_lda_input",
-                        help="Save a CSV-format file of the transposed LDA-input\
-                              table to the file specifed by this option.")
+                        help="Save a CSV-format file of the transposed LDA-input table to"
+                             " the file specifed by this option.")
     parser.add_argument("--plot_title", default=None,
                         help="Plot title. Default is no title.")
     parser.add_argument("-o", "--out_fp", default="",
-                        help="The path and file name to save the LDA plot under.\
-                              If specified, the figure will be saved directly\
-                              instead of opening a window in which the plot \
-                              can be viewed before saving")
+                        help="The path and file name to save the LDA plot under. If "
+                             "specified, the figure will be saved directly instead of "
+                             "opening a window in which the plot can be viewed before "
+                             "saving.")
     parser.add_argument("-d", "--dimensions", default=2, type=int, choices=[2, 3],
-                        help="Choose whether to plot 2D or 3D.")
+                        help="Choose whether to plot 2D or 3D. Default is a 2D view.")
     parser.add_argument("--z_angles", type=float, nargs=2, default=[45., 30.],
                         help="Specify the azimuth and elevation angles for a 3D plot.")
     parser.add_argument("--figsize", default=[14, 8], type=int, nargs=2,
-                        help="Specify the 'width height' in inches for LDA plots."
-                             "By default, figure size is 14x8 inches.")
+                        help="Specify the 'width height' in inches for LDA plots. Default"
+                        " figure size is 14x8 inches.")
     parser.add_argument("--font_size", default=12, type=int,
                         help="Sets the font size for text elements in the plot.")
     parser.add_argument("--label_padding", default=15, type=int,
-                        help="Sets the spacing in points between the each axis and its \
-                             label.")
+                        help="Sets the spacing in points between the each axis and its "
+                        "label.")
     parser.add_argument("--annotate_points", action="store_true",
-                        help="If specified, each data point will be labeled with "
-                             "its sample ID. Default is False.")
+                        help="If specified, each data point will be labeled with its "
+                        "sample ID. Default is False.")
     parser.add_argument("--ggplot2_style", action="store_true",
                         help="Apply ggplot2 styling to the figure. Default is False.")
     return parser.parse_args()
@@ -207,7 +208,7 @@ def main():
     except AssertionError:
         categories = {v[category_idx] for k, v in imap.items()}
         color_cycle = cycle(Set3_12.hex_colors)
-        class_colors = {c:color_cycle.next() for c in categories}
+        class_colors = {c: color_cycle.next() for c in categories}
     else:
         class_colors = util.color_mapping(imap, header, args.group_by, args.colors)
 
@@ -226,7 +227,6 @@ def main():
             sampleids = None
         if args.save_lda_input:
             uf_data.to_csv(args.save_lda_input, sep="\t")
-
         # Run LDA
         X_lda, y_lda, exp_var = run_LDA(uf_data)
     else:
@@ -236,7 +236,6 @@ def main():
         except IOError as ioe:
             err_msg = "\nError with biom format file (-d): {}\n"
             sys.exit(err_msg.format(ioe))
-
         # Get normalized relative abundances
         rel_abd = bc.relative_abundance(biomf)
         rel_abd = bc.arcsine_sqrt_transform(rel_abd)
@@ -249,7 +248,6 @@ def main():
             sampleids = None
         if args.save_lda_input:
             df_rel_abd.to_csv(args.save_lda_input, sep="\t")
-
         # Run LDA
         X_lda, y_lda, exp_var = run_LDA(df_rel_abd)
 
