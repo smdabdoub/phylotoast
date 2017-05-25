@@ -6,7 +6,6 @@ Abstract: This script calculates and returns LDA plots based on normalized relat
 
 import sys
 import argparse
-# import warnings
 from itertools import cycle
 from phylotoast import util, biom_calc as bc, graph_util as gu
 errors = []
@@ -133,13 +132,7 @@ def run_LDA(df):
 
     # Calculate LDA
     sklearn_lda = LDA()
-#     try:
     X_lda_sklearn = sklearn_lda.fit_transform(X, y)
-#     except Exception as e:
-#         pass
-#         print("\nWarning: {} Please reduce your feature (OTU/gene) list by removing "
-#               "highly correlated features using Variance Inflation Factor. Another "
-#               "approach maybe to perform PCoA, instead of LDA.".format(e))
     try:
         exp_var = sklearn_lda.explained_variance_ratio_
     except AttributeError as ae:
@@ -199,7 +192,6 @@ def handle_program_options():
 
 def main():
     args = handle_program_options()
-#     warnings.filterwarnings("error")
 
     # Parse and read mapping file
     try:
