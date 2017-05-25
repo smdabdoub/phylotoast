@@ -6,7 +6,7 @@ This script calculates and returns LDA plots based on normalized relative abunda
 
 .. code-block:: bash
 
-        usage: LDA.py [-h] -m MAP_FP -g GROUP_BY [-c COLORS] [-i OTU_TABLE] [-dm DIST_MATRIX_FILE] [--save_lda_input SAVE_LDA_INPUT] [--plot_title PLOT_TITLE] [-o OUT_FP] [-d {2,3}] [--z_angles Z_ANGLES Z_ANGLES] [--figsize FIGSIZE FIGSIZE] [--font_size FONT_SIZE] [--label_padding LABEL_PADDING] [--annotate_points] [--ggplot2_style]
+        usage: LDA.py [-h] -m MAP_FP -g GROUP_BY [-c COLORS] [-ot OTU_TABLE] [-dm DIST_MATRIX_FILE] [--save_lda_input SAVE_LDA_INPUT] [--plot_title PLOT_TITLE] [-o OUT_FP] [-d {2,3}] [--z_angles Z_ANGLES Z_ANGLES] [--figsize FIGSIZE FIGSIZE] [--font_size FONT_SIZE] [--label_padding LABEL_PADDING] [--annotate_points] [--ggplot2_style]
 
 Required arguments
 ^^^^^^^^^^^^^^^^^^^^
@@ -26,7 +26,7 @@ Optional arguments
 
     A column name in the mapping file containing hexadecimal (#FF0000) color values that will be used to color the groups. Each sample ID must have a color entry.
 
-.. cmdoption:: -i OTU_TABLE, --otu_table OTU_TABLE
+.. cmdoption:: -ot OTU_TABLE, --otu_table OTU_TABLE
 
     Input biom file format OTU table.
 

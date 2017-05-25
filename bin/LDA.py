@@ -53,11 +53,11 @@ def plot_LDA(X_lda, y_lda, class_colors, exp_var, style, fig_size, label_pad,
         try:
             assert X_lda.shape[1] >= 3
         except AssertionError:
-            sys.exit("\nLinear Discriminant Analysis requires atleast 4 groups of samples"
-                     " to create a 3D figure. Please update group information or use the "
-                     "default 2D view of the results.\n")
+            sys.exit("\nLinear Discriminant Analysis requires at least 4 groups of "
+                     "samples to create a 3D figure. Please update group information or "
+                     "use the default 2D view of the results.\n")
         if sids is not None:
-            print("\nPoint annotations are available only for 2D figure.\n")
+            print("\nPoint annotations are available only for 2D figures.\n")
         ax = fig.add_subplot(111, projection="3d")
         ax.view_init(elev=zangles[1], azim=zangles[0])
         try:
@@ -158,7 +158,7 @@ def handle_program_options():
                         help="A column name in the mapping file containing hexadecimal "
                              "(#FF0000) color values that will be used to color the "
                              "groups. Each sample ID must have a color entry.")
-    parser.add_argument("-i", "--otu_table", help="Input biom file format OTU table.")
+    parser.add_argument("-ot", "--otu_table", help="Input biom file format OTU table.")
     parser.add_argument("-dm", "--dist_matrix_file", help="Input distance matrix file.")
     parser.add_argument("--save_lda_input",
                         help="Save a CSV-format file of the transposed LDA-input table to"
@@ -213,19 +213,19 @@ def main():
 
     if args.dist_matrix_file:
         try:
-            uf_data = pd.read_csv(args.dist_matrix_file, sep="\t", index_col=0)
+            dm_data = pd.read_csv(args.dist_matrix_file, sep="\t", index_col=0)
         except IOError as ioe:
             err_msg = "\nError with unifrac distance matrix file (-d): {}\n"
             sys.exit(err_msg.format(ioe))
-        uf_data.insert(0, "Condition", [imap[sid][category_idx] for sid in uf_data.index])
+        dm_data.insert(0, "Condition", [imap[sid][category_idx] for sid in dm_data.index])
         if args.annotate_points:
-            sampleids = uf_data.index
+            sampleids = dm_data.index
         else:
             sampleids = None
         if args.save_lda_input:
-            uf_data.to_csv(args.save_lda_input, sep="\t")
+            dm_data.to_csv(args.save_lda_input, sep="\t")
         # Run LDA
-        X_lda, y_lda, exp_var = run_LDA(uf_data)
+        X_lda, y_lda, exp_var = run_LDA(dm_data)
     else:
         # Load biom file and calculate relative abundance
         try:
