@@ -6,14 +6,10 @@ This script calculates and returns LDA plots based on normalized relative abunda
 
 .. code-block:: bash
 
-        usage: LDA.py [-h] -i OTU_TABLE -m MAP_FP -g GROUP_BY -c COLOR_BY [-dm DIST_MATRIX_FILE] [--save_lda_input SAVE_LDA_INPUT] [--plot_title PLOT_TITLE] [-o OUT_FP] [-d {2,3}] [--z_angles Z_ANGLES Z_ANGLES] [--figsize FIGSIZE FIGSIZE] [--font_size FONT_SIZE] [--label_padding LABEL_PADDING] [--ggplot2_style]
+        usage: LDA.py [-h] -m MAP_FP -g GROUP_BY [-c COLORS] [-ot OTU_TABLE] [-dm DIST_MATRIX_FILE] [--save_lda_input SAVE_LDA_INPUT] [--plot_title PLOT_TITLE] [-o OUT_FP] [-d {2,3}] [--z_angles Z_ANGLES Z_ANGLES] [--figsize FIGSIZE FIGSIZE] [--font_size FONT_SIZE] [--label_padding LABEL_PADDING] [--annotate_points] [--ggplot2_style]
 
 Required arguments
 ^^^^^^^^^^^^^^^^^^^^
-
-.. cmdoption:: -i OTU_TABLE, --otu_table OTU_TABLE
-
-    Input biom file format OTU table.
 
 .. cmdoption:: -m MAP_FP, --map_fp MAP_FP
 
@@ -29,6 +25,10 @@ Optional arguments
 .. cmdoption:: -c COLORS, --colors COLORS
 
     A column name in the mapping file containing hexadecimal (#FF0000) color values that will be used to color the groups. Each sample ID must have a color entry.
+
+.. cmdoption:: -ot OTU_TABLE, --otu_table OTU_TABLE
+
+    Input biom file format OTU table.
 
 .. cmdoption:: -dm DIST_MATRIX_FILE, --dist_matrix_file DIST_MATRIX_FILE
 
@@ -83,7 +83,7 @@ Workflow for generating LDA plots using PhyloToAST
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Step 1** :
-Create an all-pairs distance matrix for your sample data using the `beta_diversity.py <http://qiime.org/scripts/beta_diversity.html>`_ QIIME script. Different distance metrics can be calculated here: bray_cutis, morisita_horn, kulczynski, and many others.
+Create an all-pairs distance matrix for your sample data using the `beta_diversity.py <http://qiime.org/scripts/beta_diversity.html>`_ QIIME script. Different distance metrics can be calculated here: bray_curtis, morisita_horn, kulczynski, and many others.
 
 **Step 2** :
 Users can use either diversity distance matrix file or BIOM format file to run ``LDA.py`` script with all relevant parameters. If a distance matrix file is provided, LDA will use the distance matrix as an input, otherwise it will calculate OTU relative abundances from input BIOM format file and run LDA based on OTU relative abundances.

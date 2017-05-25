@@ -22,77 +22,70 @@ if len(errors) != 0:
 
 
 def handle_program_options():
-    parser = argparse.ArgumentParser(description="Create a 2D or 3D PCoA plot. "
-                                     "By default, this script opens a window "
-                                     "with the plot displayed if you want to "
-                                     "change certain aspects of the plot (such "
-                                     "as rotate the view in 3D mode). If the -o "
-                                     "option is specified, the plot will be "
-                                     "saved directly to an image without "
-                                     "the initial display window.")
+    parser = argparse.ArgumentParser(description="Create a 2D or 3D PCoA plot. By default"
+                                     ", this script opens a window with the plot "
+                                     "displayed if you want to change certain aspects of "
+                                     "the plot (such as rotate the view in 3D mode). If "
+                                     "the -o option is specified, the plot will be saved "
+                                     "directly to an image without the initial display "
+                                     "window.")
     parser.add_argument("-i", "--coord_fp", required=True,
-                        help="Input principal coordinates filepath (i.e., "
-                             "resulting file from principal_coordinates.py) "
-                             "[REQUIRED].")
+                        help="Input principal coordinates filepath (i.e. resulting file "
+                             "from principal_coordinates.py) [REQUIRED].")
     parser.add_argument("-m", "--map_fp", required=True,
                         help="Input metadata mapping filepath [REQUIRED].")
     parser.add_argument("-g", "--group_by", required=True,
-                        help="Any mapping categories, such as treatment type,  "
-                              "that will be used to group the data in the  "
-                              "output iTol table. For example, one category  "
-                              "with three types will result in three data  "
-                              "columns in the final output. Two categories with "
-                              "three types each will result in six data  "
-                              "columns. Default is no categories and all the  "
-                              "data will be treated as a single group.")
-    parser.add_argument("-d", "--dimensions", default=2, type=int,
-                        choices=[2, 3],
+                        help="Any mapping categories, such as treatment type, that will "
+                        "be used to group the data in the output iTol table. For example,"
+                        " one category with three types will result in three data columns"
+                        " in the final output. Two categories with three types each will "
+                        "result in six data columns. Default is no categories and all the"
+                        " data will be treated as a single group.")
+    parser.add_argument("-d", "--dimensions", default=2, type=int, choices=[2, 3],
                         help="Choose whether to plot 2D or 3D.")
     parser.add_argument("-c", "--colors", default=None,
-                        help="A column name in the mapping file containing "
-                              "hexadecimal (#FF0000) color values that will "
-                              "be used to color the groups. Each sample ID must "
-                              "have a color entry.")
+                        help="A column name in the mapping file containing hexadecimal "
+                        "(#FF0000) color values that will be used to color the groups. "
+                        "Each sample ID must have a color entry.")
     parser.add_argument("-s", "--point_size", default=100, type=int,
-                        help="Specify the size of the circles representing each "
-                             "of the samples in the plot")
+                        help="Specify the size of the circles representing each of the "
+                        "samples in the plot")
     parser.add_argument("--pc_order", default=[1, 2], type=int, nargs=2,
-                        help="Choose which Principle Coordinates are displayed "
-                        "and in which order, for example: 1 2. This option "
-                        "is only used when a 2D plot is specified.")
+                        help="Choose which Principle Coordinates are displayed and in "
+                        "which order, for example: 1 2. This option is only used when a "
+                        "2D plot is specified.")
     parser.add_argument("--x_limits", type=float, nargs=2,
-                        help="Specify limits for the x-axis instead of "
-                             "automatic setting based on the data range. Should "
-                             "take the form: --x_limits -0.5 0.5")
+                        help="Specify limits for the x-axis instead of automatic setting "
+                        "based on the data range. Should take the form: --x_limits -0.5 "
+                        "0.5")
     parser.add_argument("--y_limits", type=float, nargs=2,
-                        help="Specify limits for the y-axis instead of "
-                             "automatic setting based on the data range. Should "
-                             "take the form: --y_limits -0.5 0.5")
+                        help="Specify limits for the y-axis instead of automatic setting "
+                        "based on the data range. Should take the form: --y_limits -0.5 "
+                        "0.5")
     parser.add_argument("--z_limits", type=float, nargs=2,
-                        help="Specify limits for the z-axis instead of "
-                             "automatic setting based on the data range. Should "
-                             "take the form: --z_limits -0.5 0.5")
+                        help="Specify limits for the z-axis instead of automatic setting "
+                        "based on the data range. Should take the form: --z_limits -0.5 "
+                        "0.5")
     parser.add_argument("--z_angles", type=float, nargs=2, default=[-134.5, 23.],
                         help="Specify the azimuth and elevation angles for a 3D plot.")
     parser.add_argument("-t", "--title", default="", help="Title of the plot.")
     parser.add_argument("--figsize", default=[14, 8], type=int, nargs=2,
-                        help="Specify the 'width height' in inches for PCoA plots."
-                             "By default, figure size is 14x8 inches")
+                        help="Specify the 'width height' in inches for PCoA plots. "
+                        "Default figure size is 14x8 inches")
     parser.add_argument("--font_size", default=12, type=int,
                         help="Sets the font size for text elements in the plot.")
     parser.add_argument("--label_padding", default=15, type=int,
-                        help="Sets the spacing in points between the each axis and "
-                        "its label.")
+                        help="Sets the spacing in points between the each axis and its "
+                        "label.")
     parser.add_argument("--annotate_points", action="store_true",
-                        help="If specified, each graphed point will be labeled with "
-                        "its sample ID.")
+                        help="If specified, each graphed point will be labeled with its "
+                        "sample ID.")
     parser.add_argument("--ggplot2_style", action="store_true",
                         help="Apply ggplot2 styling to the figure.")
     parser.add_argument("-o", "--out_fp", default=None,
-                        help="The path and file name to save the plot under. "
-                              "If specified, the figure will be saved directly "
-                              "instead of opening a window in which the plot can "
-                              "be viewed before saving.")
+                        help="The path and file name to save the plot under. If specified"
+                        ", the figure will be saved directly instead of opening a window "
+                        "in which the plot can be viewed before saving.")
     return parser.parse_args()
 
 
@@ -172,12 +165,12 @@ def main():
             ax.scatter(xs=[e[1] for e in categories[cat]["pc1"]],
                        ys=[e[1] for e in categories[cat]["pc2"]],
                        zs=[e[1] for e in categories[cat]["pc3"]],
-                       zdir="z", c=colors[i], s=args.point_size,
-                       label=cat)
+                       zdir="z", c=colors[i], s=args.point_size, label=cat,
+                       edgecolors="k")
         else:
             ax.scatter([e[1] for e in categories[cat]["pc1"]],
                        [e[1] for e in categories[cat]["pc2"]],
-                       c=colors[i], s=args.point_size, label=cat)
+                       c=colors[i], s=args.point_size, label=cat, edgecolors="k")
 
         # Script to annotate PCoA sample points.
         if args.annotate_points:
