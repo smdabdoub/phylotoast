@@ -217,9 +217,9 @@ def main():
         except IOError as ioe:
             err_msg = "\nError with unifrac distance matrix file (-d): {}\n"
             sys.exit(err_msg.format(ioe))
-        dm_data.insert(0, "Condition", [imap[sid][category_idx] for sid in dm_data.index])
+        dm_data.insert(0, "Condition", [imap[str(sid)][category_idx] for sid in dm_data.index])
         if args.annotate_points:
-            sampleids = dm_data.index
+            sampleids = [str(sid) for sid in dm_data.index]
         else:
             sampleids = None
         if args.save_lda_input:
