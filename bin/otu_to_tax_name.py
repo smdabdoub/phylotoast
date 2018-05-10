@@ -16,21 +16,19 @@ if len(importerrors) > 0:
 
 
 def handle_program_options():
-    parser = argparse.ArgumentParser(description="Convert a list of OTU IDs to a list of "
-                                                 "OTU IDs paired with Genus_Species "
-                                                 "identifiers and perform reverse lookup,"
-                                                 " if needed.")
+    parser = argparse.ArgumentParser(description="Convert a list of OTU IDs to "
+                                     "a list of OTU IDs paired with "
+                                     "Genus_Species identifiers and perform "
+                                     "reverse lookup, if needed.")
     parser.add_argument("-i", "--otu_table", required=True,
                         help="Input biom file format OTU table. [REQUIRED]")
     parser.add_argument("-oid", "--otu_id_fp", required=True,
-                        help="A single or multi-column (tab-separated) file containing "
-                        "the OTU IDs to be converted in the first column. [REQUIRED]")
+                        help="A single or multi-column file containing the OTU"
+                        "to be converted in the first column. [REQUIRED]")
     parser.add_argument("-o", "--output_fp",
-                        help="For a list input, a new file containing a list of OTU IDs "
-                              "and their corresponding short taxonomic identifiers "
-                              "separated by tabs. For a BIOM file input, a new "
-                              "mapping file with all the OTU IDs replaced by the short "
-                              "identifier.[REQUIRED]")
+                        help="A new file containing a list of OTU IDs "
+                              "and their corresponding short taxonomic "
+                              "identifiers separated by tabs.[REQUIRED]")
     parser.add_argument("--reverse_lookup", action="store_true",
                         help="Get OTUIDs from genus-species OTU name.")
     return parser.parse_args()
