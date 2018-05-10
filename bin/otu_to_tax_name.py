@@ -46,7 +46,9 @@ def main():
     # Read in otus file data
     try:
         with open(args.otu_id_fp, "rU") as inf:
-            csvr = csv.reader(inf, delimiter="\t")
+            dialect = csv.Sniffer().sniff(inf.read(1024))
+            inf.seek(0)
+            csvr = csv.reader(inf, dialect)
             otu_ids = [line[0] for line in csvr]
     except IOError as ioe:
         sys.exit("\nError with file containing OTUs:{}\n".format(ioe))
