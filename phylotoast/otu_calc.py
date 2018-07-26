@@ -28,7 +28,10 @@ def otu_name(tax):
         elif lvl.startswith("g"):
             return "{}_{}".format(extract_name(lvl), spname)
         else:
-            return "Unclassified_{}".format(extract_name(lvl))
+            if spname != "spp.":
+                return spname
+            else:
+                return "Unclassified_{}".format(extract_name(lvl))
 
 def load_core_file(core_fp):
     """
