@@ -43,7 +43,7 @@ if len(errors) != 0:
 
 
 def plot_LDA(X_lda, y_lda, class_colors, exp_var, style, fig_size, label_pad,
-             font_size, sids, dim=2, zangles=None, out_fp=""):
+             font_size, sids, dim=2, zangles=None, pt_size=250, out_fp=""):
     """
     Plot transformed LDA data.
     """
@@ -70,7 +70,7 @@ def plot_LDA(X_lda, y_lda, class_colors, exp_var, style, fig_size, label_pad,
             cat_y = X_lda[:, 1][y_lda == target_name]
             cat_z = X_lda[:, 2][y_lda == target_name]
             ax.scatter(xs=cat_x, ys=cat_y, zs=cat_z, label=target_name,
-                       c=class_colors[target_name], alpha=0.85, s=250, edgecolors="k",
+                       c=class_colors[target_name], alpha=0.85, s=pt_size, edgecolors="k",
                        zdir="z")
     else:
         ax = fig.add_subplot(111)
@@ -80,7 +80,7 @@ def plot_LDA(X_lda, y_lda, class_colors, exp_var, style, fig_size, label_pad,
                 cat_y = np.ones((cat_x.shape[0], 1)) + i
             else:
                 cat_y = X_lda[:, 1][y_lda == target_name]
-            ax.scatter(x=cat_x, y=cat_y, label=target_name, alpha=0.85, s=250,
+            ax.scatter(x=cat_x, y=cat_y, label=target_name, alpha=0.85, s=pt_size,
                        color=class_colors[target_name], edgecolors="k")
         # Annotate data points with sample IDs
         if sids is not None:
@@ -172,6 +172,9 @@ def handle_program_options():
                              "saving.")
     parser.add_argument("-d", "--dimensions", default=2, type=int, choices=[2, 3],
                         help="Choose whether to plot 2D or 3D. Default is a 2D view.")
+    parser.add_argument("-s", "--point_size", default=100, type=int,
+                        help="Specify the size of the circles representing each of the "
+                        "samples in the plot")
     parser.add_argument("--z_angles", type=float, nargs=2, default=[45., 30.],
                         help="Specify the azimuth and elevation angles for a 3D plot.")
     parser.add_argument("--figsize", default=[14, 8], type=int, nargs=2,
@@ -253,11 +256,12 @@ def main():
         plot_LDA(X_lda, y_lda, class_colors, exp_var, style=args.ggplot2_style,
                  fig_size=args.figsize, label_pad=args.label_padding,
                  font_size=args.font_size, sids=sampleids, dim=3,
-                 zangles=args.z_angles, out_fp=args.out_fp)
+                 zangles=args.z_angles, pt_size=args.point_size, out_fp=args.out_fp)
     else:
         plot_LDA(X_lda, y_lda, class_colors, exp_var, style=args.ggplot2_style,
                  fig_size=args.figsize, label_pad=args.label_padding,
-                 font_size=args.font_size, sids=sampleids, out_fp=args.out_fp)
+                 font_size=args.font_size, sids=sampleids, pt_size=args.point_size,
+                 out_fp=args.out_fp)
 
 
 if __name__ == "__main__":
