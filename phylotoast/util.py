@@ -4,6 +4,7 @@
 """
 import errno
 import itertools
+import io
 import os
 import sys
 from textwrap import dedent as twdd
@@ -221,12 +222,12 @@ def file_handle(fnh, mode="rU"):
     :return: Returns an opened file for appropriate usage.
     """
     handle = None
-    if isinstance(fnh, file):
+    if isinstance(fnh, io.IOBase):
         if fnh.closed:
-            raise ValueError("Input file is closed.")
+            raise IOError("Input file is closed.")
         handle = fnh
     elif isinstance(fnh, str):
-        handle = open(fnh, mode)
+        handle = io.open(fnh, mode)
 
     return handle
 
