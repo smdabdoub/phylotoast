@@ -7,11 +7,19 @@ import csv
 import argparse
 import os.path as osp
 from itertools import zip_longest
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from phylotoast import graph_util as gu, util as putil
 importerrors = []
 try:
     import biom
+except ImportError as ie:
+    importerrors.append(ie)
+try:
+    import pandas as pd
+except ImportError as ie:
+    importerrors.append(ie)
+try:
+    import ptitprince as pt
 except ImportError as ie:
     importerrors.append(ie)
 try:
@@ -49,6 +57,19 @@ def calc_diversity(method, parsed_mapf, biom, cats, cats_index):
                 for cat, counts in counts.items()}
 
     return div_calc, sample_ids
+
+
+def div_calc_df(dc):
+    """
+    Construct a Pandas DataFrame from the output of calc_diversity.
+    """
+    cols = ["SampleIDs", "MetricVal", "Group"]
+    dc_df = pd.DataFrame(columns=cols)
+    for cat in dc:
+        tmp_df = pd.DataFrame(list(dc[cat].items()), columns=cols[:2])
+        tmp_df["Group"] = [cat]*len(tmp_df)
+        dc_df = dc_df.append(tmp_df, ignore_index=True)
+    return dc_df
 
 
 def print_MannWhitneyU(div_calc):
@@ -105,6 +126,20 @@ def plot_group_kde(diversities, grp_colors, title, diversity_type,
     fig_div.savefig(osp.join(out_dir, diversity_type+"."+plot_ext), facecolor="white",
                     edgecolor="none", bbox_inches="tight", pad_inches=0.2)
 
+def plot_group_raincloud(diversities, grp_colors, title, diversity_type,
+                         out_dir, plot_ext, figsize):
+    fig_div, ax = plt.subplots(figsize=figsize)
+    divc_df = div_calc_df(diversities)
+    sigma = .2
+
+    ax=pt.RainCloud(x = "Group", y = "MetricVal", data = divc_df, 
+                    palette = grp_colors, bw = sigma, width_viol = .8, 
+                    pointplot = False,
+                    figsize = (7,5), orient = "h", ax=ax,)
+
+    fig_div.savefig(osp.join(out_dir, diversity_type+"."+plot_ext), facecolor="white",
+                    edgecolor="none", bbox_inches="tight", pad_inches=0.2)
+
 
 def write_diversity_metrics(data, sample_ids, fp=None):
     """
@@ -153,6 +188,9 @@ def handle_program_options():
                              "hexadecimal (e.g. #FF0000) color values that "
                              "will be used to color the groups. Each sample ID "
                              "must have a color entry.")
+    parser.add_argument("--raincloud", action="store_true",
+                        help="Visualize the results with a raincloud plot "
+                             "instead of the default KDE smoothed histograms.")
     parser.add_argument("--plot_title", default="",
                         help="A descriptive title that will appear at the top "
                              "of the output plot. Surround with quotes if "
@@ -215,7 +253,7 @@ def main():
     if args.category not in header:
         sys.exit("Category '{}' not found".format(args.category))
     cat_idx = header.index(args.category)
-    cat_vals = {entry[cat_idx] for entry in sample_map.values()}
+    cat_vals = OrderedDict((e[cat_idx], None) for e in sample_map.values())
 
     plot_title = args.plot_title
 
@@ -236,8 +274,12 @@ def main():
         if args.save_calculations:
             write_diversity_metrics(div_calc, sample_ids, args.save_calculations)
 
-        plot_group_diversity(div_calc, colors, plot_title, x_label, args.output_dir,
-                             args.image_type)
+        if args.raincloud:
+            plot_group_raincloud(div_calc, colors, plot_title, x_label, args.output_dir,
+                                 args.image_type, args.figsize)
+        else:
+            plot_group_kde(div_calc, colors, plot_title, x_label, args.output_dir,
+                           args.image_type, args.figsize)
 
         # calculate and print significance testing results
         if not args.suppress_stats:
