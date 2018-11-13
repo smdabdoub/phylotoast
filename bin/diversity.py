@@ -6,7 +6,7 @@ import sys
 import csv
 import argparse
 import os.path as osp
-from itertools import izip_longest
+from itertools import zip_longest
 from collections import defaultdict
 from phylotoast import graph_util as gu, util as putil
 importerrors = []
@@ -28,7 +28,7 @@ except ImportError as ie:
     importerrors.append(ie)
 if len(importerrors) != 0:
     for item in importerrors:
-        print "Import Error. Please install missing module:", item
+        print("Import Error. Please install missing module:", item)
     sys.exit()
 
 
@@ -59,11 +59,12 @@ def print_MannWhitneyU(div_calc):
         x = div_calc.values()[0].values()
         y = div_calc.values()[1].values()
     except:
-        return "Error setting up input arrays for Mann-Whitney U Test. Skipping "\
-               "significance testing."
+        print("Error setting up input arrays for Mann-Whitney U Test. Skipping "\
+               "significance testing.")
+        return
     T, p = stats.mannwhitneyu(x, y)
-    print "\nMann-Whitney U test statistic:", T
-    print "Two-tailed p-value: {}".format(2 * p)
+    print("\nMann-Whitney U test statistic:", T)
+    print("Two-tailed p-value: {}".format(2 * p))
 
 
 def print_KruskalWallisH(div_calc):
@@ -73,19 +74,21 @@ def print_KruskalWallisH(div_calc):
     """
     calc = defaultdict(list)
     try:
-        for k1, v1 in div_calc.iteritems():
-            for k2, v2 in v1.iteritems():
+        for k1, v1 in div_calc.items():
+            for k2, v2 in v1.items():
                 calc[k1].append(v2)
     except:
-        return "Error setting up input arrays for Kruskal-Wallis H-Test. Skipping "\
-               "significance testing."
+        print("Error setting up input arrays for Kruskal-Wallis H-Test. Skipping "\
+               "significance testing.")
+        return
     h, p = stats.kruskal(*calc.values())
-    print "\nKruskal-Wallis H-test statistic for {} groups: {}".format(str(len(div_calc)), h)
-    print "p-value: {}".format(p)
+    print("\nKruskal-Wallis H-test statistic for {} groups: {}".format(str(len(div_calc)), h))
+    print("p-value: {}".format(p))
 
 
-def plot_group_diversity(diversities, grp_colors, title, diversity_type, out_dir, plot_ext):
-    fig_div = plt.figure(figsize=(21, 7))
+def plot_group_kde(diversities, grp_colors, title, diversity_type,
+                         out_dir, plot_ext, figsize):
+    fig_div = plt.figure(figsize=figsize)
     grid = gridspec.GridSpec(1, 2)
 
     # Disease States Shannon Diversity plots
@@ -133,38 +136,46 @@ def handle_program_options():
     parser.add_argument("-c", "--category",
                         help="Specific category from the mapping file.")
     parser.add_argument("-d", "--diversity", default=["shannon"], nargs="+",
-                        help="The alpha diversity metric. Default \
-                             value is 'shannon', which will calculate the Shannon\
-                             entropy. Multiple metrics can be specified (space separated).\
-                             The full list of metrics is available at:\
-                             http://scikit-bio.org/docs/latest/generated/skbio.diversity.alpha.html.\
-                             Beta diversity metrics will be supported in the future.")
+                        help="The alpha diversity metric. Default "
+                             "value is 'shannon', which will calculate the "
+                             "Shannon entropy. Multiple metrics can be "
+                             "specified (space separated). The full list of "
+                             "metrics is available at: "
+                             "http://scikit-bio.org/docs/latest/generated/"
+                             "skbio.diversity.alpha.html.")
     parser.add_argument("--x_label", default=[None], nargs="+",
-                        help="The name of the diversity metric to be displayed on the\
-                        plot as the X-axis label. If multiple metrics are specified,\
-                        then multiple entries for the X-axis label should be given.")
+                        help="The name of the diversity metric to be displayed "
+                        "on the plot as the X-axis label. If multiple metrics "
+                        "are specified, then multiple entries for the X-axis "
+                        "label should be given.")
     parser.add_argument("--color_by",
-                        help="A column name in the mapping file containing\
-                              hexadecimal (#FF0000) color values that will\
-                              be used to color the groups. Each sample ID must\
-                              have a color entry.")
+                        help="A column name in the mapping file containing "
+                             "hexadecimal (e.g. #FF0000) color values that "
+                             "will be used to color the groups. Each sample ID "
+                             "must have a color entry.")
     parser.add_argument("--plot_title", default="",
-                        help="A descriptive title that will appear at the top \
-                        of the output plot. Surround with quotes if there are\
-                        spaces in the title.")
+                        help="A descriptive title that will appear at the top "
+                             "of the output plot. Surround with quotes if "
+                             "there are spaces in the title.")
     parser.add_argument("-o", "--output_dir", default=".",
                         help="The directory plots will be saved to.")
     parser.add_argument("--image_type", default="png",
-                        help="The type of image to save: png, svg, pdf, eps, etc...")
+                        help="The type of image to save: png, svg, pdf, eps, "
+                             "etc...")
+    parser.add_argument("--figsize", default=[21, 7], type=int, nargs=2,
+                        help="Specify the 'width height' in inches for LDA "
+                             "plots. Default figure size is 21x7 inches.")
     parser.add_argument("--save_calculations",
-                        help="Path and name of text file to store the calculated "
-                        "diversity metrics.")
-    parser.add_argument("--suppress_stats", action="store_true", help="Do not display "
-                        "significance testing results which are shown by default.")
+                        help="Path and name of text file to store the "
+                             "calculated diversity metrics.")
+    parser.add_argument("--suppress_stats", action="store_true", 
+                        help="Do not display significance testing results "
+                        "which are shown by default.")
     parser.add_argument("--show_available_metrics", action="store_true",
-                        help="Supply this parameter to see which alpha diversity metrics "
-                             " are available for usage. No calculations will be performed"
-                             " if this parameter is provided.")
+                        help="Supply this parameter to see which alpha "
+                             "diversity metrics are available for usage. "
+                             "No calculations will be performed if this "
+                             "parameter is provided.")
     return parser.parse_args()
 
 
@@ -177,7 +188,7 @@ def main():
     except ValueError:
         pass
     if args.show_available_metrics:
-        print "\nAvailable alpha diversity metrics:"
+        print("\nAvailable alpha diversity metrics:")
         return "\n".join(metrics)
 
     # check that the output dir exists, create it if not
@@ -211,7 +222,7 @@ def main():
     colors = putil.color_mapping(sample_map, header, args.category, args.color_by)
 
     # Perform diversity calculations and density plotting
-    for method, x_label in izip_longest(args.diversity, args.x_label):
+    for method, x_label in zip_longest(args.diversity, args.x_label):
         if x_label is None:
             x_label = method.title()
         if method not in alpha.__all__:
@@ -230,12 +241,12 @@ def main():
 
         # calculate and print significance testing results
         if not args.suppress_stats:
-            print "Diversity significance testing: {}".format(x_label)
+            print("Diversity significance testing: {}".format(x_label))
             if len(cat_vals) == 2:
                 print_MannWhitneyU(div_calc)
             elif len(cat_vals) > 2:
                 print_KruskalWallisH(div_calc)
-            print
+            print()
         else:
             continue
 
