@@ -14,7 +14,7 @@ except ImportError as ie:
 
 if len(importerrors) != 0:
     for item in importerrors:
-        print 'Import Error:', item
+        print('Import Error:', item)
     sys.exit()
 
 from matplotlib.ticker import FuncFormatter, MaxNLocator, MultipleLocator
@@ -88,7 +88,7 @@ def ggplot2_style(ax):
     ax.yaxis.set_ticks_position('left')
 
 
-    if ax.legend_ <> None:
+    if ax.legend_ != None:
         lg = ax.legend_
         lg.get_frame().set_linewidth(0)
         lg.get_frame().set_alpha(0.5)
