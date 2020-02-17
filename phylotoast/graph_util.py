@@ -4,6 +4,10 @@ import sys
 # 3rd party
 importerrors = []
 try:
+    import numpy as np
+except ImportError as ie:
+    importerrors.append(ie)
+try:
     import statsmodels.nonparametric.kde as kde
 except ImportError as ie:
     importerrors.append(ie)
@@ -40,7 +44,9 @@ def plot_kde(data, ax, title=None, color='r', fill_bt=True):
     :type fill_bt: bool
     :param fill_bt: Specify whether to fill the area beneath the histogram line
     """
-    e = kde.KDEUnivariate(data)
+    if isinstance(data, list):
+        data = np.asarray(data)
+    e = kde.KDEUnivariate(data.astype(np.float))
     e.fit()
     ax.plot(e.support, e.density, color=color, alpha=0.9, linewidth=2.25)
     if fill_bt:
