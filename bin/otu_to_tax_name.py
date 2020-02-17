@@ -22,7 +22,7 @@ def handle_program_options():
                                      "reverse lookup, if needed.")
     parser.add_argument("-i", "--otu_table", required=True,
                         help="Input biom file format OTU table. [REQUIRED]")
-    parser.add_argument("-oid", "--otu_id_fp", required=True,
+    parser.add_argument("-t", "--otu_id_fp", required=True,
                         help="A single or multi-column file containing the OTU"
                         "to be converted in the first column. [REQUIRED]")
     parser.add_argument("-s", "--separator", default=",",
