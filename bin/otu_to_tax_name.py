@@ -34,6 +34,8 @@ def handle_program_options():
                               "identifiers separated by tabs.[REQUIRED]")
     parser.add_argument("--reverse_lookup", action="store_true",
                         help="Get OTUIDs from genus-species OTU name.")
+    parser.add_argument("--kraken", action="store_true",
+                        help="Indicates the BIOM file is output from kraken-biom.")
     return parser.parse_args()
 
 
@@ -59,13 +61,17 @@ def main():
 
     output = {}
     for val, idx, md in biomf.iter(axis="observation"):
-        name = otuc.otu_name(md["taxonomy"])
+        taxa = md["taxonomy"]
+        if args.kraken:
+            taxa = md["taxonomy"].split("; ")
+        name = otuc.otu_name(taxa)
         if args.reverse_lookup:
             if name in otu_ids:
                 output[name] = idx   # Get otuids from otu names
         else:
             if idx in otu_ids:
                 output[idx] = name  # Get otu name from otu IDs
+
     with open(args.output_fp, "w") as outf:
         outf.write("Input\tOutput\n")
         for k, v in output.items():
