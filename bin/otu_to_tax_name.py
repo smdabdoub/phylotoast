@@ -25,6 +25,9 @@ def handle_program_options():
     parser.add_argument("-oid", "--otu_id_fp", required=True,
                         help="A single or multi-column file containing the OTU"
                         "to be converted in the first column. [REQUIRED]")
+    parser.add_argument("-s", "--separator", default=",",
+                        help='The column separator character, e.g. )"\t" for a TSV file.' 
+                             'Defaults to ",".')
     parser.add_argument("-o", "--output_fp",
                         help="A new file containing a list of OTU IDs "
                               "and their corresponding short taxonomic "
@@ -46,9 +49,10 @@ def main():
     # Read in otus file data
     try:
         with open(args.otu_id_fp, "rU") as inf:
-            dialect = csv.Sniffer().sniff(inf.read(1024))
-            inf.seek(0)
-            csvr = csv.reader(inf, dialect)
+            #dialect = csv.Sniffer().sniff(inf.read(1024))
+            #inf.seek(0)
+            #csvr = csv.reader(inf, dialect)
+            csvr = csv.reader(inf, delimiter=args.separator)
             otu_ids = [line[0] for line in csvr]
     except IOError as ioe:
         sys.exit("\nError with file containing OTUs:{}\n".format(ioe))
