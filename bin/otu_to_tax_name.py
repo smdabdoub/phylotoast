@@ -73,9 +73,12 @@ def main():
                 output[idx] = name  # Get otu name from otu IDs
 
     with open(args.output_fp, "w") as outf:
-        outf.write("Input\tOutput\n")
-        for k, v in output.items():
-            outf.write("{0}\t{1}\n".format(k, v))
+        for oid in otu_ids:
+            if oid in output:
+                outf.write("{0}\t{1}\n".format(oid, output[oid]))
+            else:
+                print("ID: '{}' not found.".format(oid))
+                outf.write("{0}\t{1}\n".format(oid, ""))
 
 
 if __name__ == "__main__":
