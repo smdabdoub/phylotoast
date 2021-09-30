@@ -8,7 +8,8 @@ from __future__ import absolute_import, division, print_function
 
 import ast
 import argparse
-from collections import Counter, OrderedDict
+from collections import Counter, OrderedDict, defaultdict
+import csv
 import itertools as it
 import os.path as osp
 import sys
@@ -103,7 +104,7 @@ def load_tsv_core(core_fp, skip_header=False):
 
 def plot_overlaps(otus, group_otus, group_colors, 
                   out_fp, fig_size=None, title="",
-                  filter_common=False):
+                  filter_common=False, table_fp=None):
     """
     Given a list of OTUs and a number of groups containing subsets of
     the OTU set, plot a presence/absence bar chart showing which species
@@ -140,15 +141,15 @@ def plot_overlaps(otus, group_otus, group_colors,
             else:
                 rank -= max_penalty - i
                 in_prev = False
-        return count, rank
+
+        return count, rank, sp
 
 
     if filter_common:
         otus = [otu for otu in otus if sort_order_group(otu)[0] < len(group_otus)]
     otus = sorted(otus, key=sort_order_group, reverse=True)
 
-    #TODO: fill shared_table during the double loop below and add arg to enable output to file
-    shared_table = [merge_dicts({grp: None for grp in group_otus},{"OTU": otu_id}) for otu_id in otus]
+    shared_table = defaultdict(list)
     
     fig, ax = plt.subplots(figsize=fig_size)
     ax.xaxis.set_major_locator(MaxNLocator(nbins=len(otus), integer=True))
@@ -162,11 +163,13 @@ def plot_overlaps(otus, group_otus, group_colors,
     bar_colors = []
 
     for i, grp in enumerate(group_otus):
-
         for j, otu in enumerate(otus):
             if otu in group_otus[grp]:
                 bars.append(translate(base, j*x_step+0.5, i*y_step))
                 bar_colors.append(group_colors[grp])
+                shared_table[grp].append(otu)
+            else:
+                shared_table[grp].append("")
 
     black = (0,0,0,1)
 
@@ -196,6 +199,15 @@ def plot_overlaps(otus, group_otus, group_colors,
     ax.margins(0.05)
     ax.yaxis.set_visible(True)
     ax.set_xlim((0, len(otus)*x_step))
+
+    if table_fp:
+        with open(table_fp, "w") as outf:
+            csvw = csv.writer(outf, delimiter="\t")
+            # write header
+            csvw.writerow(shared_table.keys())
+            # write data rows
+            for i, _ in enumerate(otus):
+                csvw.writerow([shared_table[grp][i] for grp in shared_table])
 
     # save or display result
     if out_fp:
@@ -256,10 +268,13 @@ def handle_program_options():
                              "core overlap plot. By default, figure size is "
                              "10x5 inches.")
     parser.add_argument("-o", "--out_fp", default=None,
-                        help="The path and file name to save the plot under. "
+                        help="The path of the file to save the plot under. "
                               "If specified, the figure will be saved directly "
                               "instead of opening a window in which the plot "
                               "can be viewed before saving.")
+    parser.add_argument("--table_fp", default=None,
+                        help="Output the list of overlapping OTUs as they "
+                             "appear in the figure into a TSV file.")
     return parser.parse_args()
 
 
@@ -299,7 +314,8 @@ def main():
 
     plot_overlaps(overlap, group_cores, class_colors, 
                   out_fp=args.out_fp, fig_size=args.figsize, title=args.title,
-                  filter_common=args.filtercommon)
+                  filter_common=args.filtercommon,
+                  table_fp=args.table_fp)
 
 
 if __name__ == '__main__':
