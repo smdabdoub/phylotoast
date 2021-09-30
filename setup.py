@@ -4,9 +4,10 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 
-requires = ['numpy', 'scipy', 'matplotlib <= 1.5.3', 'biopython >= 1.60',
-            'scikit-bio <= 0.4.2', 'scikit-learn', 'pandas', 'statsmodels',
-            'palettable', 'biom-format >= 2.1.5', 'h5py']
+requires = ['numpy', 'scipy', 'matplotlib <= 1.5.3', 'biopython == 1.60',
+            'scikit-bio <= 0.4.2', 'scikit-learn <= 0.20.4', 'pandas', 
+            'statsmodels == 0.10.0', 'palettable', 'biom-format == 2.1.5', 
+            'h5py']
 
 scripts = ['bin/LDA.py',
            'bin/LDA_bubble.py',
@@ -39,7 +40,7 @@ scripts = ['bin/LDA.py',
 
 setup(
   name='phylotoast',
-  version='1.4.0rc2',
+  version='1.4.0rc3',
   description='Tools for phylogenetic data analysis including visualization and cluster-computing support. Integrates with the QIIME pipeline. http://phylotoast.org',
   author='Shareef M. Dabdoub',
   author_email='dabdoub.2@osu.edu',
