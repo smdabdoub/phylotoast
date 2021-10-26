@@ -4,8 +4,8 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 
-requires = ['numpy', 'scipy', 'matplotlib <= 1.5.3', 'biopython == 1.60',
-            'scikit-bio <= 0.4.2', 'scikit-learn <= 0.20.4', 'pandas', 
+requires = ['numpy <= 1.16.6', 'scipy <= 1.2.3', 'matplotlib <= 1.5.3', 'biopython == 1.60',
+            'scikit-bio <= 0.4.2', 'scikit-learn <= 0.20.4', 'pandas <= 0.24.2', 
             'statsmodels == 0.10.0', 'palettable', 'biom-format == 2.1.5', 
             'h5py']
 
