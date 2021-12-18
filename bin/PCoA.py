@@ -77,6 +77,10 @@ def handle_program_options():
     parser.add_argument("--label_padding", default=15, type=int,
                         help="Sets the spacing in points between the each axis and its "
                         "label.")
+    parser.add_argument("--legend_loc", default="best", choices=['best','upper right','upper left',
+                        'lower left', 'lower right', 'right', 'center left', 'center right',
+                        'lower center', 'upper center', 'center', 'outside'], 
+                        help="Sets the location of the Legend. Default: best.")
     parser.add_argument("--annotate_points", action="store_true",
                         help="If specified, each graphed point will be labeled with its "
                         "sample ID.")
@@ -189,7 +193,22 @@ def main():
     ax.set_xlabel(axis_str.format(pco[0], float(pc1v)), labelpad=args.label_padding)
     ax.set_ylabel(axis_str.format(pco[1], float(pc2v)), labelpad=args.label_padding)
 
-    leg = plt.legend(loc="best", scatterpoints=3, frameon=True, framealpha=1)
+    if args.legend_loc == "outside":
+        leg = plt.legend(bbox_to_anchor=(1.05, 0.94), loc=2, borderaxespad=-2.0, 
+                         scatterpoints=3, frameon=True, framealpha=1)
+        # https://stackoverflow.com/a/45846024
+        plt.gcf().canvas.draw()
+        invFigure = plt.gcf().transFigure.inverted()
+        lgd_pos = leg.get_window_extent()
+        lgd_coord = invFigure.transform(lgd_pos)
+        lgd_xmax = lgd_coord[1, 0]
+        ax_pos = plt.gca().get_window_extent()
+        ax_coord = invFigure.transform(ax_pos)
+        ax_xmax = ax_coord[1, 0]
+        shift = 1 - (lgd_xmax - ax_xmax)
+        plt.gcf().tight_layout(rect=(0, 0, shift, 1))
+    else:
+        leg = plt.legend(loc=args.legend_loc, scatterpoints=3, frameon=True, framealpha=1)
     leg.get_frame().set_edgecolor('k')
 
     # Set the font characteristics
